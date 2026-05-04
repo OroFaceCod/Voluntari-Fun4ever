@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Înregistrare Voluntar — Romanian Business Leaders</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.min.js"></script>
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --paper: #faf8f5;
+    --cream: #f2ede6;
+    --gold: #c9a84c;
+    --gold-light: #e8d5a3;
+    --red: #b5302a;
+    --gray: #7a7a8a;
+    --border: #ddd8d0;
+    --shadow: 0 2px 24px rgba(26,26,46,0.09);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--ink);
+    color: white;
+    padding: 28px 40px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .logo-badge {
+    width: 52px; height: 52px;
+    background: var(--gold);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 20px; font-weight: 700;
+    color: var(--ink);
+    flex-shrink: 0;
+  }
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px; font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+  header p { font-size: 13px; color: rgba(255,255,255,0.55); margin-top: 2px; }
+
+  /* ── PROGRESS ── */
+  .progress-bar {
+    background: var(--cream);
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+    display: flex;
+    gap: 0;
+  }
+  .step-tab {
+    padding: 14px 24px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--gray);
+    border-bottom: 3px solid transparent;
+    cursor: default;
+    transition: all .2s;
+    white-space: nowrap;
+  }
+  .step-tab.active { color: var(--ink); border-bottom-color: var(--gold); }
+  .step-tab.done { color: var(--gold); }
+
+  /* ── MAIN LAYOUT ── */
+  main {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  /* ── FORM SECTIONS ── */
+  .form-page { display: none; }
+  .form-page.active { display: block; }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px; font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .section-subtitle {
+    color: var(--gray);
+    font-size: 14px;
+    margin-bottom: 36px;
+  }
+
+  .field-group {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow);
+  }
+  .field-group-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+  }
+
+  .row { display: grid; gap: 16px; margin-bottom: 16px; }
+  .row.cols-2 { grid-template-columns: 1fr 1fr; }
+  .row.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .row:last-child { margin-bottom: 0; }
+
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    color: var(--gray);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+
+  input[type=text], input[type=date], input[type=email], input[type=tel] {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: var(--ink);
+    background: var(--paper);
+    outline: none;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  input:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(201,168,76,0.15);
+  }
+  input.error { border-color: var(--red); }
+
+  /* Minor warning banner */
+  #minor-banner {
+    display: none;
+    background: #fff8e6;
+    border: 1.5px solid var(--gold-light);
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 13.5px;
+    color: #7a5c10;
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+  #minor-banner b { color: #5a3e00; }
+
+  /* ── SIGNATURE ── */
+  .sig-container {
+    position: relative;
+    background: var(--paper);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .sig-container canvas {
+    display: block;
+    cursor: crosshair;
+    touch-action: none;
+  }
+  .sig-label {
+    position: absolute;
+    bottom: 10px; left: 14px;
+    font-size: 11px;
+    color: var(--border);
+    pointer-events: none;
+    font-style: italic;
+  }
+  .sig-clear {
+    position: absolute;
+    top: 8px; right: 10px;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 3px 9px;
+    font-size: 11px;
+    color: var(--gray);
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .sig-clear:hover { border-color: var(--red); color: var(--red); }
+
+  /* ── NAVIGATION BUTTONS ── */
+  .btn-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 36px;
+  }
+  .btn {
+    padding: 13px 32px;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all .2s;
+  }
+  .btn-secondary {
+    background: white;
+    border: 1.5px solid var(--border);
+    color: var(--gray);
+  }
+  .btn-secondary:hover { border-color: var(--ink); color: var(--ink); }
+  .btn-primary {
+    background: var(--ink);
+    color: white;
+  }
+  .btn-primary:hover { background: #2d2d4e; transform: translateY(-1px); }
+  .btn-gold {
+    background: var(--gold);
+    color: var(--ink);
+    font-size: 16px;
+    padding: 15px 40px;
+  }
+  .btn-gold:hover { background: #b8922e; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(201,168,76,0.35); }
+
+  /* ── REVIEW PAGE ── */
+  .review-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  .review-item { font-size: 14px; }
+  .review-item .rl { color: var(--gray); font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; font-weight: 600; }
+  .review-item .rv { font-weight: 500; margin-top: 2px; }
+
+  .doc-list {
+    display: flex; flex-direction: column; gap: 10px;
+    margin-bottom: 28px;
+  }
+  .doc-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+  .doc-icon {
+    width: 36px; height: 36px;
+    background: var(--cream);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .doc-name { font-weight: 500; font-size: 14px; }
+  .doc-sub { font-size: 12px; color: var(--gray); margin-top: 1px; }
+
+  /* ── SUCCESS PAGE ── */
+  #page-success {
+    text-align: center;
+    padding: 40px 0;
+  }
+  .success-icon {
+    width: 80px; height: 80px;
+    background: #e8f5e9;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 38px;
+    margin: 0 auto 28px;
+  }
+  .download-links {
+    display: flex; flex-direction: column; gap: 12px;
+    margin: 32px 0;
+    text-align: left;
+  }
+  .dl-btn {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 22px;
+    background: var(--ink);
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all .2s;
+    width: 100%;
+    text-align: left;
+  }
+  .dl-btn:hover { background: #2d2d4e; transform: translateX(3px); }
+  .dl-btn .dl-icon { font-size: 22px; }
+  .dl-btn .dl-sub { font-size: 11px; opacity: 0.6; margin-top: 1px; }
+
+  /* ── HELPERS ── */
+  .error-msg {
+    color: var(--red);
+    font-size: 12px;
+    margin-top: 5px;
+  }
+  .required::after { content: ' *'; color: var(--red); }
+
+  @media (max-width: 600px) {
+    header { padding: 20px; }
+    main { padding: 28px 16px 60px; }
+    .row.cols-2, .row.cols-3 { grid-template-columns: 1fr; }
+    .field-group { padding: 20px; }
+    .review-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-badge">RBL</div>
+  <div>
+    <h1>Romanian Business Leaders</h1>
+    <p>Formular de înregistrare voluntar</p>
+  </div>
+</header>
+
+<div class="progress-bar">
+  <div class="step-tab active" id="tab-1">1. Date personale</div>
+  <div class="step-tab" id="tab-2">2. Semnătură</div>
+  <div class="step-tab" id="tab-3">3. Confirmare</div>
+</div>
+
+<main>
+
+<!-- ════════ PAGE 1: DATE PERSONALE ════════ -->
+<div class="form-page active" id="page-1">
+  <div class="section-title">Date personale</div>
+  <div class="section-subtitle">Completează cu atenție. Datele vor fi introduse automat în contract.</div>
+
+  <div id="minor-banner">
+    ⚠️ <b>Voluntar minor</b> — Pe baza datei de naștere introduse, ești minor. Se vor genera documente speciale pentru minori, inclusiv acordul parental. Va trebui să completezi și datele unui părinte/tutore.
+  </div>
+
+  <div class="field-group">
+    <div class="field-group-title">Identitate</div>
+    <div class="row cols-2">
+      <div>
+        <label class="required">Nume</label>
+        <input type="text" id="f-nume" placeholder="ex: Popescu">
+      </div>
+      <div>
+        <label class="required">Prenume</label>
+        <input type="text" id="f-prenume" placeholder="ex: Maria">
+      </div>
+    </div>
+    <div class="row cols-2">
+      <div>
+        <label class="required">Data nașterii</label>
+        <input type="date" id="f-dob" max="">
+      </div>
+      <div>
+        <label class="required">CNP</label>
+        <input type="text" id="f-cnp" placeholder="13 cifre" maxlength="13">
+      </div>
+    </div>
+    <div class="row cols-2">
+      <div>
+        <label class="required">Serie CI</label>
+        <input type="text" id="f-ci-serie" placeholder="ex: AA" maxlength="2" style="text-transform:uppercase">
+      </div>
+      <div>
+        <label class="required">Număr CI</label>
+        <input type="text" id="f-ci-nr" placeholder="ex: 123456" maxlength="6">
+      </div>
+    </div>
+  </div>
+
+  <div class="field-group">
+    <div class="field-group-title">Domiciliu</div>
+    <div class="row cols-2">
+      <div>
+        <label class="required">Județ</label>
+        <input type="text" id="f-judet" placeholder="ex: Cluj">
+      </div>
+      <div>
+        <label class="required">Oraș / Localitate</label>
+        <input type="text" id="f-oras" placeholder="ex: Cluj-Napoca">
+      </div>
+    </div>
+    <div class="row cols-2">
+      <div>
+        <label class="required">Stradă</label>
+        <input type="text" id="f-strada" placeholder="ex: Str. Libertății">
+      </div>
+      <div>
+        <label class="required">Număr</label>
+        <input type="text" id="f-nr" placeholder="ex: 12">
+      </div>
+    </div>
+  </div>
+
+  <div class="field-group">
+    <div class="field-group-title">Contact</div>
+    <div class="row cols-2">
+      <div>
+        <label class="required">Telefon</label>
+        <input type="tel" id="f-tel" placeholder="ex: 0722 123 456">
+      </div>
+      <div>
+        <label class="required">Email</label>
+        <input type="email" id="f-email" placeholder="ex: maria@email.com">
+      </div>
+    </div>
+  </div>
+
+  <!-- DATE PARINTE (vizibil doar pentru minori) -->
+  <div class="field-group" id="parinte-section" style="display:none;">
+    <div class="field-group-title">📋 Date părinte / tutore legal</div>
+    <div class="row cols-2">
+      <div>
+        <label class="required">Nume și prenume părinte</label>
+        <input type="text" id="f-p-nume" placeholder="Nume complet">
+      </div>
+      <div>
+        <label class="required">CNP părinte</label>
+        <input type="text" id="f-p-cnp" placeholder="13 cifre" maxlength="13">
+      </div>
+    </div>
+    <div class="row cols-2">
+      <div>
+        <label class="required">Domiciliu (oraș, județ)</label>
+        <input type="text" id="f-p-dom" placeholder="ex: Cluj-Napoca, Cluj">
+      </div>
+      <div>
+        <label class="required">Telefon părinte</label>
+        <input type="tel" id="f-p-tel" placeholder="ex: 0722 000 111">
+      </div>
+    </div>
+    <div class="row">
+      <div>
+        <label class="required">Email părinte</label>
+        <input type="email" id="f-p-email" placeholder="ex: parinte@email.com">
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <span></span>
+    <button class="btn btn-primary" onclick="goToPage2()">Continuă →</button>
+  </div>
+</div>
+
+<!-- ════════ PAGE 2: SEMNĂTURA ════════ -->
+<div class="form-page" id="page-2">
+  <div class="section-title">Semnătură</div>
+  <div class="section-subtitle">Semnează în câmpul de mai jos folosind mouse-ul sau degetul (pe telefon/tabletă).</div>
+
+  <div class="field-group">
+    <div class="field-group-title">Semnătură voluntar</div>
+    <div class="sig-container" style="height:180px;">
+      <canvas id="sig-canvas" height="178" style="width:100%;"></canvas>
+      <div class="sig-label">Semnează aici</div>
+      <button class="sig-clear" onclick="clearSig('sig-canvas')">Șterge</button>
+    </div>
+  </div>
+
+  <div class="field-group" id="sig-parinte-block" style="display:none;">
+    <div class="field-group-title">Semnătură părinte / tutore</div>
+    <p style="font-size:13px;color:var(--gray);margin-bottom:14px;">Necesară pentru voluntarii minori.</p>
+    <div class="sig-container" style="height:180px;">
+      <canvas id="sig-parinte-canvas" height="178" style="width:100%;"></canvas>
+      <div class="sig-label">Semnează aici</div>
+      <button class="sig-clear" onclick="clearSig('sig-parinte-canvas')">Șterge</button>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-secondary" onclick="goToPage(1)">← Înapoi</button>
+    <button class="btn btn-primary" onclick="goToPage3()">Continuă →</button>
+  </div>
+</div>
+
+<!-- ════════ PAGE 3: CONFIRMARE ════════ -->
+<div class="form-page" id="page-3">
+  <div class="section-title">Confirmare și generare documente</div>
+  <div class="section-subtitle">Verifică datele și generează contractele de voluntariat în format PDF.</div>
+
+  <div class="field-group">
+    <div class="field-group-title">Rezumat date</div>
+    <div class="review-grid" id="review-data"></div>
+  </div>
+
+  <div class="field-group">
+    <div class="field-group-title">Documente ce vor fi generate</div>
+    <div class="doc-list" id="doc-list"></div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-secondary" onclick="goToPage(2)">← Înapoi</button>
+    <button class="btn btn-gold" onclick="generateDocs()">⬇ Generează contracte PDF</button>
+  </div>
+</div>
+
+<!-- ════════ PAGE 4: SUCCESS ════════ -->
+<div class="form-page" id="page-success">
+  <div class="success-icon">✅</div>
+  <div class="section-title" style="text-align:center;">Documente generate!</div>
+  <p style="color:var(--gray);text-align:center;margin-top:8px;">Descarcă fiecare document, tipărește-le și semnează-le.</p>
+
+  <div class="download-links" id="download-links"></div>
+
+  <button class="btn btn-secondary" onclick="resetForm()" style="display:block;margin:0 auto;">
+    ← Înregistrare nouă
+  </button>
+</div>
+
+</main>
+
+<script>
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let contractCounter = parseInt(localStorage.getItem('rbl_contract_nr') || '0');
+
+// ─── CANVAS SETUP ────────────────────────────────────────────────────────────
+function resizeCanvas(id) {
+  const canvas = document.getElementById(id);
+  if (!canvas) return;
+  const tempImg = canvas.toDataURL();
+  const rect = canvas.parentElement.getBoundingClientRect();
+  if (rect.width === 0) return;
+  const oldW = canvas.width;
+  canvas.width = rect.width;
+  if (oldW > 0 && tempImg !== 'data:,') {
+    const img = new Image();
+    img.onload = () => canvas.getContext('2d').drawImage(img, 0, 0);
+    img.src = tempImg;
+  }
+}
+
+function setupCanvas(id) {
+  const canvas = document.getElementById(id);
+  if (!canvas) return;
+  resizeCanvas(id);
+  window.addEventListener('resize', () => resizeCanvas(id));
+
+  const ctx = canvas.getContext('2d');
+  let drawing = false;
+
+  const pos = (e) => {
+    const r = canvas.getBoundingClientRect();
+    const src = e.touches ? e.touches[0] : e;
+    return { x: src.clientX - r.left, y: src.clientY - r.top };
+  };
+
+  canvas.addEventListener('mousedown', e => { drawing = true; const p = pos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); });
+  canvas.addEventListener('mousemove', e => {
+    if (!drawing) return;
+    const p = pos(e);
+    ctx.lineTo(p.x, p.y);
+    ctx.strokeStyle = '#1a1a2e';
+    ctx.lineWidth = 2.2;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.stroke();
+  });
+  canvas.addEventListener('mouseup', () => drawing = false);
+  canvas.addEventListener('mouseleave', () => drawing = false);
+
+  canvas.addEventListener('touchstart', e => { e.preventDefault(); drawing = true; const p = pos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); }, {passive:false});
+  canvas.addEventListener('touchmove', e => {
+    e.preventDefault();
+    if (!drawing) return;
+    const p = pos(e);
+    ctx.lineTo(p.x, p.y);
+    ctx.strokeStyle = '#1a1a2e';
+    ctx.lineWidth = 2.5;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.stroke();
+  }, {passive:false});
+  canvas.addEventListener('touchend', () => drawing = false);
+}
+
+function clearSig(id) {
+  const canvas = document.getElementById(id);
+  canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+}
+
+function isSigEmpty(id) {
+  const canvas = document.getElementById(id);
+  const ctx = canvas.getContext('2d');
+  const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+  return !data.some(v => v !== 0);
+}
+
+// ─── MINOR DETECTION ─────────────────────────────────────────────────────────
+function isMinor(dob) {
+  if (!dob) return false;
+  const birth = new Date(dob);
+  const now = new Date();
+  let age = now.getFullYear() - birth.getFullYear();
+  const m = now.getMonth() - birth.getMonth();
+  if (m < 0 || (m === 0 && now.getDate() < birth.getDate())) age--;
+  return age < 18;
+}
+
+document.getElementById('f-dob').addEventListener('change', function() {
+  const minor = isMinor(this.value);
+  document.getElementById('minor-banner').style.display = minor ? 'block' : 'none';
+  document.getElementById('parinte-section').style.display = minor ? 'block' : 'none';
+  document.getElementById('sig-parinte-block').style.display = minor ? 'block' : 'none';
+});
+
+// ─── VALIDATION ───────────────────────────────────────────────────────────────
+function v(id) {
+  const el = document.getElementById(id);
+  const val = el.value.trim();
+  if (!val) { el.classList.add('error'); return false; }
+  el.classList.remove('error');
+  return true;
+}
+
+function goToPage2() {
+  const fields = ['f-nume','f-prenume','f-dob','f-cnp','f-ci-serie','f-ci-nr','f-judet','f-oras','f-strada','f-nr','f-tel','f-email'];
+  const ok = fields.map(v).every(Boolean);
+
+  const minor = isMinor(document.getElementById('f-dob').value);
+  let parentOk = true;
+  if (minor) {
+    const pf = ['f-p-nume','f-p-cnp','f-p-dom','f-p-tel','f-p-email'];
+    parentOk = pf.map(v).every(Boolean);
+  }
+
+  if (!ok || !parentOk) {
+    alert('Te rugăm să completezi toate câmpurile obligatorii marcate cu *');
+    return;
+  }
+  goToPage(2);
+  requestAnimationFrame(() => {
+    resizeCanvas('sig-canvas');
+    resizeCanvas('sig-parinte-canvas');
+  });
+}
+
+function goToPage3() {
+  if (isSigEmpty('sig-canvas')) {
+    alert('Te rugăm să semnezi în câmpul de semnătură voluntar.');
+    return;
+  }
+  const minor = isMinor(document.getElementById('f-dob').value);
+  if (minor && isSigEmpty('sig-parinte-canvas')) {
+    alert('Te rugăm să adaugi și semnătura părintelui/tutorelui.');
+    return;
+  }
+  buildReview();
+  goToPage(3);
+}
+
+// ─── NAVIGATION ──────────────────────────────────────────────────────────────
+function goToPage(n) {
+  document.querySelectorAll('.form-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.step-tab').forEach(t => t.classList.remove('active','done'));
+
+  if (n === 'success') {
+    document.getElementById('page-success').classList.add('active');
+    ['tab-1','tab-2','tab-3'].forEach(t => document.getElementById(t).classList.add('done'));
+  } else {
+    document.getElementById('page-' + n).classList.add('active');
+    document.getElementById('tab-' + n).classList.add('active');
+    for (let i = 1; i < n; i++) document.getElementById('tab-' + i).classList.add('done');
+  }
+  window.scrollTo(0, 0);
+}
+
+// ─── REVIEW ──────────────────────────────────────────────────────────────────
+function g(id) { return document.getElementById(id).value.trim(); }
+
+function buildReview() {
+  const minor = isMinor(g('f-dob'));
+  const items = [
+    ['Nume complet', g('f-prenume') + ' ' + g('f-nume')],
+    ['Data nașterii', g('f-dob')],
+    ['CNP', g('f-cnp')],
+    ['CI', g('f-ci-serie').toUpperCase() + ' ' + g('f-ci-nr')],
+    ['Domiciliu', g('f-oras') + ', ' + g('f-judet')],
+    ['Email', g('f-email')],
+  ];
+  document.getElementById('review-data').innerHTML = items.map(([l, v]) =>
+    `<div class="review-item"><div class="rl">${l}</div><div class="rv">${v || '—'}</div></div>`
+  ).join('');
+
+  const docs = minor
+    ? [
+        ['📄', 'Contract de voluntariat (minor)', 'completat automat'],
+        ['📄', 'Fișa voluntarului', 'completată automat'],
+        ['📄', 'Formular consimțământ GDPR (minor)', 'completat automat'],
+        ['📋', 'Acord parental', 'completat cu datele părintelui'],
+      ]
+    : [
+        ['📄', 'Contract de voluntariat', 'completat automat'],
+        ['📄', 'Fișa voluntarului', 'completată automat'],
+        ['📄', 'Formular consimțământ GDPR', 'completat automat'],
+      ];
+
+  document.getElementById('doc-list').innerHTML = docs.map(([icon, name, sub]) =>
+    `<div class="doc-item"><div class="doc-icon">${icon}</div><div><div class="doc-name">${name}</div><div class="doc-sub">${sub}</div></div></div>`
+  ).join('');
+}
+
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+function today() {
+  const d = new Date();
+  return `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.${d.getFullYear()}`;
+}
+function todayYear() { return new Date().getFullYear(); }
+
+function nextContractNr() {
+  contractCounter++;
+  localStorage.setItem('rbl_contract_nr', contractCounter);
+  return String(contractCounter).padStart(3, '0');
+}
+
+function getSigDataURL(id) {
+  return document.getElementById(id).toDataURL('image/png');
+}
+
+// ─── pdfMake STYLES ──────────────────────────────────────────────────────────
+// pdfMake suportă Unicode nativ (Roboto inclus) → diacritice românești funcționează
+const STYLES = {
+  title: { fontSize: 13, bold: true, alignment: 'center', margin: [0,0,0,4] },
+  subtitle: { fontSize: 11, alignment: 'center', margin: [0,0,0,10] },
+  nr: { fontSize: 10, alignment: 'center', margin: [0,0,0,14] },
+  sectionTitle: { fontSize: 10, bold: true, margin: [0,6,0,3] },
+  body: { fontSize: 10, margin: [0,0,0,6] },
+  bold: { fontSize: 10, bold: true },
+  italic: { fontSize: 9, italics: true },
+  smallBold: { fontSize: 9, bold: true },
+  small: { fontSize: 9 },
+  header: { fontSize: 10, bold: true, margin: [0,0,0,2] },
+};
+
+// ─── CONTRACT MAJOR ──────────────────────────────────────────────────────────
+function buildContract_Major(data, nr) {
+  const sigImg = getSigDataURL('sig-canvas');
+  const numePrenume = `${data.prenume} ${data.nume}`;
+
+  return {
+    content: [
+      { text: 'CONTRACT DE VOLUNTARIAT', style: 'title' },
+      { text: ' ', margin: [0,0,0,2] },
+      { text: `Nr. ${nr}/`, style: 'nr' },
+      { text: `${today()}`, style: 'nr' },
+
+      { text: [
+        'Între ',
+        { text: 'FUNDAȚIA ROMANIAN BUSINESS LEADERS, ', bold: true },
+        'persoana juridică non-profit cu sediul în București, Calea Dorobanți, nr 42, etaj 3, ap 5, Sector 1, Bucuresti (adresa socială: comuna Mogosoaia, Jud. Ilfov, Str. I.C.Bratianu, nr. 145) înființată prin HJ nr. 40PJ/20.07.2011 emisa de Judecatoria Buftea, telefon 021/794.14.98, CIF RO 29004248, IBAN (RON) RO82BTRL04801205902473XX deschis la Banca Transilvania, Sucursala Chibrit, reprezentanta în mod legal de Alexandru Dincovici în calitate de Director General, numită în continuare ',
+        { text: 'Organizația gazdă', bold: true },
+      ], style: 'body' },
+
+      { text: 'și', style: 'body' },
+
+      { text: [
+        { text: `${numePrenume}`, bold: true },
+        `, domiciliat în ${data.oras}, Str. ${data.strada} nr. ${data.nr}, Jud. ${data.judet}, identificat cu CI seria `,
+        { text: data.ciSerie.toUpperCase(), bold: true },
+        ' nr. ',
+        { text: data.ciNr, bold: true },
+        ', CNP ',
+        { text: data.cnp, bold: true },
+        ', numită în continuare ',
+        { text: 'Voluntar', bold: true },
+        ',',
+      ], style: 'body' },
+
+      { text: 's-a convenit încheierea prezentului contract în baza Legii nr. 78/2014 privind reglementarea activității de voluntariat din România.', style: 'body', margin: [0,0,0,10] },
+
+      { text: 'Art. 1. OBIECTUL CONTRACTULUI', style: 'sectionTitle' },
+      { text: [
+        { text: '1.1 ', bold: true },
+        'Obiectul contractului îl constituie derularea de către ',
+        { text: 'Voluntar', bold: true },
+        ' a activităților menționate în fișa voluntarului, atașată prezentului contract, în cadrul acțiunilor Fundației Romanian Business Leaders.',
+      ], style: 'body' },
+
+      { text: 'Art. 2. DURATA CONTRACTULUI', style: 'sectionTitle' },
+      { text: 'Prezentul contract se încheie pe o perioadă determinată de 1 an de la semnare.', style: 'body' },
+
+      { text: 'Art. 3. RAMBURSAREA CHELTUIELILOR', style: 'sectionTitle' },
+      { text: 'Organizația este de acord să ramburseze voluntarului cheltuielile efectuate pentru realizarea activității și cu care organizația gazdă este de acord în prealabil. Pentru a i se deconta cheltuielile, voluntarul trebuie să prezinte o listă amănunțită a cheltuielilor însoțită de chitanțele corespunzătoare.', style: 'body' },
+
+      { text: 'Art. 4. DREPTURILE PĂRȚILOR', style: 'sectionTitle' },
+      { text: [{ text: 'A. Organizația gazdă dispune de următoarele drepturi:', bold: true }], style: 'body' },
+      { ul: [
+        '4.1 dreptul de a stabili organizarea și funcționarea activității de voluntariat;',
+        '4.2 dreptul de a inițiia conținutul fișei de voluntariat, pe care o adaptează la solicitarea și pregătirea voluntarului, precum și la tipul de activități de voluntariat desfășurate de către organizația gazdă;',
+        '4.2 dreptul de a exercita controlul asupra modului de implementare a fișei de voluntariat prin coordonatorul de voluntari;',
+        '4.3 dreptul de a constata abaterile voluntarului, raportate la clauzele stabilite în contractul de voluntariat, fișa de voluntariat și/sau în fișa de protecție a voluntarului.',
+      ], style: 'body', margin: [10,0,0,4] },
+      { text: [{ text: 'B. Voluntarul dispune de următoarele drepturi:', bold: true }], style: 'body' },
+      { ul: [
+        '4.4 dreptul de a desfășura activitatea de voluntariat în concordanță cu capacitatea și disponibilitatea acestuia;',
+        '4.5 dreptul de a solicita organizației gazdă eliberarea adeverinței de voluntariat însoțită de raportul de activitate;',
+        '4.6 dreptul la confidențialitate și protecția datelor personale;',
+        '4.7 dreptul la timp liber corespunzător cu activitatea de voluntariat.',
+        '4.8 dreptul de a fi respectat ca și persoană și tratat ca și coleg cu drepturi egale atât de conducerea organizației, de angajați;',
+        '4.9 dreptul de a participa activ la elaborarea și derularea programelor în considerarea cărora a încheiat contractul;',
+        '4.10 dreptul la un loc unde să își desfășoare activitatea și accesul la echipamentul și consumabilele necesare derulării activității;',
+        '4.11 dreptul de a beneficia de îndrumare și orientare din partea coordonatorului de proiect;',
+        '4.12 dreptul de a i se rambursa cheltuielile efectuate pentru derularea activității, conform articolului 3;',
+      ], style: 'body', margin: [10,0,0,6] },
+
+      { text: 'Art. 5. OBLIGAȚIILE PĂRȚILOR', style: 'sectionTitle' },
+      { text: [{ text: 'A. Organizația gazdă se obligă:', bold: true }], style: 'body' },
+      { ul: [
+        '5.1 să asigure desfășurarea activităților sub conducerea unui coordonator de voluntari, cu respectarea condițiilor legale privind securitatea și sănătatea în muncă, în funcție de natura și de caracteristicile activității respective;',
+        '5.2 să suporte cheltuielile de hrană, cazare și transport pentru voluntar în desfășurarea activității sale de voluntariat, atunci când este cazul, aprobat în prealabil de organizație;',
+        '5.3 să-i pună la dispoziție voluntarului toate informațiile necesare (cu caracter public) pentru a-și desfășura activitățile.',
+      ], style: 'body', margin: [10,0,0,4] },
+      { text: [{ text: 'B. Voluntarul se obligă:', bold: true }], style: 'body' },
+      { ul: [
+        '5.4 să presteze o activitate de interes public, fără remunerație;',
+        '5.5 să aibă o conduită complementară cu obiectivele generale ale voluntariatului – îmbunătățirea calității vieții și reducerea sărăciei, dezvoltare sustenabilă, sănătate, prevenirea și gestionarea efectelor dezastrelor, incluziunea socială și totodată lupta împotriva excluderii sociale și discriminarea;',
+        '5.6 să îndeplinească sarcinile prevăzute în fișa de voluntariat, precum și respectarea instrucțiunilor stipulate în fișa de protecție a voluntarului;',
+        '5.7 să păstreze confidențialitatea informațiilor la care are acces în cadrul activității de voluntariat, pe perioada desfășurării contractului de voluntariat și pe o perioadă de 2 ani după încetarea acestuia;',
+        '5.8 să anunțe indisponibilitatea temporară de a presta activitatea de voluntariat în care este implicat.',
+        '5.9 să îndeplinească la timp sarcinile primite din partea organizatorilor proiectului/programului',
+        '5.10 să participe la cursurile de instruire oferite de către organizatori dacă acestea sunt necesare pentru buna îndeplinire a sarcinilor;',
+        '5.11 să ocrotească bunurile pe care le folosește în cadrul activităților de voluntariat;',
+        '5.12 să respecte regulile și normele de comportament ale organizației gazdă primite în scris de la organizatori înainte de începerea activității',
+        '5.13 să nu comunice sau să răspândească în public afirmații defăimătoare la adresa organizației și/sau a activității acesteia.',
+      ], style: 'body', margin: [10,0,0,6] },
+
+      { text: 'Art. 6. NEGOCIEREA/MODIFICAREA CONTRACTULUI', style: 'sectionTitle' },
+      { text: '6.1 Dacă pe parcursul executării contractului de voluntariat intervine, independent de voința părților, o situație de natură să îngreuneze executarea obligațiilor ce revin voluntarului, contractul va fi renegociat, iar dacă situația face imposibilă executarea contractului, acesta încetează de plin drept.', style: 'body' },
+      { text: '6.2 Negocierea sau renegocierea contractului de voluntariat se va face la cererea scrisă a uneia dintre părți, formulată în termen de 3 zile de la data la care a intervenit situația descrisă mai sus, în condițiile stabilite prin prezentul contract de voluntariat.', style: 'body' },
+      { text: '6.3 La negocierea clauzelor și la încheierea contractelor de voluntariat părțile sunt egale și libere.', style: 'body' },
+
+      { text: 'Art. 7. ÎNCETAREA CONTRACTULUI', style: 'sectionTitle' },
+      { text: 'Denunțarea unilaterală a contractului de voluntariat poate să aibă loc din inițiativa voluntarului sau a organizației, cu un preaviz de 15 zile. Organizația poate să denunțe unilateral acest contract de voluntariat imediat ce voluntarul a încălcat prevederile contractului de voluntariat sau orice alte restricții legale în timpul îndeplinirii sarcinilor, inclusiv (însă nu numai) în caz de necinste, incompetență, condamnare pentru infracțiune. Contractul de voluntariat poate înceta și prin acordul părților, care consimt să nu continue raporturile stabilite anterior.', style: 'body' },
+
+      { text: 'Art. 8. CLAUZE FINALE', style: 'sectionTitle' },
+      { text: '8.1 Prezentul contract este însoțit de fișa de voluntariat.', style: 'body' },
+      { text: '8.2 Răspunderea pentru neexecutarea sau executarea necorespunzătoare a contractului de voluntariat este supusă prevederilor Legii nr. 287/2009 privind Codul civil, republicată, cu modificările ulterioare.', style: 'body' },
+      { text: `Încheiat astăzi, ${today()}, în două exemplare, câte unul pentru fiecare parte, și intră în vigoare la data semnării de către ambele părți.`, style: 'body', margin: [0,6,0,16] },
+
+      {
+        columns: [
+          {
+            width: '50%',
+            stack: [
+              { text: 'Organizația Gazdă', bold: true, fontSize: 10 },
+              { text: 'Fundația Romanian Business Leaders', fontSize: 10 },
+              { text: 'Alexandru Dincovici', fontSize: 10 },
+              { text: 'Director General', fontSize: 10 },
+            ]
+          },
+          {
+            width: '50%',
+            stack: [
+              { text: `Nume și semnătură voluntar`, bold: true, fontSize: 10 },
+              { text: numePrenume, fontSize: 10 },
+              { text: ' ', margin: [0,4,0,0] },
+              { image: sigImg, width: 120, height: 40, margin: [0,4,0,0] },
+            ]
+          }
+        ],
+        margin: [0,0,0,20]
+      },
+
+      // ── FIȘA VOLUNTARULUI ──
+      { text: ' ', pageBreak: 'before' },
+      { text: `Nr. ctr. ${nr}/${today()}`, style: 'nr' },
+      { text: 'FIȘA VOLUNTARULUI', style: 'title' },
+      { text: ' ', margin: [0,0,0,8] },
+      { text: [{ text: 'Denumirea postului: ', bold: true }, 'voluntar'], style: 'body' },
+      { text: [{ text: 'Nume voluntar: ', bold: true }, numePrenume], style: 'body' },
+      { text: ' ', margin: [0,0,0,4] },
+      { text: 'RELAȚII IERARHICE:', style: 'sectionTitle' },
+      { text: 'este subordonat: Directorul general al Fundației Romanian Business Leaders – Alexandru Dincovici și coordonatorului de voluntari – Teodora Gaftoi.', style: 'body' },
+      { text: 'RELAȚII FUNCȚIONALE:', style: 'sectionTitle' },
+      { text: 'Lucrează în strânsă legătură cu echipa executivă a RBL.', style: 'body' },
+      { text: 'PROGRAM DE LUCRU:', style: 'sectionTitle' },
+      { text: 'Voluntarul își desfășoară activitatea pe parcursul anului calendaristic, conform unui program flexibil, stabilit de comun acord cu coordonatorul de voluntari, în funcție de nevoile proiectelor și disponibilitatea voluntarului.', style: 'body' },
+      { text: 'RESPONSABILITĂȚI:', style: 'sectionTitle' },
+      { ul: [
+        'coordonare acces participanți eveniment RBL',
+        'ajutor amenajare și distribuire materiale tipărite în timpul evenimentului RBL',
+        'suport în amenajare spațiu desfășurare eveniment RBL',
+        'suport în coordonare logistică organizare eveniment RBL',
+      ], style: 'body', margin: [10,0,0,12] },
+
+      { text: `Data: ${today()}`, style: 'body', margin: [0,6,0,14] },
+      {
+        columns: [
+          {
+            width: '50%',
+            stack: [
+              { text: 'Semnătura Director General', bold: true, fontSize: 10 },
+              { text: 'Fundația Romanian Business Leaders', fontSize: 10 },
+              { text: 'Alexandru Dincovici', fontSize: 10 },
+            ]
+          },
+          {
+            width: '50%',
+            stack: [
+              { text: 'Semnătura voluntar', bold: true, fontSize: 10 },
+              { text: numePrenume, fontSize: 10 },
+              { image: sigImg, width: 120, height: 40, margin: [0,4,0,0] },
+            ]
+          }
+        ]
+      },
+    ],
+    styles: STYLES,
+    defaultStyle: { font: 'Roboto', fontSize: 10 },
+    pageMargins: [50, 40, 50, 40],
+  };
+}
+
+// ─── GDPR MAJOR ──────────────────────────────────────────────────────────────
+function buildGDPR_Major(data) {
+  const sigImg = getSigDataURL('sig-canvas');
+  const numePrenume = `${data.prenume} ${data.nume}`;
+
+  return {
+    content: [
+      { text: 'FORMULAR DE CONSIMTAMANT', style: 'title' },
+      { text: ' ', margin: [0,0,0,8] },
+      { text: [{ text: 'Nume și prenume: ', bold: true }, numePrenume], style: 'body' },
+      { text: [{ text: 'Funcția: ', bold: true }, 'VOLUNTAR'], style: 'body' },
+      { text: [{ text: 'Telefon: ', bold: true }, data.tel], style: 'body' },
+      { text: [{ text: 'E-mail: ', bold: true }, data.email], style: 'body' },
+      { text: ' ', margin: [0,0,0,6] },
+      { text: 'FORMULAR PRELUARE CONSIMȚĂMÂNT', style: 'sectionTitle' },
+      { text: ' ', margin: [0,0,0,2] },
+      { text: [
+        'Cu ocazia completării formularului de înscriere în cadrul ',
+        { text: 'ROMANIAN BUSINESS LEADERS', bold: true },
+        ' („',
+        { text: 'RBL', bold: true },
+        '"), declar ca sunt de acord ca ',
+        { text: 'RBL', bold: true },
+        ', cu sediul în Comuna Mogoșoaia, Str. I.C. Brătianu, nr. 145, jud. Ilfov și cu adresa de corespondență în București, Calea Dorobanți, nr. 42, et. 3, cam. 5, Sector 1, România, email contact@rbls.ro, telefon 021 794 14 98, reprezentată legal prin președinte ',
+        { text: 'Sergiu Neguț', bold: true },
+        ', să fie autorizată să prelucreze datele mele cu caracter personal comunicate către aceasta, precum si datele colectate în cadrul relațiilor cu RBL în vederea promovării activității, proiectelor și evenimentelor RBL, ale sponsorilor, partenerilor și ale membrilor fundației (scop de marketing). În scopul aici menționat, sunt de acord și cu înregistrarea evenimentelor online realizate de RBL și distribuirea materialelor înregistrate.',
+      ], style: 'body' },
+      { text: 'Îmi ofer consimțământul în mod liber, dorind să ofer sprijinul meu în eforturile de promovare care fac posibilă aducerea evenimentelor de afaceri si a proiectelor susținute de RBL în atenția publicului, înțelegând că nu există nicio consecință negativă pentru mine în cazul în care nu îmi acord consimțământul.', style: 'body' },
+      { text: 'Sunt de acord cu prelucrarea datelor mele prin aplicații de tip email, cloud, calendar, conferințe video etc oferite de companii situate sau controlate din afara Spațiului Economic European (SEE), cum ar fi Google, Microsoft și Facebook, înțelegând că nivelul de protecție a datelor personale prevăzut de legislația aplicabilă acestora poate fi mai redus decât cel din SEE, permițând autorităților locale accesarea lor, în paralel cu lipsa unor mecanisme de contestare eficiente.', style: 'body' },
+      { text: 'Declar ca am citit Informarea privind prelucrarea datelor cu caracter personal (https://www.rbls.ro/politica-de-confidentialitate/), informare al cărui conținut l-am înțeles în integralitate,', style: 'body' },
+      { text: 'Am luat cunoștință și am fost informat/ă asupra faptului că în conformitate cu dispozițiile Regulamentului (UE) 2016/679 al Parlamentului European și al Consiliului din 27 aprilie 2016, privind protecția persoanelor fizice în ceea ce privește prelucrarea datelor cu caracter personal am, în condițiile legale aplicabile, dreptul de acces, rectificare, ștergere, restrictionare, portabilitate, opoziție, de a face o plângere la autoritatea de supraveghere, precum și dreptul de a-mi retrage consimțământul în orice moment printr-un simplu e-mail la adresa dataprotection@rbls.ro. Retragerea consimțământului nu afectează legalitatea prelucrării efectuate pe baza consimțământului înainte de retragerea acestuia.', italics: true, fontSize: 9, margin: [0,0,0,8] },
+      { text: [{ text: 'Confirm că am citit și am înțeles conținutul prezentului document "FORMULAR DE CONSIMTAMANT"', bold: true }], style: 'body', margin: [0,0,0,14] },
+      {
+        columns: [
+          {
+            width: '50%',
+            stack: [
+              { text: 'Data', bold: true, fontSize: 10 },
+              { text: today(), fontSize: 10 },
+            ]
+          },
+          {
+            width: '50%',
+            stack: [
+              { text: 'Semnătura', bold: true, fontSize: 10 },
+              { image: sigImg, width: 120, height: 40, margin: [0,4,0,0] },
+            ]
+          }
+        ]
+      },
+    ],
+    styles: STYLES,
+    defaultStyle: { font: 'Roboto', fontSize: 10 },
+    pageMargins: [50, 40, 50, 40],
+  };
+}
+
+// ─── GDPR MINOR ──────────────────────────────────────────────────────────────
+function buildGDPR_Minor(data) {
+  const sigParinte = getSigDataURL('sig-parinte-canvas');
+  const numePrenume = `${data.prenume} ${data.nume}`;
+
+  return {
+    content: [
+      { text: 'FORMULAR DE CONSIMTAMANT', style: 'title' },
+      { text: ' ', margin: [0,0,0,8] },
+      { text: [{ text: 'Nume și prenume părinte/tutore voluntar: ', bold: true }, data.pNume], style: 'body' },
+      { text: [{ text: 'E-mail: ', bold: true }, data.pEmail], style: 'body' },
+      { text: ' ', margin: [0,0,0,6] },
+      { text: 'FORMULAR PRELUARE CONSIMȚĂMÂNT', style: 'sectionTitle' },
+      { text: ' ', margin: [0,0,0,2] },
+      { text: `Declar ca sunt de acord ca RBL cu sediul în Str. I.C.Bratianu nr.145, Mogosoaia, jud. Ilfov sa fie autorizata sa proceseze datele fiului/fiicei mele, precum și datele care sunt colectate în cadrul relațiilor cu RBL, în următoarele scopuri: derularea activităților ce fac obiectul contractului de voluntariat, gestionarea și trimiterea de informări vizând evenimentele RBL.`, style: 'body' },
+      { text: 'Declar pe proprie răspundere că am înțeles aceasta declarație de consimțământ și sunt de acord cu procesarea datelor fiului/fiicei mele prin mijloacele descrise mai jos în scopurile arătate în aceasta declarație de consimțământ.', style: 'body' },
+      { text: 'De asemenea, declar ca am fost incunostiintat si am primit informarea privind prelucrarea datelor cu caracter personal, informare al cărui conținut l-am înțeles în integralitate.', style: 'body', margin: [0,0,0,14] },
+      {
+        columns: [
+          { width: '50%', stack: [{ text: 'DATA,', bold: true, fontSize: 10 }, { text: today(), fontSize: 10 }] },
+          { width: '50%', stack: [
+            { text: 'NUME, SEMNĂTURA PĂRINTE/TUTORE', bold: true, fontSize: 10 },
+            { text: data.pNume, fontSize: 10 },
+            { image: sigParinte, width: 120, height: 40, margin: [0,4,0,0] },
+          ]},
+        ],
+        margin: [0,0,0,20]
+      },
+      { text: '1 Consimtamantul in ceea ce priveste prelucrarea datelor cu caracter personal, precum si furnizarea datelor mentionate mai jos sunt voluntare. Acest consimtamant poate fi revocat in orice moment, cu efect ulterior printr-o simpla notificare catre RBL. Notificarea de revocare a consimtamantului poate fi realizata si prin e-mail catre dataprotection@rbls.ro. Va rugam sa aveti in vedere faptul ca revocarea consimtamantului nu afecteaza legalitatea utilizarii datelor inainte de retragerea consimtamantului. Daca consimtamantul nu este acordat sau a fost revocat, datele personale nu vor fi utilizate in scopurile aratate anterior.', fontSize: 8, italics: true, margin: [0,0,0,6] },
+      { text: 'In ipoteza in care aveti neclaritati legate de aceasta declaratie sau de protectia datelor de catre RBL in general, va rugam sa nu ezitati sa ne contactati la adresa de e-mail dataprotection@rbls.ro.', fontSize: 8, italics: true },
+    ],
+    styles: STYLES,
+    defaultStyle: { font: 'Roboto', fontSize: 10 },
+    pageMargins: [50, 40, 50, 40],
+  };
+}
+
+// ─── ACORD PARENTAL ──────────────────────────────────────────────────────────
+function buildAcordParental(data, nr) {
+  const sigImg = getSigDataURL('sig-canvas');
+  const sigParinte = getSigDataURL('sig-parinte-canvas');
+  const numePrenume = `${data.prenume} ${data.nume}`;
+  const an1 = todayYear();
+  const an2 = todayYear() + 1;
+
+  return {
+    content: [
+      { text: 'Acord parental', style: 'title' },
+      { text: ' ', margin: [0,0,0,10] },
+      { text: [
+        'Subsemnatul ',
+        { text: data.pNume, bold: true },
+        ', cetățean român, domiciliat în ',
+        { text: data.pDom, bold: true },
+        ', identificat prin CNP ',
+        { text: data.pCNP, bold: true },
+        ', în calitate de părinte al copilului ',
+        { text: numePrenume, bold: true },
+        `, declar pe propria răspundere, că sunt de acord cu participarea acestuia la evenimentele organizate de Fundația Romanian Business Leaders, în perioada aprilie ${an1} - aprilie ${an2}.`,
+      ], style: 'body' },
+      { text: 'Am luat la cunoștință și sunt de acord ca acesta să participe din interes la proiect și că participarea la activități se face pe răspunderea personală a părinților dacă acesta nu a împlinit 18 ani la data derulării evenimentului.', style: 'body' },
+      { text: 'Fundația își rezervă dreptul de a utiliza datele personale ale participanților doar cu scopul îndeplinirii formalităților organizatorice și dreptul de a contacta telefonic unul dintre părinți dacă situația impune acest lucru.', style: 'body' },
+      { text: 'Date contact organizatori: Gaftoi Teodora, Events Assistant în cadrul evenimentelor RBL teodora.gaftoi@rbls.ro / telefon - 0739 637 426', style: 'body', margin: [0,0,0,10] },
+      { text: 'Am luat la cunoștință,', style: 'body', margin: [0,0,0,14] },
+      {
+        columns: [
+          {
+            width: '50%',
+            stack: [
+              { text: 'Parinte', bold: true, fontSize: 10 },
+              { text: [{ text: 'Nume si prenume: ' }, data.pNume], fontSize: 10 },
+              { text: [{ text: 'Telefon: ' }, data.pTel], fontSize: 10 },
+              { text: 'Semnatura:', fontSize: 10, margin: [0,6,0,2] },
+              { image: sigParinte, width: 110, height: 36, margin: [0,2,0,0] },
+            ]
+          },
+          {
+            width: '50%',
+            stack: [
+              { text: 'Voluntar', bold: true, fontSize: 10 },
+              { text: [{ text: 'Nume și prenume: ' }, numePrenume], fontSize: 10 },
+              { text: [{ text: 'Telefon: ' }, data.tel], fontSize: 10 },
+              { text: 'Semnatura:', fontSize: 10, margin: [0,6,0,2] },
+              { image: sigImg, width: 110, height: 36, margin: [0,2,0,0] },
+            ]
+          }
+        ]
+      },
+
+      // ── CONTRACT MINOR ──
+      { text: ' ', pageBreak: 'before' },
+      { text: 'CONTRACT DE VOLUNTARIAT', style: 'title' },
+      { text: 'pentru voluntari minori', style: 'subtitle' },
+      { text: `Nr. ${nr} din data de ${today()}`, style: 'nr' },
+
+      { text: [
+        'Între ',
+        { text: 'Fundația Romanian Business Leaders, ', bold: true },
+        'cu sediul în Mogosoaia, str. I.C.Bratianu nr.145, jud. Ilfov, identificată cu CUI RO 29004248, reprezentată de Alexandru Dincovici în calitate de director general, numită în continuare ',
+        { text: 'Organizația gazdă', bold: true },
+      ], style: 'body' },
+      { text: 'și', style: 'body' },
+      { text: [
+        { text: numePrenume, bold: true },
+        `, domiciliat în ${data.oras}, Jud. ${data.judet} (se va trece doar orașul și județul), numit în continuare `,
+        { text: 'Voluntar', bold: true },
+        ',',
+      ], style: 'body' },
+      { text: 's-a convenit încheierea prezentului contract în baza Legii nr. 78/2014 privind reglementarea activității de voluntariat din România.', style: 'body', margin: [0,0,0,8] },
+
+      { text: 'Art. 1. OBIECTUL CONTRACTULUI', style: 'sectionTitle' },
+      { ul: [
+        ['Obiectul contractului îl constituie derularea de către ', { text: 'Voluntar', bold: true }, ' a activităților menționate în fișa voluntarului, atașată prezentului contract.'],
+        'În executarea contractului de voluntariat, voluntarul se subordonează coordonatorului de voluntari al Organizației gazdă, conform Art. 16 din Legea 78/2014 privind reglementarea activității de voluntariat din România.',
+      ].map(t => Array.isArray(t) ? { text: t } : { text: t }), style: 'body', margin: [10,0,0,6] },
+
+      { text: 'Art. 2. DURATA CONTRACTULUI', style: 'sectionTitle' },
+      { text: 'Prezentul contract se încheie pe o perioadă determinată de 1 an de la semnare.', style: 'body' },
+
+      { text: 'Art. 3. RAMBURSAREA CHELTUIELILOR', style: 'sectionTitle' },
+      { text: 'Organizația este de acord să ramburseze voluntarului cheltuielile efectuate pentru realizarea activității și cu care organizația gazdă este de acord în prealabil. Pentru a i se deconta cheltuielile, voluntarul trebuie să prezinte o listă amănunțită a cheltuielilor însoțită de chitanțele corespunzătoare.', style: 'body' },
+
+      { text: 'Art. 4. DREPTURILE PĂRȚILOR', style: 'sectionTitle' },
+      { text: [{ text: 'Organizația gazdă dispune de următoarele drepturi:', bold: true }], style: 'body' },
+      { ul: [
+        'dreptul de a stabili organizarea și funcționarea activității de voluntariat;',
+        'dreptul de a inițiia conținutul fișei de voluntariat, pe care o adaptează la solicitarea și pregătirea voluntarului, precum și la tipul de activități de voluntariat desfășurate de către organizația gazdă;',
+        'dreptul de a exercita controlul asupra modului de implementare a fișei de voluntariat prin coordonatorul de voluntari;',
+        'dreptul de a constata abaterile voluntarului, raportate la clauzele stabilite în contractul de voluntariat și/sau în fișa de voluntariat.',
+      ], style: 'body', margin: [10,0,0,4] },
+      { text: [{ text: 'Voluntarul dispune de următoarele drepturi:', bold: true }], style: 'body' },
+      { ul: [
+        'dreptul de a desfășura activitatea de voluntariat în concordanță cu capacitatea și disponibilitatea acestuia;',
+        'dreptul de a solicita organizației gazdă eliberarea adeverinței de voluntariat însoțită de raportul de activitate;',
+        'dreptul de a stabili, împreună cu organizația gazdă, interesele de dezvoltare ale voluntarului, urmărite în cadrul activității de voluntariat;',
+        'dreptul de a fi informat cu privire la cerințele profesionale și abilitățile sociale necesare desfășurării activității de voluntariat, care sunt integrate în fișa voluntarului;',
+        'dreptul la confidențialitate și protecția datelor personale;',
+        'dreptul la timp liber corespunzător cu activitatea de voluntariat.',
+        'dreptul de a fi respectat ca și persoană și tratat ca și coleg cu drepturi egale atât de conducerea organizației, de angajați, cât și de organizatorii taberei;',
+        'dreptul de a participa activ la elaborarea și derularea programelor în considerarea cărora a încheiat contractul;',
+        'dreptul la un loc unde să își desfășoare activitatea și accesul la echipamentul și consumabilele necesare derulării activității;',
+        'dreptul de a beneficia de îndrumare și orientare din partea coordonatorului de proiect;',
+        'dreptul de a i se rambursa cheltuielile efectuate pentru derularea activității, conform articolului 3;',
+      ], style: 'body', margin: [10,0,0,6] },
+
+      { text: 'Art. 5. OBLIGAȚIILE PĂRȚILOR', style: 'sectionTitle' },
+      { text: [{ text: 'Organizația gazdă se obligă:', bold: true }], style: 'body' },
+      { ul: [
+        'să asigure desfășurarea activităților sub conducerea unui coordonator de voluntari, cu respectarea condițiilor legale privind securitatea și sănătatea în muncă, în funcție de natura și de caracteristicile activității respective;',
+        'să stabilească cerințele profesionale și abilitățile sociale, necesare desfășurării activității de voluntariat;',
+        'să suporte cheltuielile de hrană, cazare și transport pentru voluntar în desfășurarea activității sale de voluntariat, în limita sumelor alocate cu această destinație, in cazul deplasarilor;',
+        'să suporte alte cheltuieli ocazionate de desfășurarea activității de voluntariat, cu excepția celor aferente muncii prestate de către voluntar, în limita sumelor alocate cu această destinație.',
+      ], style: 'body', margin: [10,0,0,4] },
+      { text: [{ text: 'Voluntarul se obligă:', bold: true }], style: 'body' },
+      { ul: [
+        'să presteze o activitate de interes public, fără remunerație;',
+        'să aibă o conduită complementară cu obiectivele generale ale voluntariatului – îmbunătățirea calității vieții și reducerea sărăciei, dezvoltare sustenabilă, sănătate, prevenirea și gestionarea efectelor dezastrelor, incluziunea socială și totodată lupta împotriva excluderii sociale și discriminarea;',
+        'să îndeplinească sarcinile prevăzute în fișa de voluntariat',
+        'să păstreze confidențialitatea informațiilor la care are acces în cadrul activității de voluntariat, pe perioada desfășurării contractului de voluntariat și pe o perioadă de 2 ani după încetarea acestuia;',
+        'să anunțe indisponibilitatea temporară de a presta activitatea de voluntariat în care este implicat.',
+        'să îndeplinească la timp sarcinile primite din partea organizatorilor proiectului/programului',
+        'să participe la cursurile de instruire oferite de către organizatori dacă acestea sunt necesare pentru buna îndeplinire a sarcinilor;',
+        'să ocrotească bunurile pe care le folosește în cadrul activităților de voluntariat;',
+        'să nu comunice sau să răspândească în public afirmații defăimătoare la adresa organizației și/sau a activității acesteia.',
+      ], style: 'body', margin: [10,0,0,6] },
+
+      { text: 'Art. 6. NEGOCIEREA/MODIFICAREA CONTRACTULUI', style: 'sectionTitle' },
+      { ul: [
+        'Dacă pe parcursul executării contractului de voluntariat intervine, independent de voința părților, o situație de natură să îngreuneze executarea obligațiilor ce revin voluntarului, contractul va fi renegociat, iar dacă situația face imposibilă executarea contractului, acesta încetează de plin drept.',
+        'Negocierea sau renegocierea contractului de voluntariat se va face la cererea scrisă a uneia dintre părți, formulată în termen de 3 zile de la data la care a intervenit situația descrisă mai sus, în condițiile stabilite prin prezentul contract de voluntariat.',
+        'La negocierea clauzelor și la încheierea contractelor de voluntariat părțile sunt egale și libere.',
+      ], style: 'body', margin: [10,0,0,6] },
+
+      { text: 'Art. 7. ÎNCETAREA CONTRACTULUI', style: 'sectionTitle' },
+      { text: 'Denunțarea unilaterală a contractului de voluntariat poate să aibă loc din inițiativa voluntarului sau a organizației, cu un preaviz de 15 zile. Organizația poate să denunțe unilateral acest contract de voluntariat imediat ce voluntarul a încălcat prevederile contractului de voluntariat sau orice alte restricții legale în timpul îndeplinirii sarcinilor, inclusiv (însă nu numai) în caz de necinste, incompetență, condamnare pentru infracțiune. Contractul de voluntariat poate înceta și prin acordul părților, care consimt să nu continue raporturile stabilite anterior.', style: 'body' },
+
+      { text: 'Art. 8. CLAUZE FINALE', style: 'sectionTitle' },
+      { ul: [
+        'Prezentul contract este însoțit de anexe (fișa de voluntariat și fișa de protecție), care fac parte integrantă a acestui contract.',
+        'Prezentul contract se va încheia cu acordul părinților sau al reprezentanților legali, conform legislației în vigoare.',
+        'Răspunderea pentru neexecutarea sau executarea necorespunzătoare a contractului de voluntariat este supusă prevederilor Legii nr. 287/2009 privind Codul civil, republicată, cu modificările ulterioare.',
+        'Toate prevederile prezentului Contract sunt rezultatul negocierii dintre Organizația-gazdă și Voluntar și reprezintă acordul total al părților cu privire la toate aspectele prezentului Contract, iar Voluntarul declară în mod expres că a citit, a înțeles și a acceptat prevederile lui, primind un exemplar al acestuia.',
+        'Prezentului Contract îi sunt aplicabile dispozițiile legii române, atât cu privire la aspectele contractuale, cât și cu privire la cele necontractuale reieșind din prezentul Contract.',
+      ], style: 'body', margin: [10,0,0,8] },
+
+      { text: `Încheiat astăzi, ${today()}, în două exemplare, câte unul pentru fiecare parte, și intră în vigoare la data semnării de către ambele părți.`, style: 'body', margin: [0,0,0,16] },
+
+      {
+        columns: [
+          {
+            width: '50%',
+            stack: [
+              { text: 'Organizația Gazdă', bold: true, fontSize: 10 },
+              { text: 'Fundatia Romanian Business Leaders', fontSize: 10 },
+              { text: 'Alexandru Dincovici', fontSize: 10 },
+            ]
+          },
+          {
+            width: '50%',
+            stack: [
+              { text: 'Voluntar', bold: true, fontSize: 10 },
+              { text: numePrenume, fontSize: 10 },
+              { image: sigImg, width: 120, height: 40, margin: [0,4,0,0] },
+            ]
+          }
+        ],
+        margin: [0,0,0,20]
+      },
+
+      // ── FIȘA VOLUNTARULUI (minor) ──
+      { text: ' ', pageBreak: 'before' },
+      { text: `Nr. ${nr}/${today()}`, style: 'nr' },
+      { text: 'FIȘA VOLUNTARULUI', style: 'title' },
+      { text: ' ', margin: [0,0,0,8] },
+      { text: [{ text: 'Denumirea postului: ', bold: true }, 'Voluntar'], style: 'body' },
+      { text: [{ text: 'Nume voluntar: ', bold: true }, numePrenume], style: 'body' },
+      { text: ' ', margin: [0,0,0,4] },
+      { text: 'RELAȚII IERARHICE:', style: 'sectionTitle' },
+      { text: 'este subordonat: Directorul General al Fundației Romanian Business Leaders – Alexandru Dincovici și Coordonatorului de voluntari – Teodora Gaftoi.', style: 'body' },
+      { text: 'RELAȚII FUNCȚIONALE:', style: 'sectionTitle' },
+      { text: 'Lucrează în stransa legatura cu echipa proiectului și echipa executivă.', style: 'body' },
+      { text: 'PROGRAM DE LUCRU:', style: 'sectionTitle' },
+      { text: 'Voluntarul își desfășoară activitatea pe parcursul anului calendaristic, conform unui program flexibil, stabilit de comun acord cu coordonatorul de voluntari, în funcție de nevoile proiectelor și disponibilitatea voluntarului.', style: 'body' },
+      { text: 'Activitati:', style: 'sectionTitle' },
+      { ul: [
+        'sprijinirea organizării și desfășurării evenimentelor RBL (logistică, acces participanți, suport în teren etc.)',
+        'suport administrativ și logistic pentru departamentul de evenimente',
+        'implicare în activități de comunicare, promovare și distribuire materiale informative',
+        'activități de documentare, redactare și arhivare materiale',
+        'contribuții la dezvoltarea comunității de voluntari RBL',
+      ], style: 'body', margin: [10,0,0,12] },
+
+      { text: `Data: ${today()}`, style: 'body', margin: [0,6,0,14] },
+      {
+        columns: [
+          {
+            width: '55%',
+            stack: [
+              { text: 'Semnătura', bold: true, fontSize: 10 },
+              { text: 'Director General', bold: true, fontSize: 10 },
+              { text: 'Fundația Romanian Business Leaders', fontSize: 10 },
+              { text: 'Alexandru Dincovici', fontSize: 10 },
+            ]
+          },
+          {
+            width: '45%',
+            stack: [
+              { text: 'Semnătura voluntar', bold: true, fontSize: 10 },
+              { text: numePrenume, fontSize: 10 },
+              { image: sigImg, width: 110, height: 36, margin: [0,4,0,0] },
+            ]
+          }
+        ]
+      },
+
+      // ── FORMULAR CONSIMTAMANT (minor) ──
+      { text: ' ', pageBreak: 'before' },
+      { text: 'FORMULAR DE CONSIMTAMANT', style: 'title' },
+      { text: ' ', margin: [0,0,0,8] },
+      { text: [{ text: 'Nume și prenume: ', bold: true }, numePrenume], style: 'body' },
+      { text: [{ text: 'Funcția: ', bold: true }, 'VOLUNTAR'], style: 'body' },
+      { text: [{ text: 'Telefon: ', bold: true }, data.tel], style: 'body' },
+      { text: [{ text: 'E-mail: ', bold: true }, data.email], style: 'body' },
+      { text: ' ', margin: [0,0,0,6] },
+      { text: 'FORMULAR PRELUARE CONSIMTAMANT', style: 'sectionTitle' },
+      { text: [
+        'Cu ocazia completarii formularului de înscriere in cadrul ',
+        { text: 'ROMANIAN BUSINESS LEADER', bold: true },
+        ' („',
+        { text: 'RBL', bold: true },
+        '"), declar ca sunt de acord ca ',
+        { text: 'RBL', bold: true },
+        ', cu sediul în Comuna Mogoșoaia, Str. I.C. Brătianu, nr. 145, jud. Ilfov și cu adresa de corespondență în București, Calea Dorobanți, nr. 42, et. 3, cam. 5, Sector 1, România, email contact@rbls.ro, telefon 021 794 14 98, reprezentată legal prin președinte ',
+        { text: 'Sergiu Neguț', bold: true },
+        ', să fie autorizata sa prelucreze datele mele cu caracter personal comunicate catre aceasta, precum si datele colectate în cadrul relatiilor cu RBL în vederea promovării activității, proiectelor și evenimentelor RBL, ale sponsorilor, partenerilor și ale membrilor fundației (scop de marketing). În scopul aici menționat, sunt de acord și cu înregistrarea evenimentelor online realizate de RBL și distribuirea materialelor înregistrate.',
+      ], style: 'body' },
+      { text: 'Îmi ofer consimțământul în mod liber, dorind să ofer sprijinul meu în eforturile de promovare care fac posibilă aducerea evenimentelor de afaceri si a proiectelor susținute de RBL în atenția publicului, înțelegând că nu există nicio consecință negativă pentru mine în cazul în care nu îmi acord consimțământul.', style: 'body' },
+      { text: 'Sunt de acord cu prelucrarea datelor mele prin aplicații de tip email, cloud, calendar, conferințe video etc oferite de companii situate sau controlate din afara Spațiului Economic European (SEE), cum ar fi Google, Microsoft și Facebook, înțelegând că nivelul de protecție a datelor personale prevăzut de legislația aplicabilă acestora poate fi mai redus decât cel din SEE, permițând autorităților locale accesarea lor, în paralel cu lipsa unor mecanisme de contestare eficiente.', style: 'body' },
+      { text: 'Declar ca am citit Informarea privind prelucrarea datelor cu caracter personal (https://www.rbls.ro/politica-de-confidentialitate/), informare al carui continut l-am inteles in integralitate,', style: 'body' },
+      { text: 'Am luat cunoștință și am fost informat/ă asupra faptului că în conformitate cu dispozițiile Regulamentului (UE) 2016/679 al Parlamentului European și al Consiliului din 27 aprilie 2016, privind protecția persoanelor fizice în ceea ce privește prelucrarea datelor cu caracter personal am, în condițiile legale aplicabile, dreptul de acces, rectificare, ștergere, restricționare, portabilitate, opoziție, de a face o plângere la autoritatea de supraveghere, precum și dreptul de a-mi retrage consimțământul în orice moment printr-un simplu e-mail la adresa dataprotection@rbls.ro. Retragerea consimțământului nu afectează legalitatea prelucrării efectuate pe baza consimțământului înainte de retragerea acestuia.', italics: true, fontSize: 9, margin: [0,0,0,8] },
+      { text: [{ text: 'Confirm că am citit și am înțeles conținutul prezentului document "FORMULAR DE CONSIMTAMANT"', bold: true }], style: 'body', margin: [0,0,0,14] },
+      {
+        columns: [
+          { width: '40%', stack: [{ text: 'Data', bold: true, fontSize: 10 }, { text: today(), fontSize: 10 }] },
+          { width: '60%', stack: [
+            { text: 'Semnătura', bold: true, fontSize: 10 },
+            { image: getSigDataURL('sig-canvas'), width: 120, height: 40, margin: [0,4,0,0] },
+          ]},
+        ]
+      },
+    ],
+    styles: STYLES,
+    defaultStyle: { font: 'Roboto', fontSize: 10 },
+    pageMargins: [50, 40, 50, 40],
+  };
+}
+
+// ─── GENERATE ALL DOCS ───────────────────────────────────────────────────────
+function generateDocs() {
+  const data = {
+    nume: g('f-nume'),
+    prenume: g('f-prenume'),
+    dob: g('f-dob'),
+    cnp: g('f-cnp'),
+    ciSerie: g('f-ci-serie'),
+    ciNr: g('f-ci-nr'),
+    judet: g('f-judet'),
+    oras: g('f-oras'),
+    strada: g('f-strada'),
+    nr: g('f-nr'),
+    tel: g('f-tel'),
+    email: g('f-email'),
+    pNume: g('f-p-nume'),
+    pCNP: g('f-p-cnp'),
+    pDom: g('f-p-dom'),
+    pTel: g('f-p-tel'),
+    pEmail: g('f-p-email'),
+  };
+
+  const minor = isMinor(data.dob);
+  const nr = nextContractNr();
+  const numePrenume = `${data.prenume} ${data.nume}`;
+
+  const dlLinks = document.getElementById('download-links');
+  dlLinks.innerHTML = '';
+
+  const addDL = (label, sub, docDef, filename) => {
+    const btn = document.createElement('button');
+    btn.className = 'dl-btn';
+    btn.innerHTML = `<span class="dl-icon">📄</span><div><div>${label}</div><div class="dl-sub">${sub}</div></div>`;
+    btn.onclick = () => pdfMake.createPdf(docDef).download(filename);
+    dlLinks.appendChild(btn);
+  };
+
+  if (minor) {
+    addDL('Acord parental + Contract de voluntariat (minor) + Fișa + GDPR minor',
+      `Nr. ${nr} — ${today()}`,
+      buildAcordParental(data, nr),
+      `documente_minor_${data.nume}_${nr}.pdf`
+    );
+    addDL('Formular consimțământ GDPR (minor — semnat de părinte)',
+      `Părinte: ${data.pNume}`,
+      buildGDPR_Minor(data),
+      `gdpr_parinte_${data.nume}.pdf`
+    );
+  } else {
+    addDL('Contract de voluntariat + Fișa voluntarului',
+      `Nr. ${nr} — ${today()}`,
+      buildContract_Major(data, nr),
+      `contract_voluntariat_${data.nume}_${nr}.pdf`
+    );
+    addDL('Formular consimțământ GDPR',
+      numePrenume,
+      buildGDPR_Major(data),
+      `gdpr_${data.nume}.pdf`
+    );
+  }
+
+  goToPage('success');
+}
+
+// ─── RESET ───────────────────────────────────────────────────────────────────
+function resetForm() {
+  document.querySelectorAll('input').forEach(i => i.value = '');
+  clearSig('sig-canvas');
+  clearSig('sig-parinte-canvas');
+  document.getElementById('minor-banner').style.display = 'none';
+  document.getElementById('parinte-section').style.display = 'none';
+  document.getElementById('sig-parinte-block').style.display = 'none';
+  goToPage(1);
+  ['sig-canvas','sig-parinte-canvas'].forEach(id => {
+    const c = document.getElementById(id);
+    if (c) { c.width = 0; }
+  });
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+window.addEventListener('load', () => {
+  setupCanvas('sig-canvas');
+  setupCanvas('sig-parinte-canvas');
+  document.getElementById('f-dob').max = new Date().toISOString().split('T')[0];
+});
+</script>
+</body>
+</html>
