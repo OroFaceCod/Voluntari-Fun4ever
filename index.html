@@ -777,23 +777,7 @@ function saveGeneralSettings() {
 //  EVENTS — încărcare din Apps Script sau local
 // ════════════════════════════════════════════════════════════════
 async function loadEvents() {
-  document.getElementById('event-cards-wrap').innerHTML = '<div class="loading-events">⏳ Se încarcă evenimentele...</div>';
-
-  if (SCRIPT_URL) {
-    try {
-      const resp = await fetch(SCRIPT_URL + '?action=getEvents');
-      const result = await resp.json();
-      if (result.ok && result.data) {
-        events = result.data;
-        renderEventCards();
-        return;
-      }
-    } catch(e) {
-      console.warn('Nu s-au putut încărca evenimentele din Apps Script:', e.message);
-    }
-  }
-
-  // Fallback: evenimente salvate local (din admin fără URL)
+  // Evenimentele sunt stocate local — nu depind de Apps Script
   const local = localStorage.getItem('fun4ever_events_local');
   events = local ? JSON.parse(local) : [];
   renderEventCards();
@@ -956,19 +940,7 @@ async function saveEvent() {
     contractCounter: editId ? (events.find(e=>e.id===editId)||{}).contractCounter || startNr-1 : startNr-1,
   };
 
-  if (SCRIPT_URL) {
-    try {
-      await fetch(SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        body: JSON.stringify({ action: 'saveEvent', password: 'Fun4ever!', event: ev }),
-      });
-    } catch(ex) {
-      alert('Eroare la salvarea în Apps Script: ' + ex.message + '\nEvenimentul se salvează local.');
-    }
-  }
-
-  // Salveaza local indiferent
+  // Salveaza local (evenimentele nu au nevoie de Apps Script)
   const idx = events.findIndex(e => e.id === ev.id);
   if (idx >= 0) events[idx] = ev;
   else events.push(ev);
@@ -981,16 +953,6 @@ async function saveEvent() {
 
 async function deleteEvent(id) {
   if (!confirm('Ștergi acest eveniment?')) return;
-
-  if (SCRIPT_URL) {
-    try {
-      await fetch(SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        body: JSON.stringify({ action: 'deleteEvent', password: 'Fun4ever!', eventId: id }),
-      });
-    } catch(e) {}
-  }
 
   events = events.filter(e => e.id !== id);
   localStorage.setItem('fun4ever_events_local', JSON.stringify(events));
@@ -1184,11 +1146,20 @@ async function generateDocs() {
 
   try {
     // no-cors: trimitem datele fara sa citim raspunsul
-    // Apps Script proceseaza async si trimite email cu linkurile
+    // Apps Script proceseaza si trimite email cu linkurile
     fetch(SCRIPT_URL, {
       method: 'POST',
       mode: 'no-cors',
-      body: JSON.stringify({ action:'register', eventId: currentEvent.id, formData }),
+      body: JSON.stringify({
+        action: 'register',
+        eventName: currentEvent.name,
+        eventDocs: (currentEvent.docs || []).filter(d => {
+          if (d.forMinor === 'major' && minor) return false;
+          if (d.forMinor === 'minor' && !minor) return false;
+          return !!d.driveFileId;
+        }),
+        formData,
+      }),
     });
 
     // Animam pasii
