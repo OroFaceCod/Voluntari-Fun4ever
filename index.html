@@ -5,541 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Înregistrare Voluntar — Fun4ever.ro</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.min.js"></script>
-<style>
-  :root {
-    --navy:   #2b3252;
-    --red:    #d94f38;
-    --cream:  #f5f0eb;
-    --white:  #ffffff;
-    --gray:   #6b7280;
-    --light:  #f9f7f4;
-    --border: #e2ddd8;
-    --shadow: 0 2px 20px rgba(43,50,82,0.10);
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Inter', sans-serif; background: var(--light); color: var(--navy); min-height: 100vh; }
- 
-  /* HEADER */
-  header {
-    background: var(--navy); color: white;
-    padding: 0 40px; display: flex; align-items: center;
-    justify-content: space-between; height: 72px;
-    box-shadow: 0 2px 12px rgba(43,50,82,0.18);
-  }
-  .header-left { display: flex; align-items: center; gap: 16px; }
-  .logo-svg { width: 46px; height: 46px; flex-shrink: 0; }
-  .header-titles h1 { font-size: 18px; font-weight: 700; color: var(--red); text-transform: uppercase; letter-spacing: 0.5px; }
-  .header-titles p { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 1px; }
-  .admin-toggle-btn {
-    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18);
-    color: rgba(255,255,255,0.7); border-radius: 6px; padding: 7px 14px;
-    font-size: 12px; font-family: 'Inter', sans-serif; cursor: pointer; transition: all .2s;
-  }
-  .admin-toggle-btn:hover { background: rgba(255,255,255,0.15); color: white; }
- 
-  /* ADMIN PANEL */
-  #admin-panel {
-    display: none; background: #222844;
-    border-top: 1px solid rgba(255,255,255,0.06);
-    border-bottom: 3px solid var(--red);
-    padding: 18px 40px;
-  }
-  #admin-panel.open { display: block; }
-  .admin-inner { max-width: 780px; margin: 0 auto; display: flex; align-items: flex-end; gap: 18px; flex-wrap: wrap; }
-  .admin-field { display: flex; flex-direction: column; gap: 5px; }
-  .admin-field label { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.45); }
-  .admin-field input {
-    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2);
-    color: white; border-radius: 6px; padding: 8px 13px; font-size: 14px;
-    font-family: 'Inter', sans-serif; width: 160px; outline: none; transition: border-color .2s;
-  }
-  .admin-field input:focus { border-color: var(--red); }
-  .admin-save-btn {
-    background: var(--red); color: white; border: none; border-radius: 6px;
-    padding: 9px 20px; font-size: 13px; font-weight: 600; font-family: 'Inter', sans-serif;
-    cursor: pointer; transition: all .2s;
-  }
-  .admin-save-btn:hover { background: #c4432d; }
-  .admin-info { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 6px; width: 100%; }
- 
-  /* PROGRESS */
-  .progress-bar { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 40px; display: flex; }
-  .step-tab { padding: 13px 22px; font-size: 13px; font-weight: 500; color: var(--gray); border-bottom: 3px solid transparent; cursor: default; transition: all .2s; white-space: nowrap; }
-  .step-tab.active { color: var(--navy); border-bottom-color: var(--red); font-weight: 600; }
-  .step-tab.done { color: var(--red); }
- 
-  /* MAIN */
-  main { max-width: 780px; margin: 0 auto; padding: 40px 24px 80px; }
-  .form-page { display: none; }
-  .form-page.active { display: block; }
-  .section-title { font-size: 26px; font-weight: 700; margin-bottom: 5px; }
-  .section-subtitle { color: var(--gray); font-size: 14px; margin-bottom: 30px; }
- 
-  /* FIELD GROUPS */
-  .field-group { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 24px 28px; margin-bottom: 18px; box-shadow: var(--shadow); }
-  .field-group-title { font-size: 10px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; color: var(--red); margin-bottom: 16px; }
-  .row { display: grid; gap: 14px; margin-bottom: 14px; }
-  .row.cols-2 { grid-template-columns: 1fr 1fr; }
-  .row:last-child { margin-bottom: 0; }
-  label { display: block; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; color: var(--gray); margin-bottom: 5px; text-transform: uppercase; }
-  input[type=text], input[type=date], input[type=email], input[type=tel] {
-    width: 100%; padding: 10px 13px; border: 1.5px solid var(--border); border-radius: 7px;
-    font-family: 'Inter', sans-serif; font-size: 14px; color: var(--navy);
-    background: var(--light); outline: none; transition: border-color .2s, box-shadow .2s;
-  }
-  input:focus { border-color: var(--red); box-shadow: 0 0 0 3px rgba(217,79,56,0.12); }
-  input.error { border-color: var(--red); background: #fff5f4; }
- 
-  /* MINOR BANNER */
-  #minor-banner { display: none; background: #fff8e6; border: 1.5px solid #f0c060; border-radius: 10px; padding: 14px 18px; font-size: 13px; color: #7a5c10; margin-bottom: 18px; line-height: 1.5; }
- 
-  /* SIGNATURE */
-  .sig-container { position: relative; background: var(--light); border: 1.5px solid var(--border); border-radius: 8px; overflow: hidden; }
-  .sig-container canvas { display: block; cursor: crosshair; touch-action: none; }
-  .sig-label { position: absolute; bottom: 10px; left: 14px; font-size: 11px; color: var(--border); pointer-events: none; font-style: italic; }
-  .sig-clear { position: absolute; top: 8px; right: 10px; background: none; border: 1px solid var(--border); border-radius: 5px; padding: 3px 9px; font-size: 11px; color: var(--gray); cursor: pointer; font-family: 'Inter', sans-serif; transition: all .2s; }
-  .sig-clear:hover { border-color: var(--red); color: var(--red); }
- 
-  /* BUTTONS */
-  .btn-row { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; }
-  .btn { padding: 12px 28px; border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: all .2s; }
-  .btn-secondary { background: var(--white); border: 1.5px solid var(--border); color: var(--gray); }
-  .btn-secondary:hover { border-color: var(--navy); color: var(--navy); }
-  .btn-primary { background: var(--navy); color: white; }
-  .btn-primary:hover { background: #374070; transform: translateY(-1px); }
-  .btn-red { background: var(--red); color: white; font-size: 15px; padding: 13px 36px; }
-  .btn-red:hover { background: #c4432d; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(217,79,56,0.30); }
- 
-  /* REVIEW */
-  .review-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .review-item .rl { color: var(--gray); font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
-  .review-item .rv { font-weight: 500; font-size: 14px; margin-top: 2px; }
-  .doc-list { display: flex; flex-direction: column; gap: 9px; }
-  .doc-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--white); border: 1px solid var(--border); border-radius: 8px; }
-  .doc-icon { width: 32px; height: 32px; background: var(--cream); border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
-  .doc-name { font-weight: 500; font-size: 13px; }
-  .doc-sub { font-size: 11px; color: var(--gray); margin-top: 1px; }
- 
-  /* SUCCESS */
-  #page-success { text-align: center; padding: 40px 0; }
-  .success-icon { width: 76px; height: 76px; background: #e8f5e9; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; margin: 0 auto 22px; }
-  .download-links { display: flex; flex-direction: column; gap: 10px; margin: 26px 0; text-align: left; }
-  .dl-btn { display: flex; align-items: center; gap: 14px; padding: 14px 20px; background: var(--navy); color: white; border-radius: 10px; cursor: pointer; border: none; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; transition: all .2s; width: 100%; text-align: left; }
-  .dl-btn:hover { background: #374070; transform: translateX(3px); }
-  .dl-btn .dl-icon { font-size: 20px; flex-shrink: 0; }
-  .dl-btn .dl-name { font-weight: 600; font-size: 13px; }
-  .dl-btn .dl-sub { font-size: 11px; opacity: 0.55; margin-top: 2px; }
-  .required::after { content: ' *'; color: var(--red); }
-
-  #admin-overlay {
-  display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,0.5); z-index: 999;
-  align-items: center; justify-content: center;
-}
-#admin-overlay.open { display: flex; }
-.admin-modal {
-  background: #222844; border-radius: 12px;
-  padding: 32px; width: 320px;
-  border-top: 3px solid var(--red);
-}
-.admin-modal h3 { color: white; font-size: 16px; margin-bottom: 6px; }
-.admin-modal p { color: rgba(255,255,255,0.45); font-size: 12px; margin-bottom: 18px; }
-.admin-modal input {
-  width: 100%; padding: 10px 13px;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 7px; color: white;
-  font-family: 'Inter', sans-serif; font-size: 14px;
-  outline: none; margin-bottom: 12px;
-}
-.admin-modal input:focus { border-color: var(--red); }
-.admin-modal-btns { display: flex; gap: 10px; }
-.admin-modal-btns button { flex: 1; padding: 10px; border-radius: 7px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; border: none; }
-.btn-confirm { background: var(--red); color: white; }
-.btn-confirm:hover { background: #c4432d; }
-.btn-cancel-modal { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.6); }
-.admin-modal .error-msg { color: #ff6b6b; font-size: 12px; margin-bottom: 8px; display: none; }
-  
-  .sig-tab-btn {
-    padding: 7px 16px; border-radius: 6px; font-family: 'Inter', sans-serif;
-    font-size: 12px; font-weight: 600; cursor: pointer; border: 1.5px solid var(--border);
-    background: var(--white); color: var(--gray); transition: all .2s;
-  }
-  .sig-tab-btn.active { background: var(--navy); color: white; border-color: var(--navy); }
-  .sig-upload-box {
-    border: 2px dashed var(--border); border-radius: 8px; padding: 30px 20px;
-    text-align: center; cursor: pointer; transition: all .2s; background: var(--light);
-    font-size: 13px; color: var(--gray); min-height: 140px;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .sig-upload-box:hover { border-color: var(--red); color: var(--navy); }
-  .sig-upload-box img { max-height: 100px; max-width: 100%; border-radius: 4px; }
-  .processing-step {
-    display: flex; align-items: center; gap: 10px; padding: 8px 0;
-    font-size: 13px; color: var(--gray);
-  }
-  .processing-step.done { color: #2d6a4f; }
-  .processing-step.active { color: var(--navy); font-weight: 600; }
-  .processing-step.error { color: var(--red); }
-  .step-dot { width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; }
-  .step-dot.pending { background: var(--border); }
-  .step-dot.active { background: var(--navy); color: white; animation: pulse 1s infinite; }
-  .step-dot.done { background: #2d6a4f; color: white; }
-  .step-dot.error { background: var(--red); color: white; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
-
-  @media (max-width: 600px) {
-    header { padding: 0 16px; } #admin-panel { padding: 16px; }
-    main { padding: 24px 14px 60px; }
-    .row.cols-2 { grid-template-columns: 1fr; }
-    .field-group { padding: 18px; }
-    .review-grid { grid-template-columns: 1fr; }
-    .progress-bar { padding: 0 8px; overflow-x: auto; }
-  }
-</style>
-</head>
-<body>
- 
-<header>
-  <div id="admin-overlay">
-  <div class="admin-modal">
-    <h3>⚙ Panou Admin</h3>
-    <p>Introdu parola pentru a accesa setările.</p>
-    <input type="password" id="admin-password-input" placeholder="Parolă" onkeydown="if(event.key==='Enter') checkAdminPassword()">
-    <div class="error-msg" id="admin-pass-error">Parolă incorectă. Încearcă din nou.</div>
-    <div class="admin-modal-btns">
-      <button class="btn-cancel-modal" onclick="closeAdminOverlay()">Anulează</button>
-      <button class="btn-confirm" onclick="checkAdminPassword()">Intră</button>
-    </div>
-  </div>
-</div>
-  <div class="header-left">
-    <svg class="logo-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-      <rect x="12" y="12" width="36" height="36" rx="8" fill="#d94f38"/>
-      <rect x="52" y="52" width="36" height="36" rx="8" fill="#d94f38"/>
-      <rect x="52" y="12" width="36" height="36" rx="8" fill="#e8dfd4"/>
-      <rect x="12" y="52" width="36" height="36" rx="8" fill="#e8dfd4"/>
-      <circle cx="14" cy="14" r="7" fill="#d94f38"/>
-      <circle cx="86" cy="86" r="7" fill="#d94f38"/>
-      <circle cx="86" cy="14" r="7" fill="#e8dfd4"/>
-      <circle cx="14" cy="86" r="7" fill="#e8dfd4"/>
-      <path d="M50 62 C50 62 35 52 35 43 C35 37.5 39.5 33 45 33 C47.8 33 50 35.5 50 35.5 C50 35.5 52.2 33 55 33 C60.5 33 65 37.5 65 43 C65 52 50 62 50 62Z" fill="#2b3252"/>
-    </svg>
-    <div class="header-titles">
-      <h1>Fun4ever.ro</h1>
-      <p>Formular de înregistrare voluntar</p>
-    </div>
-  </div>
-  <button class="admin-toggle-btn" onclick="toggleAdmin()">⚙ Admin</button>
-</header>
- 
-<div id="admin-panel">
-  <div class="admin-inner">
-    <div class="admin-field">
-      <label>Număr start contracte</label>
-      <input type="number" id="admin-start-nr" min="1" placeholder="ex: 42" style="width:140px;">
-    </div>
-    <div class="admin-field" style="flex:1;min-width:260px;">
-      <label>URL Google Apps Script</label>
-      <input type="text" id="admin-script-url" placeholder="https://script.google.com/macros/s/.../exec" style="width:100%;">
-    </div>
-    <button class="admin-save-btn" onclick="saveAdminSettings()">Salvează</button>
-    <div class="admin-info" style="width:100%;">Următor contract: <b id="admin-current-nr">—</b> &nbsp;·&nbsp; URL script: <b id="admin-url-status">negăsit</b></div>
-  </div>
-</div>
- 
-<div class="progress-bar">
-  <div class="step-tab active" id="tab-1">1. Date personale</div>
-  <div class="step-tab" id="tab-2">2. Semnătură</div>
-  <div class="step-tab" id="tab-3">3. Confirmare</div>
-</div>
- 
-<main>
- 
-<!-- PAGE 1 -->
-<div class="form-page active" id="page-1">
-  <div class="section-title">Date personale</div>
-  <div class="section-subtitle">Completează cu atenție. Datele vor fi introduse automat în contract.</div>
-  <div id="minor-banner">⚠️ <b>Voluntar minor</b> — Pe baza datei de naștere, ești minor. Se vor genera documente speciale pentru minori. Completează și datele unui părinte/tutore.</div>
- 
-  <div class="field-group">
-    <div class="field-group-title">Identitate</div>
-    <div class="row cols-2">
-      <div><label class="required">Nume</label><input type="text" id="f-nume" placeholder="ex: Popescu"></div>
-      <div><label class="required">Prenume</label><input type="text" id="f-prenume" placeholder="ex: Maria"></div>
-    </div>
-    <div class="row cols-2">
-      <div><label class="required">Data nașterii</label><input type="date" id="f-dob"></div>
-      <div><label class="required">CNP</label><input type="text" id="f-cnp" placeholder="13 cifre" maxlength="13"></div>
-    </div>
-    <div class="row cols-2">
-      <div><label class="required">Serie CI</label><input type="text" id="f-ci-serie" placeholder="ex: AA" maxlength="2" style="text-transform:uppercase"></div>
-      <div><label class="required">Număr CI</label><input type="text" id="f-ci-nr" placeholder="ex: 123456" maxlength="6"></div>
-    </div>
-  </div>
- 
-  <div class="field-group">
-    <div class="field-group-title">Domiciliu</div>
-    <div class="row cols-2">
-      <div><label class="required">Județ</label><input type="text" id="f-judet" placeholder="ex: Cluj"></div>
-      <div><label class="required">Oraș / Localitate</label><input type="text" id="f-oras" placeholder="ex: Cluj-Napoca"></div>
-    </div>
-    <div class="row cols-2">
-      <div><label class="required">Stradă</label><input type="text" id="f-strada" placeholder="ex: Str. Libertății"></div>
-      <div><label class="required">Număr</label><input type="text" id="f-nr" placeholder="ex: 12"></div>
-    </div>
-  </div>
- 
-  <div class="field-group">
-    <div class="field-group-title">Contact</div>
-    <div class="row cols-2">
-      <div><label class="required">Telefon</label><input type="tel" id="f-tel" placeholder="ex: 0722 123 456"></div>
-      <div><label class="required">Email</label><input type="email" id="f-email" placeholder="ex: maria@email.com"></div>
-    </div>
-  </div>
- 
-  <div class="field-group" id="parinte-section" style="display:none;">
-    <div class="field-group-title">📋 Date părinte / tutore legal</div>
-    <div class="row cols-2">
-      <div><label class="required">Nume și prenume părinte</label><input type="text" id="f-p-nume" placeholder="Nume complet"></div>
-      <div><label class="required">CNP părinte</label><input type="text" id="f-p-cnp" placeholder="13 cifre" maxlength="13"></div>
-    </div>
-    <div class="row cols-2">
-      <div><label class="required">Domiciliu (oraș, județ)</label><input type="text" id="f-p-dom" placeholder="ex: Cluj-Napoca, Cluj"></div>
-      <div><label class="required">Telefon părinte</label><input type="tel" id="f-p-tel" placeholder="ex: 0722 000 111"></div>
-    </div>
-    <div class="row">
-      <div><label class="required">Email părinte</label><input type="email" id="f-p-email" placeholder="ex: parinte@email.com"></div>
-    </div>
-  </div>
- 
-  <div class="btn-row"><span></span><button class="btn btn-primary" onclick="goToPage2()">Continuă →</button></div>
-</div>
- 
-<!-- PAGE 2 -->
-<div class="form-page" id="page-2">
-  <div class="section-title">Semnătură</div>
-  <div class="section-subtitle">Semnează în câmpul de mai jos folosind mouse-ul sau degetul.</div>
-  <div class="field-group">
-    <div class="field-group-title">Semnătură voluntar</div>
-    <div style="display:flex;gap:8px;margin-bottom:10px;">
-      <button class="sig-tab-btn active" id="sig-tab-draw" onclick="switchSigTab('draw','sig')">✏ Desenează</button>
-      <button class="sig-tab-btn" id="sig-tab-upload" onclick="switchSigTab('upload','sig')">↑ Încarcă imagine</button>
-    </div>
-    <div id="sig-draw-area">
-      <div class="sig-container" style="height:180px;">
-        <canvas id="sig-canvas" height="178" style="width:100%;"></canvas>
-        <div class="sig-label">Semnează aici</div>
-        <button class="sig-clear" onclick="clearSig('sig-canvas')">Șterge</button>
-      </div>
-    </div>
-    <div id="sig-upload-area" style="display:none;">
-      <div class="sig-upload-box" onclick="document.getElementById('sig-file-input').click()">
-        <div id="sig-upload-preview">📎 Click pentru a încărca imaginea semnăturii (PNG, JPG)</div>
-        <input type="file" id="sig-file-input" accept="image/*" style="display:none" onchange="handleSigUpload(this,'sig-canvas','sig-upload-preview')">
-      </div>
-    </div>
-  </div>
-  <div class="field-group" id="sig-parinte-block" style="display:none;">
-    <div class="field-group-title">Semnătură părinte / tutore</div>
-    <p style="font-size:13px;color:var(--gray);margin-bottom:14px;">Necesară pentru voluntarii minori.</p>
-    <div style="display:flex;gap:8px;margin-bottom:10px;">
-      <button class="sig-tab-btn active" id="sigp-tab-draw" onclick="switchSigTab('draw','sigp')">✏ Desenează</button>
-      <button class="sig-tab-btn" id="sigp-tab-upload" onclick="switchSigTab('upload','sigp')">↑ Încarcă imagine</button>
-    </div>
-    <div id="sigp-draw-area">
-      <div class="sig-container" style="height:180px;">
-        <canvas id="sig-parinte-canvas" height="178" style="width:100%;"></canvas>
-        <div class="sig-label">Semnează aici</div>
-        <button class="sig-clear" onclick="clearSig('sig-parinte-canvas')">Șterge</button>
-      </div>
-    </div>
-    <div id="sigp-upload-area" style="display:none;">
-      <div class="sig-upload-box" onclick="document.getElementById('sigp-file-input').click()">
-        <div id="sigp-upload-preview">📎 Click pentru a încărca imaginea semnăturii (PNG, JPG)</div>
-        <input type="file" id="sigp-file-input" accept="image/*" style="display:none" onchange="handleSigUpload(this,'sig-parinte-canvas','sigp-upload-preview')">
-      </div>
-    </div>
-  </div>
-  <div class="btn-row">
-    <button class="btn btn-secondary" onclick="goToPage(1)">← Înapoi</button>
-    <button class="btn btn-primary" onclick="goToPage3()">Continuă →</button>
-  </div>
-</div>
- 
-<!-- PAGE 3 -->
-<div class="form-page" id="page-3">
-  <div class="section-title">Confirmare și generare documente</div>
-  <div class="section-subtitle">Verifică datele și generează fiecare document separat în format PDF.</div>
-  <div class="field-group">
-    <div class="field-group-title">Rezumat date</div>
-    <div class="review-grid" id="review-data"></div>
-  </div>
-  <div class="field-group">
-    <div class="field-group-title">Documente ce vor fi generate separat</div>
-    <div class="doc-list" id="doc-list"></div>
-  </div>
-  <div class="btn-row">
-    <button class="btn btn-secondary" onclick="goToPage(2)">← Înapoi</button>
-    <button class="btn btn-red" id="btn-generate" onclick="generateDocs()">⬇ Generează și salvează documente</button>
-  </div>
-</div>
- 
-<!-- PROCESSING -->
-<div class="form-page" id="page-processing">
-  <div style="text-align:center;padding:60px 20px;">
-    <div style="font-size:48px;margin-bottom:20px;">⏳</div>
-    <div class="section-title" style="text-align:center;">Se procesează documentele...</div>
-    <p style="color:var(--gray);margin-top:10px;font-size:14px;">Documentele sunt completate și salvate în Drive. Te rugăm să aștepți.</p>
-    <div id="processing-steps" style="margin-top:24px;text-align:left;max-width:340px;margin-left:auto;margin-right:auto;"></div>
-  </div>
-</div>
-
-<!-- SUCCESS -->
-<div class="form-page" id="page-success">
-  <div class="success-icon">✅</div>
-  <div class="section-title" style="text-align:center;">Documente salvate!</div>
-  <p style="color:var(--gray);text-align:center;margin-top:8px;">Documentele au fost salvate în Google Drive și înregistrate în Google Sheets. Descarcă-le mai jos.</p>
-  <div class="download-links" id="download-links"></div>
-  <div id="sheets-link-box" style="display:none;margin:16px 0;text-align:center;">
-    <a id="sheets-link" href="#" target="_blank" style="font-size:13px;color:var(--navy);text-decoration:underline;">📊 Vezi toate înregistrările în Google Sheets</a>
-  </div>
-  <button class="btn btn-secondary" onclick="resetForm()" style="display:block;margin:16px auto 0;">← Înregistrare nouă</button>
-</div>
- 
-</main>
- 
-<script>
-// ── STATE ──────────────────────────────────────────────────────────────────
-let contractCounter = parseInt(localStorage.getItem('rbl_contract_nr') || '0');
- 
-// ── ADMIN ─────────────────────────────────────────────────────────────────
-function toggleAdmin() {
-  if (document.getElementById('admin-panel').classList.contains('open')) {
-    document.getElementById('admin-panel').classList.remove('open');
-  } else {
-    document.getElementById('admin-overlay').classList.add('open');
-    document.getElementById('admin-password-input').value = '';
-    document.getElementById('admin-pass-error').style.display = 'none';
-    setTimeout(() => document.getElementById('admin-password-input').focus(), 100);
-  }
-}
-function checkAdminPassword() {
-  const val = document.getElementById('admin-password-input').value;
-  if (val === 'Fun4ever!') {
-    document.getElementById('admin-overlay').classList.remove('open');
-    const panel = document.getElementById('admin-panel');
-    panel.classList.add('open');
-    document.getElementById('admin-start-nr').value = contractCounter + 1;
-    document.getElementById('admin-current-nr').textContent = contractCounter + 1;
-  } else {
-    document.getElementById('admin-pass-error').style.display = 'block';
-    document.getElementById('admin-password-input').value = '';
-    document.getElementById('admin-password-input').focus();
-  }
-}
-function closeAdminOverlay() {
-  document.getElementById('admin-overlay').classList.remove('open');
-}
-function saveAdminSettings() {
-  const val = parseInt(document.getElementById('admin-start-nr').value);
-  if (isNaN(val) || val < 1) { alert('Introduceți un număr valid (minim 1).'); return; }
-  contractCounter = val - 1;
-  localStorage.setItem('rbl_contract_nr', contractCounter);
-  document.getElementById('admin-current-nr').textContent = val;
-  document.getElementById('admin-info').innerHTML = `✅ Salvat! Următorul contract va fi nr. <b>${val}</b>. Următor: <b id="admin-current-nr">${val}</b>`;
-}
- 
-// ── CANVAS ────────────────────────────────────────────────────────────────
-function resizeCanvas(id) {
-  const c = document.getElementById(id); if (!c) return;
-  const tmp = c.toDataURL();
-  const rect = c.parentElement.getBoundingClientRect(); if (!rect.width) return;
-  const oldW = c.width; c.width = rect.width;
-  if (oldW > 0 && tmp !== 'data:,') { const img = new Image(); img.onload = () => c.getContext('2d').drawImage(img,0,0); img.src = tmp; }
-}
-function setupCanvas(id) {
-  const c = document.getElementById(id); if (!c) return;
-  resizeCanvas(id); window.addEventListener('resize', () => resizeCanvas(id));
-  const ctx = c.getContext('2d'); let drawing = false;
-  const pos = e => { const r = c.getBoundingClientRect(), s = e.touches ? e.touches[0] : e; return {x:s.clientX-r.left, y:s.clientY-r.top}; };
-  c.addEventListener('mousedown', e => { drawing=true; const p=pos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); });
-  c.addEventListener('mousemove', e => { if(!drawing) return; const p=pos(e); ctx.lineTo(p.x,p.y); ctx.strokeStyle='#2b3252'; ctx.lineWidth=2.2; ctx.lineCap='round'; ctx.lineJoin='round'; ctx.stroke(); });
-  c.addEventListener('mouseup', () => drawing=false); c.addEventListener('mouseleave', () => drawing=false);
-  c.addEventListener('touchstart', e => { e.preventDefault(); drawing=true; const p=pos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); },{passive:false});
-  c.addEventListener('touchmove', e => { e.preventDefault(); if(!drawing) return; const p=pos(e); ctx.lineTo(p.x,p.y); ctx.strokeStyle='#2b3252'; ctx.lineWidth=2.5; ctx.lineCap='round'; ctx.lineJoin='round'; ctx.stroke(); },{passive:false});
-  c.addEventListener('touchend', () => drawing=false);
-}
-function clearSig(id) { const c=document.getElementById(id); c.getContext('2d').clearRect(0,0,c.width,c.height); }
-function isSigEmpty(id) { const c=document.getElementById(id); return !c.getContext('2d').getImageData(0,0,c.width,c.height).data.some(v=>v!==0); }
-function getSig(id) { return document.getElementById(id).toDataURL('image/png'); }
- 
-// ── MINOR ────────────────────────────────────────────────────────────────
-function isMinor(dob) {
-  if (!dob) return false;
-  const b=new Date(dob), n=new Date(); let age=n.getFullYear()-b.getFullYear();
-  const m=n.getMonth()-b.getMonth(); if(m<0||(m===0&&n.getDate()<b.getDate())) age--;
-  return age<18;
-}
-document.getElementById('f-dob').addEventListener('change', function() {
-  const minor = isMinor(this.value);
-  document.getElementById('minor-banner').style.display = minor?'block':'none';
-  document.getElementById('parinte-section').style.display = minor?'block':'none';
-  document.getElementById('sig-parinte-block').style.display = minor?'block':'none';
-});
- 
-// ── VALIDATION ───────────────────────────────────────────────────────────
-function v(id) { const el=document.getElementById(id), val=el.value.trim(); el.classList.toggle('error',!val); return !!val; }
-function goToPage2() {
-  const f=['f-nume','f-prenume','f-dob','f-cnp','f-ci-serie','f-ci-nr','f-judet','f-oras','f-strada','f-nr','f-tel','f-email'];
-  let ok=f.map(v).every(Boolean);
-  const minor=isMinor(document.getElementById('f-dob').value);
-  if(minor) ok=['f-p-nume','f-p-cnp','f-p-dom','f-p-tel','f-p-email'].map(v).every(Boolean)&&ok;
-  if(!ok){alert('Te rugăm să completezi toate câmpurile obligatorii marcate cu *');return;}
-  goToPage(2); requestAnimationFrame(()=>{resizeCanvas('sig-canvas');resizeCanvas('sig-parinte-canvas');});
-}
-function goToPage3() {
-  if(isSigEmpty('sig-canvas')){alert('Te rugăm să semnezi în câmpul de semnătură voluntar.');return;}
-  const minor=isMinor(document.getElementById('f-dob').value);
-  if(minor&&isSigEmpty('sig-parinte-canvas')){alert('Te rugăm să adaugi și semnătura părintelui/tutorelui.');return;}
-  buildReview(); goToPage(3);
-}
- 
-// ── NAVIGATION ───────────────────────────────────────────────────────────
-function goToPage(n) {
-  document.querySelectorAll('.form-page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.step-tab').forEach(t=>t.classList.remove('active','done'));
-  if(n==='success' || n==='processing') {
-    const pageId = n==='success' ? 'page-success' : 'page-processing';
-    document.getElementById(pageId).classList.add('active');
-    ['tab-1','tab-2','tab-3'].forEach(t=>document.getElementById(t).classList.add('done'));
-  } else {
-    document.getElementById('page-'+n).classList.add('active');
-    document.getElementById('tab-'+n).classList.add('active');
-    for(let i=1;i<n;i++) document.getElementById('tab-'+i).classList.add('done');
-  }
-  window.scrollTo(0,0);
-}
- 
-// ── HELPERS ──────────────────────────────────────────────────────────────
-function g(id){return document.getElementById(id).value.trim();}
-function today(){const d=new Date();return `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.${d.getFullYear()}`;}
-function todayYear(){return new Date().getFullYear();}
-function nextContractNr(){contractCounter++;localStorage.setItem('rbl_contract_nr',contractCounter);return String(contractCounter).padStart(3,'0');}
- 
-// ── REVIEW ───────────────────────────────────────────────────────────────
-function buildReview() {
-  const minor=isMinor(g('f-dob'));
-  const items=[['Nume complet',g('f-prenume')+' '+g('f-nume')],['Data nașterii',g('f-dob')],['CNP',g('f-cnp')],['CI',g('f-ci-serie').toUpperCase()+' '+g('f-ci-nr')],['Domiciliu',g('f-oras')+', '+g('f-judet')],['Email',g('f-email')]];
-  document.getElementById('review-data').innerHTML=items.map(([l,v])=>`<div class="review-item"><div class="rl">${l}</div><div class="rv">${v||'—'}</div></div>`).join('');
-  const docs=minor
-    ?[['📄','Contract de voluntariat (minor)','cu articolele complete pentru minori'],['📄','Fișa voluntarului (minor)','completată automat'],['📄','Formular consimțământ GDPR (voluntar minor)','semnat de voluntar'],['📋','Formular consimțământ GDPR (părinte)','semnat de părinte/tutore'],['📋','Acord parental','completat cu datele părintelui']]
-    :[['📄','Contract de voluntariat','cu toate articolele complete'],['📄','Fișa voluntarului','completată automat'],['📄','Formular consimțământ GDPR','completat și semnat']];
-  document.getElementById('doc-list').innerHTML=docs.map(([icon,name,sub])=>`<div class="doc-item"><div class="doc-icon">${icon}</div><div><div class="doc-name">${name}</div><div class="doc-sub">${sub}</div></div></div>`).join('');
-}
- 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js">
 // ── PDF STYLES ───────────────────────────────────────────────────────────
 const S={title:{fontSize:13,bold:true,alignment:'center',margin:[0,0,0,4]},subtitle:{fontSize:11,alignment:'center',margin:[0,0,0,4]},nr:{fontSize:10,alignment:'center',margin:[0,0,0,14]},sectionTitle:{fontSize:10,bold:true,margin:[0,8,0,3]},body:{fontSize:10,margin:[0,0,0,5]}};
 const DEF={font:'Roboto',fontSize:10};
@@ -788,190 +254,1081 @@ function docAcordParental(data) {
     ]},
   ]};
 }
- 
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.min.js"></script>
+<style>
+:root{--navy:#2b3252;--red:#d94f38;--cream:#f5f0eb;--white:#fff;--gray:#6b7280;--light:#f9f7f4;--border:#e2ddd8;--shadow:0 2px 20px rgba(43,50,82,.10)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--light);color:var(--navy);min-height:100vh}
 
-// ── SEMNATURA UPLOAD ──────────────────────────────────────────────────────
-function switchSigTab(mode, prefix) {
-  const isVoluntar = prefix === 'sig';
-  const drawArea  = document.getElementById(prefix + '-draw-area');
-  const uploadArea= document.getElementById(prefix + '-upload-area');
-  const tabDraw   = document.getElementById(prefix + '-tab-draw');
-  const tabUpload = document.getElementById(prefix + '-tab-upload');
-  if(mode === 'draw'){
-    drawArea.style.display='block'; uploadArea.style.display='none';
-    tabDraw.classList.add('active'); tabUpload.classList.remove('active');
+/* HEADER */
+header{background:var(--navy);color:white;padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:68px;box-shadow:0 2px 12px rgba(43,50,82,.2)}
+.header-left{display:flex;align-items:center;gap:14px}
+.logo-svg{width:44px;height:44px;flex-shrink:0}
+.header-titles h1{font-size:17px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.5px}
+.header-titles p{font-size:11px;color:rgba(255,255,255,.5);margin-top:1px}
+.header-right{display:flex;align-items:center;gap:10px}
+#event-badge{display:none;background:rgba(217,79,56,.2);border:1px solid rgba(217,79,56,.4);border-radius:20px;padding:4px 12px;font-size:11px;color:#ff9e8e;font-weight:600;cursor:pointer}
+#event-badge:hover{background:rgba(217,79,56,.35)}
+.admin-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.7);border-radius:6px;padding:7px 14px;font-size:12px;font-family:'Inter',sans-serif;cursor:pointer;transition:all .2s}
+.admin-btn:hover{background:rgba(255,255,255,.16);color:white}
+
+/* ADMIN OVERLAY */
+#admin-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:999;align-items:center;justify-content:center}
+#admin-overlay.open{display:flex}
+.admin-modal-small{background:#222844;border-radius:12px;padding:30px;width:340px;border-top:3px solid var(--red)}
+.admin-modal-small h3{color:white;font-size:16px;margin-bottom:6px}
+.admin-modal-small p{color:rgba(255,255,255,.45);font-size:12px;margin-bottom:16px}
+.admin-modal-small input{width:100%;padding:10px 13px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:7px;color:white;font-family:'Inter',sans-serif;font-size:14px;outline:none;margin-bottom:10px}
+.admin-modal-small input:focus{border-color:var(--red)}
+.modal-btns{display:flex;gap:10px}
+.modal-btns button{flex:1;padding:10px;border-radius:7px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:none}
+.btn-confirm{background:var(--red);color:white}.btn-confirm:hover{background:#c4432d}
+.btn-cancel{background:rgba(255,255,255,.08);color:rgba(255,255,255,.6)}
+.err-msg{color:#ff6b6b;font-size:12px;margin-bottom:8px;display:none}
+
+/* ADMIN PANEL */
+#admin-panel{display:none;background:#1a1f38;border-bottom:3px solid var(--red)}
+#admin-panel.open{display:block}
+.admin-tabs{display:flex;border-bottom:1px solid rgba(255,255,255,.08);padding:0 32px}
+.a-tab{padding:13px 18px;font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:rgba(255,255,255,.35);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s}
+.a-tab.active{color:white;border-bottom-color:var(--red)}
+.a-tab-content{display:none;padding:20px 32px}
+.a-tab-content.active{display:block}
+
+/* Admin fields */
+.af{display:flex;flex-direction:column;gap:4px}
+.af label{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.4)}
+.af input,.af textarea,.af select{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);color:white;border-radius:6px;padding:8px 12px;font-size:13px;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s}
+.af input:focus,.af textarea:focus{border-color:var(--red)}
+.af textarea{resize:vertical;min-height:60px}
+.af select option{background:#2b3252}
+.a-row{display:grid;gap:12px;margin-bottom:12px}
+.a-row.c2{grid-template-columns:1fr 1fr}
+.a-row.c3{grid-template-columns:1fr 1fr 1fr}
+.a-full{grid-column:1/-1}
+.a-save-btn{background:var(--red);color:white;border:none;border-radius:6px;padding:9px 20px;font-size:13px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;transition:all .2s;white-space:nowrap}
+.a-save-btn:hover{background:#c4432d}
+.a-save-btn.sec{background:rgba(255,255,255,.1);color:rgba(255,255,255,.75);border:1px solid rgba(255,255,255,.2)}
+.a-save-btn.sec:hover{background:rgba(255,255,255,.18)}
+.a-save-btn.del{background:#7a1f1f}.a-save-btn.del:hover{background:#9e2929}
+.a-info{font-size:12px;color:rgba(255,255,255,.35);margin-top:6px}
+.a-section-lbl{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--red);margin:16px 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,.07)}
+
+/* Event list in admin */
+.ev-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.ev-item{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.ev-item-info .ev-item-name{font-size:14px;font-weight:600;color:white}
+.ev-item-info .ev-item-sub{font-size:11px;color:rgba(255,255,255,.35);margin-top:2px}
+.ev-item-actions{display:flex;gap:6px;flex-shrink:0}
+.ev-item-actions button{padding:5px 12px;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;border:none;font-family:'Inter',sans-serif;transition:all .2s}
+.btn-edit-ev{background:rgba(255,255,255,.1);color:rgba(255,255,255,.7)}.btn-edit-ev:hover{background:rgba(255,255,255,.18);color:white}
+.btn-del-ev{background:rgba(192,0,0,.25);color:#ff8080}.btn-del-ev:hover{background:rgba(192,0,0,.4)}
+
+/* Event edit modal */
+#ev-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:1000;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
+#ev-modal-overlay.open{display:flex}
+.ev-modal{background:#1e2340;border-radius:14px;padding:28px;width:100%;max-width:660px;border-top:3px solid var(--red);margin:auto}
+.ev-modal h3{color:white;font-size:17px;margin-bottom:20px}
+
+/* Doc slots */
+.doc-slots{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.doc-slot{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:12px 14px}
+.doc-slot-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.doc-slot-num{width:22px;height:22px;background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0}
+.doc-slot-header input{flex:1;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:white;border-radius:6px;padding:7px 11px;font-size:13px;font-family:'Inter',sans-serif;outline:none}
+.btn-remove-slot{background:none;border:none;color:rgba(255,100,100,.6);cursor:pointer;font-size:18px;padding:0 3px;line-height:1;transition:color .2s;flex-shrink:0}
+.btn-remove-slot:hover{color:#ff6b6b}
+.doc-slot-body{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.doc-slot-body select{width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:white;border-radius:6px;padding:7px 10px;font-size:12px;font-family:'Inter',sans-serif;outline:none}
+.doc-slot-body select option{background:#2b3252}
+.drive-id-input{width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:white;border-radius:6px;padding:7px 11px;font-size:12px;font-family:monospace;outline:none}
+.drive-id-input:focus{border-color:var(--red)}
+.btn-add-slot{background:rgba(255,255,255,.05);border:1px dashed rgba(255,255,255,.2);color:rgba(255,255,255,.45);border-radius:8px;padding:10px;font-size:12px;font-family:'Inter',sans-serif;cursor:pointer;width:100%;transition:all .2s;text-align:center}
+.btn-add-slot:hover{border-color:var(--red);color:rgba(255,255,255,.75)}
+.drive-help{font-size:10px;color:rgba(255,255,255,.3);margin-top:4px;line-height:1.4}
+.ev-modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
+.ev-modal-actions button{padding:9px 22px;border-radius:7px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:none}
+
+/* PROGRESS */
+.progress-bar{background:var(--white);border-bottom:1px solid var(--border);padding:0 32px;display:none;overflow-x:auto}
+.progress-bar.show{display:flex}
+.step-tab{padding:13px 20px;font-size:13px;font-weight:500;color:var(--gray);border-bottom:3px solid transparent;white-space:nowrap;transition:all .2s}
+.step-tab.active{color:var(--navy);border-bottom-color:var(--red);font-weight:600}
+.step-tab.done{color:var(--red)}
+
+/* MAIN */
+main{max-width:780px;margin:0 auto;padding:36px 20px 80px}
+.form-page{display:none}
+.form-page.active{display:block}
+.section-title{font-size:25px;font-weight:700;margin-bottom:5px}
+.section-subtitle{color:var(--gray);font-size:14px;margin-bottom:28px}
+
+/* EVENT CARDS */
+.event-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-top:8px}
+.event-card{background:var(--white);border:2px solid var(--border);border-radius:14px;padding:26px 20px;cursor:pointer;transition:all .22s;text-align:center}
+.event-card:hover{border-color:var(--red);transform:translateY(-3px);box-shadow:0 8px 28px rgba(217,79,56,.15)}
+.event-card-icon{font-size:38px;margin-bottom:12px}
+.event-card-name{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:5px}
+.event-card-org{font-size:11px;color:var(--gray);line-height:1.4}
+.no-events{color:var(--gray);font-size:14px;padding:28px;text-align:center;background:var(--white);border-radius:12px;border:1px solid var(--border)}
+.loading-events{color:var(--gray);font-size:14px;padding:28px;text-align:center}
+
+/* FORM FIELDS */
+.field-group{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:22px 26px;margin-bottom:16px;box-shadow:var(--shadow)}
+.field-group-title{font-size:10px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--red);margin-bottom:14px}
+.row{display:grid;gap:13px;margin-bottom:13px}
+.row:last-child{margin-bottom:0}
+.cols-2{grid-template-columns:1fr 1fr}
+label{display:block;font-size:11px;font-weight:600;letter-spacing:.5px;color:var(--gray);margin-bottom:4px;text-transform:uppercase}
+input[type=text],input[type=date],input[type=email],input[type=tel]{width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:7px;font-family:'Inter',sans-serif;font-size:14px;color:var(--navy);background:var(--light);outline:none;transition:border-color .2s,box-shadow .2s}
+input:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(217,79,56,.1)}
+input.error{border-color:var(--red);background:#fff5f4}
+#minor-banner{display:none;background:#fff8e6;border:1.5px solid #f0c060;border-radius:10px;padding:13px 17px;font-size:13px;color:#7a5c10;margin-bottom:16px;line-height:1.5}
+.required::after{content:' *';color:var(--red)}
+
+/* SIGNATURE */
+.sig-tabs{display:flex;gap:7px;margin-bottom:10px}
+.sig-tab-btn{padding:7px 15px;border-radius:6px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--white);color:var(--gray);transition:all .2s}
+.sig-tab-btn.active{background:var(--navy);color:white;border-color:var(--navy)}
+.sig-container{position:relative;background:var(--light);border:1.5px solid var(--border);border-radius:8px;overflow:hidden}
+.sig-container canvas{display:block;cursor:crosshair;touch-action:none}
+.sig-label{position:absolute;bottom:10px;left:14px;font-size:11px;color:var(--border);pointer-events:none;font-style:italic}
+.sig-clear{position:absolute;top:8px;right:10px;background:none;border:1px solid var(--border);border-radius:5px;padding:3px 9px;font-size:11px;color:var(--gray);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s}
+.sig-clear:hover{border-color:var(--red);color:var(--red)}
+.sig-upload-box{border:2px dashed var(--border);border-radius:8px;padding:28px 20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--light);font-size:13px;color:var(--gray);min-height:130px;display:flex;align-items:center;justify-content:center}
+.sig-upload-box:hover{border-color:var(--red);color:var(--navy)}
+.sig-upload-box img{max-height:90px;max-width:100%;border-radius:4px}
+
+/* BUTTONS */
+.btn-row{display:flex;justify-content:space-between;align-items:center;margin-top:26px}
+.btn{padding:11px 26px;border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all .2s}
+.btn-secondary{background:var(--white);border:1.5px solid var(--border);color:var(--gray)}
+.btn-secondary:hover{border-color:var(--navy);color:var(--navy)}
+.btn-primary{background:var(--navy);color:white}
+.btn-primary:hover{background:#374070;transform:translateY(-1px)}
+.btn-red{background:var(--red);color:white;font-size:15px;padding:12px 34px}
+.btn-red:hover{background:#c4432d;transform:translateY(-1px);box-shadow:0 6px 20px rgba(217,79,56,.3)}
+
+/* REVIEW */
+.review-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.review-item .rl{color:var(--gray);font-size:10px;text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+.review-item .rv{font-weight:500;font-size:14px;margin-top:2px}
+.doc-list{display:flex;flex-direction:column;gap:8px}
+.doc-item{display:flex;align-items:center;gap:11px;padding:11px 15px;background:var(--white);border:1px solid var(--border);border-radius:8px}
+.doc-icon{width:30px;height:30px;background:var(--cream);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.doc-name{font-weight:500;font-size:13px}
+.doc-sub{font-size:11px;color:var(--gray);margin-top:1px}
+
+/* PROCESSING */
+#page-processing{text-align:center;padding:50px 20px}
+.proc-steps{max-width:320px;margin:22px auto 0;text-align:left}
+.proc-step{display:flex;align-items:center;gap:10px;padding:7px 0;font-size:13px;color:var(--gray)}
+.proc-step.done{color:#2d6a4f}
+.proc-step.active{color:var(--navy);font-weight:600}
+.proc-step.err{color:var(--red)}
+.step-dot{width:20px;height:20px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px}
+.step-dot.pending{background:var(--border)}
+.step-dot.active{background:var(--navy);color:white;animation:pulse 1s infinite}
+.step-dot.done{background:#2d6a4f;color:white}
+.step-dot.err{background:var(--red);color:white}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+
+/* SUCCESS */
+#page-success{text-align:center;padding:36px 0}
+.success-icon{width:72px;height:72px;background:#e8f5e9;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:34px;margin:0 auto 20px}
+.download-links{display:flex;flex-direction:column;gap:9px;margin:22px 0;text-align:left}
+.dl-btn{display:flex;align-items:center;gap:13px;padding:13px 18px;background:var(--navy);color:white;border-radius:10px;cursor:pointer;text-decoration:none;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;transition:all .2s;width:100%}
+.dl-btn:hover{background:#374070;transform:translateX(3px)}
+.dl-btn .dl-icon{font-size:20px;flex-shrink:0}
+.dl-btn .dl-name{font-weight:600;font-size:13px}
+.dl-btn .dl-sub{font-size:11px;opacity:.55;margin-top:1px}
+
+@media(max-width:600px){
+  header{padding:0 14px}main{padding:20px 12px 60px}
+  .progress-bar{padding:0 6px}.a-tab-content{padding:16px 14px}
+  .admin-tabs{padding:0 14px}.row.cols-2{grid-template-columns:1fr}
+  .review-grid{grid-template-columns:1fr}.field-group{padding:16px}
+  .doc-slot-body{grid-template-columns:1fr}.ev-modal{padding:18px}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN ADMIN OVERLAY -->
+<div id="admin-overlay">
+  <div class="admin-modal-small">
+    <h3>⚙ Panou Admin</h3>
+    <p>Introdu parola pentru a accesa setările.</p>
+    <input type="password" id="admin-pass-input" placeholder="Parolă" onkeydown="if(event.key==='Enter')checkAdminPass()">
+    <div class="err-msg" id="admin-pass-err">Parolă incorectă. Încearcă din nou.</div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeAdminOverlay()">Anulează</button>
+      <button class="btn-confirm" onclick="checkAdminPass()">Intră</button>
+    </div>
+  </div>
+</div>
+
+<!-- EVENT EDIT MODAL -->
+<div id="ev-modal-overlay">
+  <div class="ev-modal">
+    <h3 id="ev-modal-title">Eveniment nou</h3>
+    <input type="hidden" id="ev-edit-id">
+
+    <div class="a-section-lbl">Informații eveniment</div>
+    <div class="a-row c2">
+      <div class="af a-full"><label>Numele evenimentului *</label><input type="text" id="ev-name" placeholder="ex: RBL Voluntariat 2026"></div>
+    </div>
+    <div class="a-row c2">
+      <div class="af"><label>Emoji / Iconiță</label><input type="text" id="ev-icon" placeholder="ex: 🤝" maxlength="4"></div>
+      <div class="af"><label>Nr. start contracte</label><input type="number" id="ev-start-nr" placeholder="ex: 1" min="1"></div>
+    </div>
+
+    <div class="a-section-lbl">Organizație</div>
+    <div class="a-row">
+      <div class="af"><label>Numele organizației *</label><input type="text" id="ev-org-name" placeholder="ex: Fundația Romanian Business Leaders"></div>
+    </div>
+    <div class="a-row c3">
+      <div class="af"><label>CIF</label><input type="text" id="ev-org-cif" placeholder="RO 29004248"></div>
+      <div class="af"><label>Telefon</label><input type="text" id="ev-org-tel" placeholder="021 794 14 98"></div>
+      <div class="af"><label>Email</label><input type="text" id="ev-org-email" placeholder="contact@rbls.ro"></div>
+    </div>
+    <div class="a-row">
+      <div class="af"><label>Sediu social</label><input type="text" id="ev-org-sediu" placeholder="ex: București, Calea Dorobanți nr. 42, Sector 1"></div>
+    </div>
+
+    <div class="a-section-lbl">Reprezentanți</div>
+    <div class="a-row c2">
+      <div class="af"><label>Nume Director *</label><input type="text" id="ev-director" placeholder="ex: Alexandru Dincovici"></div>
+      <div class="af"><label>Titlu Director</label><input type="text" id="ev-director-titlu" placeholder="ex: Director General"></div>
+    </div>
+    <div class="a-row c2">
+      <div class="af"><label>Coordonator Voluntari</label><input type="text" id="ev-coord" placeholder="ex: Teodora Gaftoi"></div>
+      <div class="af"><label>Email Coordonator</label><input type="text" id="ev-coord-email" placeholder="teodora.gaftoi@rbls.ro"></div>
+    </div>
+    <div class="a-row c2">
+      <div class="af"><label>Telefon Coordonator</label><input type="text" id="ev-coord-tel" placeholder="0739 637 426"></div>
+      <div class="af"><label>Președinte (GDPR)</label><input type="text" id="ev-presedinte" placeholder="ex: Sergiu Neguț"></div>
+    </div>
+
+    <div class="a-section-lbl">
+      Documente generate (fișiere .docx din Google Drive)
+      <span style="font-weight:400;color:rgba(255,255,255,.4);letter-spacing:0;text-transform:none;font-size:10px;margin-left:6px">— ID-ul e în URL-ul fișierului Drive, între /d/ și /view</span>
+    </div>
+    <div class="doc-slots" id="ev-doc-slots"></div>
+    <button class="btn-add-slot" onclick="addDocSlot()">+ Adaugă document</button>
+
+    <div class="ev-modal-actions">
+      <button class="btn-cancel" style="background:rgba(255,255,255,.08);color:rgba(255,255,255,.6);border-radius:7px" onclick="closeEvModal()">Anulează</button>
+      <button class="btn-confirm" onclick="saveEvent()">Salvează evenimentul</button>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="header-left">
+    <svg class="logo-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <rect x="12" y="12" width="36" height="36" rx="8" fill="#d94f38"/>
+      <rect x="52" y="52" width="36" height="36" rx="8" fill="#d94f38"/>
+      <rect x="52" y="12" width="36" height="36" rx="8" fill="#e8dfd4"/>
+      <rect x="12" y="52" width="36" height="36" rx="8" fill="#e8dfd4"/>
+      <path d="M50 62 C50 62 35 52 35 43 C35 37.5 39.5 33 45 33 C47.8 33 50 35.5 50 35.5 C50 35.5 52.2 33 55 33 C60.5 33 65 37.5 65 43 C65 52 50 62 50 62Z" fill="#2b3252"/>
+    </svg>
+    <div class="header-titles">
+      <h1>Fun4ever.ro</h1>
+      <p id="header-sub">Formular de înregistrare voluntar</p>
+    </div>
+  </div>
+  <div class="header-right">
+    <span id="event-badge" onclick="backToEvents()">← Schimbă evenimentul</span>
+    <button class="admin-btn" onclick="toggleAdmin()">⚙ Admin</button>
+  </div>
+</header>
+
+<!-- ADMIN PANEL -->
+<div id="admin-panel">
+  <div class="admin-tabs">
+    <div class="a-tab active" onclick="switchAdminTab(0)">Setări generale</div>
+    <div class="a-tab" onclick="switchAdminTab(1)">Evenimente</div>
+  </div>
+
+  <!-- TAB 0: setari generale -->
+  <div class="a-tab-content active" id="atab-0">
+    <div style="display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap">
+      <div class="af">
+        <label>URL Google Apps Script *</label>
+        <input type="text" id="admin-script-url" placeholder="https://script.google.com/macros/s/.../exec" style="width:420px;max-width:100%">
+      </div>
+      <button class="a-save-btn" onclick="saveGeneralSettings()">Salvează</button>
+    </div>
+    <div class="a-info" id="admin-general-info">Fără URL configurat — documentele se generează local fără salvare în Drive/Sheets.</div>
+  </div>
+
+  <!-- TAB 1: evenimente -->
+  <div class="a-tab-content" id="atab-1">
+    <div class="ev-list" id="admin-ev-list"></div>
+    <button class="a-save-btn" onclick="openNewEvModal()">+ Adaugă eveniment</button>
+  </div>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-bar" id="progress-bar">
+  <div class="step-tab active" id="tab-1">1. Date personale</div>
+  <div class="step-tab" id="tab-2">2. Semnătură</div>
+  <div class="step-tab" id="tab-3">3. Confirmare</div>
+</div>
+
+<main>
+
+<!-- PAGE: selectie eveniment -->
+<div class="form-page active" id="page-events">
+  <div class="section-title">Selectează evenimentul</div>
+  <div class="section-subtitle">Alege evenimentul pentru care dorești să te înregistrezi ca voluntar.</div>
+  <div id="event-cards-wrap">
+    <div class="loading-events">⏳ Se încarcă evenimentele...</div>
+  </div>
+</div>
+
+<!-- PAGE 1 -->
+<div class="form-page" id="page-1">
+  <div class="section-title">Date personale</div>
+  <div class="section-subtitle">Completează cu atenție — datele vor fi introduse automat în contracte.</div>
+  <div id="minor-banner">⚠️ <b>Voluntar minor</b> — Se vor genera documentele speciale pentru minori. Completează și datele unui părinte/tutore.</div>
+
+  <div class="field-group">
+    <div class="field-group-title">Identitate</div>
+    <div class="row cols-2">
+      <div><label class="required">Nume</label><input type="text" id="f-nume" placeholder="ex: Popescu"></div>
+      <div><label class="required">Prenume</label><input type="text" id="f-prenume" placeholder="ex: Maria"></div>
+    </div>
+    <div class="row cols-2">
+      <div><label class="required">Data nașterii</label><input type="date" id="f-dob"></div>
+      <div><label class="required">CNP</label><input type="text" id="f-cnp" placeholder="13 cifre" maxlength="13"></div>
+    </div>
+    <div class="row cols-2">
+      <div><label class="required">Serie CI</label><input type="text" id="f-ci-serie" placeholder="ex: CJ" maxlength="2" style="text-transform:uppercase"></div>
+      <div><label class="required">Număr CI</label><input type="text" id="f-ci-nr" placeholder="ex: 123456" maxlength="6"></div>
+    </div>
+  </div>
+
+  <div class="field-group">
+    <div class="field-group-title">Domiciliu</div>
+    <div class="row cols-2">
+      <div><label class="required">Județ</label><input type="text" id="f-judet" placeholder="ex: Cluj"></div>
+      <div><label class="required">Oraș / Localitate</label><input type="text" id="f-oras" placeholder="ex: Cluj-Napoca"></div>
+    </div>
+    <div class="row cols-2">
+      <div><label class="required">Stradă</label><input type="text" id="f-strada" placeholder="ex: Str. Libertății"></div>
+      <div><label class="required">Număr</label><input type="text" id="f-nr" placeholder="ex: 12"></div>
+    </div>
+  </div>
+
+  <div class="field-group">
+    <div class="field-group-title">Contact</div>
+    <div class="row cols-2">
+      <div><label class="required">Telefon</label><input type="tel" id="f-tel" placeholder="0722 123 456"></div>
+      <div><label class="required">Email</label><input type="email" id="f-email" placeholder="maria@email.com"></div>
+    </div>
+  </div>
+
+  <div class="field-group" id="parinte-section" style="display:none">
+    <div class="field-group-title">📋 Date părinte / tutore legal</div>
+    <div class="row cols-2">
+      <div><label class="required">Nume și prenume părinte</label><input type="text" id="f-p-nume" placeholder="Nume complet"></div>
+      <div><label class="required">CNP părinte</label><input type="text" id="f-p-cnp" placeholder="13 cifre" maxlength="13"></div>
+    </div>
+    <div class="row cols-2">
+      <div><label class="required">Domiciliu (oraș, județ)</label><input type="text" id="f-p-dom" placeholder="ex: Cluj-Napoca, Cluj"></div>
+      <div><label class="required">Telefon părinte</label><input type="tel" id="f-p-tel" placeholder="0722 000 111"></div>
+    </div>
+    <div class="row">
+      <div><label class="required">Email părinte</label><input type="email" id="f-p-email" placeholder="parinte@email.com"></div>
+    </div>
+  </div>
+
+  <div class="btn-row"><span></span><button class="btn btn-primary" onclick="goToPage2()">Continuă →</button></div>
+</div>
+
+<!-- PAGE 2 -->
+<div class="form-page" id="page-2">
+  <div class="section-title">Semnătură</div>
+  <div class="section-subtitle">Semnează în câmpul de mai jos sau încarcă o imagine cu semnătura ta.</div>
+
+  <div class="field-group">
+    <div class="field-group-title">Semnătură voluntar</div>
+    <div class="sig-tabs">
+      <button class="sig-tab-btn active" id="sig-draw-tab" onclick="switchSigTab('draw','sig')">✏ Desenează</button>
+      <button class="sig-tab-btn" id="sig-upload-tab" onclick="switchSigTab('upload','sig')">↑ Încarcă imagine</button>
+    </div>
+    <div id="sig-draw-area">
+      <div class="sig-container" style="height:175px">
+        <canvas id="sig-canvas" height="173" style="width:100%"></canvas>
+        <div class="sig-label">Semnează aici</div>
+        <button class="sig-clear" onclick="clearSig('sig-canvas')">Șterge</button>
+      </div>
+    </div>
+    <div id="sig-upload-area" style="display:none">
+      <div class="sig-upload-box" onclick="document.getElementById('sig-file').click()">
+        <div id="sig-upload-prev">📎 Click pentru a încărca imaginea semnăturii (PNG, JPG)</div>
+        <input type="file" id="sig-file" accept="image/*" style="display:none" onchange="handleSigUpload(this,'sig-canvas','sig-upload-prev')">
+      </div>
+    </div>
+  </div>
+
+  <div class="field-group" id="sig-parinte-block" style="display:none">
+    <div class="field-group-title">Semnătură părinte / tutore</div>
+    <p style="font-size:13px;color:var(--gray);margin-bottom:12px">Necesară pentru voluntarii minori.</p>
+    <div class="sig-tabs">
+      <button class="sig-tab-btn active" id="sigp-draw-tab" onclick="switchSigTab('draw','sigp')">✏ Desenează</button>
+      <button class="sig-tab-btn" id="sigp-upload-tab" onclick="switchSigTab('upload','sigp')">↑ Încarcă imagine</button>
+    </div>
+    <div id="sigp-draw-area">
+      <div class="sig-container" style="height:175px">
+        <canvas id="sig-parinte-canvas" height="173" style="width:100%"></canvas>
+        <div class="sig-label">Semnează aici</div>
+        <button class="sig-clear" onclick="clearSig('sig-parinte-canvas')">Șterge</button>
+      </div>
+    </div>
+    <div id="sigp-upload-area" style="display:none">
+      <div class="sig-upload-box" onclick="document.getElementById('sigp-file').click()">
+        <div id="sigp-upload-prev">📎 Click pentru a încărca imaginea semnăturii (PNG, JPG)</div>
+        <input type="file" id="sigp-file" accept="image/*" style="display:none" onchange="handleSigUpload(this,'sig-parinte-canvas','sigp-upload-prev')">
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-secondary" onclick="goToPage(1)">← Înapoi</button>
+    <button class="btn btn-primary" onclick="goToPage3()">Continuă →</button>
+  </div>
+</div>
+
+<!-- PAGE 3 -->
+<div class="form-page" id="page-3">
+  <div class="section-title">Confirmare și generare</div>
+  <div class="section-subtitle">Verifică datele și apasă butonul pentru a genera și salva documentele.</div>
+  <div class="field-group">
+    <div class="field-group-title">Rezumat date</div>
+    <div class="review-grid" id="review-data"></div>
+  </div>
+  <div class="field-group">
+    <div class="field-group-title">Documente ce vor fi generate</div>
+    <div class="doc-list" id="doc-list"></div>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-secondary" onclick="goToPage(2)">← Înapoi</button>
+    <button class="btn btn-red" onclick="generateDocs()">⬇ Generează și salvează documentele</button>
+  </div>
+</div>
+
+<!-- PAGE PROCESSING -->
+<div class="form-page" id="page-processing">
+  <div style="text-align:center;padding:50px 20px">
+    <div style="font-size:46px;margin-bottom:18px">⏳</div>
+    <div class="section-title" style="text-align:center">Se procesează documentele...</div>
+    <p style="color:var(--gray);margin-top:8px;font-size:14px">Documentele sunt completate și salvate. Te rugăm să aștepți.</p>
+    <div class="proc-steps" id="proc-steps"></div>
+  </div>
+</div>
+
+<!-- PAGE SUCCESS -->
+<div class="form-page" id="page-success">
+  <div class="success-icon">✅</div>
+  <div class="section-title" style="text-align:center">Documente salvate!</div>
+  <p style="color:var(--gray);text-align:center;margin-top:8px;font-size:14px">Documentele au fost completate și salvate în Google Drive. Descarcă-le mai jos.</p>
+  <div class="download-links" id="download-links"></div>
+  <button class="btn btn-secondary" onclick="resetForm()" style="display:block;margin:20px auto 0">← Înregistrare nouă</button>
+</div>
+
+</main>
+
+<script>
+// ════════════════════════════════════════════════════════════════
+//  CONFIG & STATE
+// ════════════════════════════════════════════════════════════════
+let SCRIPT_URL = localStorage.getItem('fun4ever_script_url') || '';
+let events = [];
+let currentEvent = null;
+let contractCounter = parseInt(localStorage.getItem('rbl_contract_nr') || '0');
+
+// ════════════════════════════════════════════════════════════════
+//  ADMIN — LOGIN
+// ════════════════════════════════════════════════════════════════
+function toggleAdmin() {
+  if (document.getElementById('admin-panel').classList.contains('open')) {
+    document.getElementById('admin-panel').classList.remove('open');
   } else {
-    drawArea.style.display='none'; uploadArea.style.display='block';
-    tabDraw.classList.remove('active'); tabUpload.classList.add('active');
+    document.getElementById('admin-overlay').classList.add('open');
+    document.getElementById('admin-pass-input').value = '';
+    document.getElementById('admin-pass-err').style.display = 'none';
+    setTimeout(() => document.getElementById('admin-pass-input').focus(), 100);
   }
 }
+function checkAdminPass() {
+  const val = document.getElementById('admin-pass-input').value;
+  if (val === 'Fun4ever!') {
+    document.getElementById('admin-overlay').classList.remove('open');
+    document.getElementById('admin-panel').classList.add('open');
+    document.getElementById('admin-script-url').value = SCRIPT_URL;
+    document.getElementById('admin-general-info').textContent = SCRIPT_URL
+      ? '✅ URL configurat: ' + SCRIPT_URL.slice(0, 60) + '...'
+      : 'Fără URL configurat — documentele se generează local.';
+    renderAdminEvList();
+  } else {
+    document.getElementById('admin-pass-err').style.display = 'block';
+    document.getElementById('admin-pass-input').value = '';
+    document.getElementById('admin-pass-input').focus();
+  }
+}
+function closeAdminOverlay() { document.getElementById('admin-overlay').classList.remove('open'); }
 
-function handleSigUpload(input, canvasId, previewId) {
+function switchAdminTab(idx) {
+  document.querySelectorAll('.a-tab').forEach((t,i) => t.classList.toggle('active', i===idx));
+  document.querySelectorAll('.a-tab-content').forEach((t,i) => t.classList.toggle('active', i===idx));
+  if (idx === 1) renderAdminEvList();
+}
+
+function saveGeneralSettings() {
+  const url = document.getElementById('admin-script-url').value.trim();
+  SCRIPT_URL = url;
+  localStorage.setItem('fun4ever_script_url', url);
+  document.getElementById('admin-general-info').textContent = url
+    ? '✅ URL salvat! Evenimentele se vor încărca din Apps Script.'
+    : 'URL șters — se folosesc evenimentele locale.';
+  // Reîncarcă evenimentele cu noul URL
+  loadEvents();
+}
+
+// ════════════════════════════════════════════════════════════════
+//  EVENTS — încărcare din Apps Script sau local
+// ════════════════════════════════════════════════════════════════
+async function loadEvents() {
+  document.getElementById('event-cards-wrap').innerHTML = '<div class="loading-events">⏳ Se încarcă evenimentele...</div>';
+
+  if (SCRIPT_URL) {
+    try {
+      const resp = await fetch(SCRIPT_URL + '?action=getEvents');
+      const result = await resp.json();
+      if (result.ok && result.data) {
+        events = result.data;
+        renderEventCards();
+        return;
+      }
+    } catch(e) {
+      console.warn('Nu s-au putut încărca evenimentele din Apps Script:', e.message);
+    }
+  }
+
+  // Fallback: evenimente salvate local (din admin fără URL)
+  const local = localStorage.getItem('fun4ever_events_local');
+  events = local ? JSON.parse(local) : [];
+  renderEventCards();
+}
+
+function renderEventCards() {
+  const wrap = document.getElementById('event-cards-wrap');
+  if (!events.length) {
+    wrap.innerHTML = '<div class="no-events">Niciun eveniment configurat. Accesează panoul Admin pentru a adăuga.</div>';
+    return;
+  }
+  wrap.innerHTML = '<div class="event-cards">' +
+    events.map(ev => `
+      <div class="event-card" onclick="selectEvent('${ev.id}')">
+        <div class="event-card-icon">${ev.icon || '📄'}</div>
+        <div class="event-card-name">${ev.name}</div>
+        <div class="event-card-org">${ev.org ? ev.org.name : ''}</div>
+      </div>
+    `).join('') + '</div>';
+}
+
+function selectEvent(id) {
+  currentEvent = events.find(e => e.id === id);
+  if (!currentEvent) return;
+  contractCounter = currentEvent.contractCounter || 0;
+  document.getElementById('header-sub').textContent = currentEvent.name;
+  document.getElementById('event-badge').style.display = 'inline-block';
+  document.getElementById('event-badge').textContent = '← ' + currentEvent.name;
+  document.getElementById('progress-bar').classList.add('show');
+  goToPage(1);
+  window.scrollTo(0,0);
+}
+
+function backToEvents() {
+  if (!confirm('Mergi înapoi? Datele completate se vor pierde.')) return;
+  currentEvent = null;
+  document.getElementById('header-sub').textContent = 'Formular de înregistrare voluntar';
+  document.getElementById('event-badge').style.display = 'none';
+  document.getElementById('progress-bar').classList.remove('show');
+  document.querySelectorAll('.form-page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-events').classList.add('active');
+  resetForm();
+  window.scrollTo(0,0);
+}
+
+// ════════════════════════════════════════════════════════════════
+//  ADMIN — EVENT MANAGEMENT
+// ════════════════════════════════════════════════════════════════
+function renderAdminEvList() {
+  const list = document.getElementById('admin-ev-list');
+  if (!events.length) {
+    list.innerHTML = '<div style="color:rgba(255,255,255,.35);font-size:13px;margin-bottom:12px">Niciun eveniment adăugat.</div>';
+    return;
+  }
+  list.innerHTML = events.map(ev => `
+    <div class="ev-item">
+      <div class="ev-item-info">
+        <div class="ev-item-name">${ev.icon || '📄'} ${ev.name}</div>
+        <div class="ev-item-sub">${ev.org ? ev.org.name : ''} · ${(ev.docs||[]).length} documente · ${ev.contractCounter || 0} contracte generate</div>
+      </div>
+      <div class="ev-item-actions">
+        <button class="btn-edit-ev" onclick="openEditEvModal('${ev.id}')">✏ Editează</button>
+        <button class="btn-del-ev" onclick="deleteEvent('${ev.id}')">✕ Șterge</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openNewEvModal() {
+  document.getElementById('ev-modal-title').textContent = 'Eveniment nou';
+  document.getElementById('ev-edit-id').value = '';
+  clearEvModalFields();
+  document.getElementById('ev-doc-slots').innerHTML = '';
+  document.getElementById('ev-modal-overlay').classList.add('open');
+}
+
+function openEditEvModal(id) {
+  const ev = events.find(e => e.id === id);
+  if (!ev) return;
+  document.getElementById('ev-modal-title').textContent = 'Editează eveniment';
+  document.getElementById('ev-edit-id').value = id;
+  document.getElementById('ev-name').value = ev.name || '';
+  document.getElementById('ev-icon').value = ev.icon || '';
+  document.getElementById('ev-start-nr').value = (ev.contractCounter || 0) + 1;
+  document.getElementById('ev-org-name').value = ev.org ? ev.org.name : '';
+  document.getElementById('ev-org-cif').value = ev.org ? ev.org.cif : '';
+  document.getElementById('ev-org-tel').value = ev.org ? ev.org.tel : '';
+  document.getElementById('ev-org-email').value = ev.org ? ev.org.email : '';
+  document.getElementById('ev-org-sediu').value = ev.org ? ev.org.sediu : '';
+  document.getElementById('ev-director').value = ev.director ? ev.director.nume : '';
+  document.getElementById('ev-director-titlu').value = ev.director ? ev.director.titlu : '';
+  document.getElementById('ev-coord').value = ev.coord ? ev.coord.nume : '';
+  document.getElementById('ev-coord-email').value = ev.coord ? ev.coord.email : '';
+  document.getElementById('ev-coord-tel').value = ev.coord ? ev.coord.tel : '';
+  document.getElementById('ev-presedinte').value = ev.presedinte || '';
+  // Populeaza doc slots
+  document.getElementById('ev-doc-slots').innerHTML = '';
+  (ev.docs || []).forEach(doc => addDocSlot(doc));
+  document.getElementById('ev-modal-overlay').classList.add('open');
+}
+
+function clearEvModalFields() {
+  ['ev-name','ev-icon','ev-org-name','ev-org-cif','ev-org-tel','ev-org-email',
+   'ev-org-sediu','ev-director','ev-director-titlu','ev-coord','ev-coord-email',
+   'ev-coord-tel','ev-presedinte'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('ev-start-nr').value = 1;
+}
+
+function closeEvModal() { document.getElementById('ev-modal-overlay').classList.remove('open'); }
+
+function addDocSlot(existing) {
+  const slots = document.getElementById('ev-doc-slots');
+  const idx = slots.children.length + 1;
+  const div = document.createElement('div');
+  div.className = 'doc-slot';
+  const name = existing ? (existing.name || '') : '';
+  const driveId = existing ? (existing.driveFileId || '') : '';
+  const forMinor = existing ? (existing.forMinor || 'both') : 'both';
+  div.innerHTML = `
+    <div class="doc-slot-header">
+      <div class="doc-slot-num">${idx}</div>
+      <input type="text" placeholder="Nume document (ex: Contract voluntariat major)" value="${name}"
+        style="flex:1;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:white;border-radius:6px;padding:7px 11px;font-size:13px;font-family:'Inter',sans-serif;outline:none">
+      <button class="btn-remove-slot" onclick="this.closest('.doc-slot').remove();renumberSlots()">✕</button>
+    </div>
+    <div class="doc-slot-body">
+      <div>
+        <label style="display:block;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:4px">Afișat pentru</label>
+        <select>
+          <option value="both" ${forMinor==='both'?'selected':''}>Toți voluntarii</option>
+          <option value="major" ${forMinor==='major'?'selected':''}>Doar majori</option>
+          <option value="minor" ${forMinor==='minor'?'selected':''}>Doar minori</option>
+        </select>
+      </div>
+      <div>
+        <label style="display:block;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:4px">ID fișier Google Drive</label>
+        <input class="drive-id-input" type="text" placeholder="ex: 1ABC...XYZ" value="${driveId}">
+        <div class="drive-help">Deschide fișierul în Drive → URL-ul conține /d/ACESTA_E_ID/view</div>
+      </div>
+    </div>
+  `;
+  slots.appendChild(div);
+}
+
+function renumberSlots() {
+  document.querySelectorAll('.doc-slot').forEach((s,i) => {
+    const num = s.querySelector('.doc-slot-num');
+    if (num) num.textContent = i + 1;
+  });
+}
+
+function getDocSlots() {
+  return Array.from(document.querySelectorAll('.doc-slot')).map(slot => ({
+    name: slot.querySelector('input[type=text]').value.trim(),
+    forMinor: slot.querySelector('select').value,
+    driveFileId: slot.querySelector('.drive-id-input').value.trim(),
+  })).filter(d => d.name || d.driveFileId);
+}
+
+async function saveEvent() {
+  const name = document.getElementById('ev-name').value.trim();
+  const orgName = document.getElementById('ev-org-name').value.trim();
+  const director = document.getElementById('ev-director').value.trim();
+  if (!name || !orgName || !director) {
+    alert('Completează cel puțin: Nume eveniment, Organizație și Director.');
+    return;
+  }
+  const editId = document.getElementById('ev-edit-id').value;
+  const startNr = parseInt(document.getElementById('ev-start-nr').value) || 1;
+  const ev = {
+    id: editId || ('ev_' + Date.now()),
+    name,
+    icon: document.getElementById('ev-icon').value.trim() || '📄',
+    org: {
+      name: orgName,
+      cif: document.getElementById('ev-org-cif').value.trim(),
+      tel: document.getElementById('ev-org-tel').value.trim(),
+      email: document.getElementById('ev-org-email').value.trim(),
+      sediu: document.getElementById('ev-org-sediu').value.trim(),
+      gdprEmail: document.getElementById('ev-org-email').value.trim(),
+    },
+    director: {
+      nume: director,
+      titlu: document.getElementById('ev-director-titlu').value.trim() || 'Director General',
+    },
+    presedinte: document.getElementById('ev-presedinte').value.trim() || director,
+    coord: {
+      nume: document.getElementById('ev-coord').value.trim(),
+      email: document.getElementById('ev-coord-email').value.trim(),
+      tel: document.getElementById('ev-coord-tel').value.trim(),
+    },
+    docs: getDocSlots(),
+    contractCounter: editId ? (events.find(e=>e.id===editId)||{}).contractCounter || startNr-1 : startNr-1,
+  };
+
+  if (SCRIPT_URL) {
+    try {
+      const resp = await fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({ action: 'saveEvent', password: 'Fun4ever!', event: ev }),
+      });
+      const result = await resp.json();
+      if (!result.ok) throw new Error(result.error);
+    } catch(ex) {
+      alert('Eroare la salvarea în Apps Script: ' + ex.message + '\nEvenimentul se salvează local.');
+    }
+  }
+
+  // Salveaza local indiferent
+  const idx = events.findIndex(e => e.id === ev.id);
+  if (idx >= 0) events[idx] = ev;
+  else events.push(ev);
+  localStorage.setItem('fun4ever_events_local', JSON.stringify(events));
+
+  closeEvModal();
+  renderAdminEvList();
+  renderEventCards();
+}
+
+async function deleteEvent(id) {
+  if (!confirm('Ștergi acest eveniment?')) return;
+
+  if (SCRIPT_URL) {
+    try {
+      await fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({ action: 'deleteEvent', password: 'Fun4ever!', eventId: id }),
+      });
+    } catch(e) {}
+  }
+
+  events = events.filter(e => e.id !== id);
+  localStorage.setItem('fun4ever_events_local', JSON.stringify(events));
+  renderAdminEvList();
+  renderEventCards();
+}
+
+// ════════════════════════════════════════════════════════════════
+//  CANVAS / SIGNATURE
+// ════════════════════════════════════════════════════════════════
+function setupCanvas(id) {
+  const c = document.getElementById(id);
+  if (!c) return;
+  const resize = () => {
+    const tmp = c.toDataURL();
+    c.width = c.parentElement.getBoundingClientRect().width || 400;
+    if (tmp !== 'data:,') { const img = new Image(); img.onload = () => c.getContext('2d').drawImage(img,0,0); img.src = tmp; }
+  };
+  resize();
+  window.addEventListener('resize', resize);
+  const ctx = c.getContext('2d');
+  let drawing = false;
+  const pos = e => { const r = c.getBoundingClientRect(), s = e.touches?e.touches[0]:e; return {x:s.clientX-r.left, y:s.clientY-r.top}; };
+  c.addEventListener('mousedown', e => { drawing=true; const p=pos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); });
+  c.addEventListener('mousemove', e => { if(!drawing) return; const p=pos(e); ctx.lineTo(p.x,p.y); ctx.strokeStyle='#2b3252'; ctx.lineWidth=2.2; ctx.lineCap='round'; ctx.lineJoin='round'; ctx.stroke(); });
+  ['mouseup','mouseleave'].forEach(ev => c.addEventListener(ev, () => drawing=false));
+  c.addEventListener('touchstart', e => { e.preventDefault(); drawing=true; const p=pos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); }, {passive:false});
+  c.addEventListener('touchmove', e => { e.preventDefault(); if(!drawing) return; const p=pos(e); ctx.lineTo(p.x,p.y); ctx.strokeStyle='#2b3252'; ctx.lineWidth=2.5; ctx.lineCap='round'; ctx.lineJoin='round'; ctx.stroke(); }, {passive:false});
+  c.addEventListener('touchend', () => drawing=false);
+}
+function clearSig(id) { const c=document.getElementById(id); if(c) c.getContext('2d').clearRect(0,0,c.width,c.height); }
+function isSigEmpty(id) { const c=document.getElementById(id); return !c||!c.getContext('2d').getImageData(0,0,c.width,c.height).data.some(v=>v!==0); }
+
+function switchSigTab(mode, prefix) {
+  const isP = prefix==='sigp';
+  document.getElementById(prefix+'-draw-area').style.display = mode==='draw'?'block':'none';
+  document.getElementById(prefix+'-upload-area').style.display = mode==='upload'?'block':'none';
+  document.getElementById(prefix+'-draw-tab').classList.toggle('active', mode==='draw');
+  document.getElementById(prefix+'-upload-tab').classList.toggle('active', mode==='upload');
+}
+
+function handleSigUpload(input, canvasId, prevId) {
   const file = input.files[0];
-  if(!file) return;
+  if (!file) return;
   const reader = new FileReader();
-  reader.onload = function(e) {
+  reader.onload = e => {
     const img = new Image();
-    img.onload = function() {
+    img.onload = () => {
       const canvas = document.getElementById(canvasId);
       const ctx = canvas.getContext('2d');
       ctx.clearRect(0,0,canvas.width,canvas.height);
-      // Draw white background then image scaled to fit
       const scale = Math.min(canvas.width/img.width, canvas.height/img.height, 1);
-      const w = img.width*scale, h = img.height*scale;
-      const x = (canvas.width-w)/2, y = (canvas.height-h)/2;
+      const w=img.width*scale, h=img.height*scale;
       ctx.fillStyle='white'; ctx.fillRect(0,0,canvas.width,canvas.height);
-      ctx.drawImage(img,x,y,w,h);
+      ctx.drawImage(img,(canvas.width-w)/2,(canvas.height-h)/2,w,h);
     };
     img.src = e.target.result;
-    // Show preview
-    const preview = document.getElementById(previewId);
-    preview.innerHTML = `<img src="${e.target.result}" alt="Semnătură încărcată">`;
+    document.getElementById(prevId).innerHTML = `<img src="${e.target.result}" alt="Semnătură">`;
   };
   reader.readAsDataURL(file);
 }
 
-// ── GENERATE ─────────────────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════
+//  MINOR / VALIDATION / NAVIGATION
+// ════════════════════════════════════════════════════════════════
+function isMinor(dob) {
+  if (!dob) return false;
+  const b=new Date(dob), n=new Date(); let age=n.getFullYear()-b.getFullYear();
+  if(n.getMonth()-b.getMonth()<0||(n.getMonth()===b.getMonth()&&n.getDate()<b.getDate())) age--;
+  return age<18;
+}
+document.getElementById('f-dob').addEventListener('change', function() {
+  const minor = isMinor(this.value);
+  document.getElementById('minor-banner').style.display = minor?'block':'none';
+  document.getElementById('parinte-section').style.display = minor?'block':'none';
+  document.getElementById('sig-parinte-block').style.display = minor?'block':'none';
+});
+
+function v(id) { const el=document.getElementById(id); if(!el) return true; const ok=!!el.value.trim(); el.classList.toggle('error',!ok); return ok; }
+function g(id) { const el=document.getElementById(id); return el?el.value.trim():''; }
+
+function goToPage2() {
+  const required = ['f-nume','f-prenume','f-dob','f-cnp','f-ci-serie','f-ci-nr','f-judet','f-oras','f-strada','f-nr','f-tel','f-email'];
+  let ok = required.map(v).every(Boolean);
+  const minor = isMinor(g('f-dob'));
+  if (minor) ok = ['f-p-nume','f-p-cnp','f-p-dom','f-p-tel','f-p-email'].map(v).every(Boolean) && ok;
+  if (!ok) { alert('Te rugăm să completezi toate câmpurile obligatorii (marcate cu *).'); return; }
+  goToPage(2);
+  setTimeout(()=>{setupCanvas('sig-canvas');setupCanvas('sig-parinte-canvas');},100);
+}
+function goToPage3() {
+  if (isSigEmpty('sig-canvas')) { alert('Te rugăm să semnezi în câmpul de semnătură voluntar.'); return; }
+  if (isMinor(g('f-dob')) && isSigEmpty('sig-parinte-canvas')) { alert('Te rugăm să adaugi și semnătura părintelui/tutorelui.'); return; }
+  buildReview();
+  goToPage(3);
+}
+function goToPage(n) {
+  document.querySelectorAll('.form-page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.step-tab').forEach(t=>t.classList.remove('active','done'));
+  const special = ['success','processing'];
+  if (special.includes(String(n))) {
+    document.getElementById('page-'+n).classList.add('active');
+    ['tab-1','tab-2','tab-3'].forEach(t=>document.getElementById(t).classList.add('done'));
+  } else {
+    document.getElementById('page-'+n).classList.add('active');
+    document.getElementById('tab-'+n).classList.add('active');
+    for(let i=1;i<n;i++) document.getElementById('tab-'+i).classList.add('done');
+  }
+  window.scrollTo(0,0);
+}
+
+// ════════════════════════════════════════════════════════════════
+//  REVIEW
+// ════════════════════════════════════════════════════════════════
+function buildReview() {
+  const minor = isMinor(g('f-dob'));
+  const items = [
+    ['Nume complet', g('f-prenume')+' '+g('f-nume')],
+    ['Data nașterii', g('f-dob')],
+    ['CNP', g('f-cnp')],
+    ['CI', g('f-ci-serie').toUpperCase()+' '+g('f-ci-nr')],
+    ['Domiciliu', g('f-oras')+', '+g('f-judet')],
+    ['Email', g('f-email')],
+  ];
+  document.getElementById('review-data').innerHTML = items.map(([l,val])=>
+    `<div class="review-item"><div class="rl">${l}</div><div class="rv">${val||'—'}</div></div>`
+  ).join('');
+
+  const docs = (currentEvent&&currentEvent.docs)||[];
+  const visible = docs.filter(d=>{
+    if(d.forMinor==='major'&&minor) return false;
+    if(d.forMinor==='minor'&&!minor) return false;
+    return d.driveFileId||true;
+  });
+  document.getElementById('doc-list').innerHTML = visible.length
+    ? visible.map(d=>`<div class="doc-item"><div class="doc-icon">📄</div><div><div class="doc-name">${d.name||'Document'}</div><div class="doc-sub">${d.driveFileId?'Se va completa automat și descărca din Drive':'Fără ID Drive — va fi omis'}</div></div></div>`).join('')
+    : '<div class="doc-item"><div class="doc-icon">⚠️</div><div><div class="doc-name">Niciun document configurat</div><div class="doc-sub">Adaugă documente în Admin pentru acest eveniment</div></div></div>';
+}
+
+// ════════════════════════════════════════════════════════════════
+//  HELPERS
+// ════════════════════════════════════════════════════════════════
+function today() {
+  const d=new Date(); const zi=d.getDay();
+  if(zi===6) d.setDate(d.getDate()+2);
+  if(zi===0) d.setDate(d.getDate()+1);
+  return `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.${d.getFullYear()}`;
+}
+function nextContractNr() {
+  if (currentEvent) {
+    currentEvent.contractCounter = (currentEvent.contractCounter||0)+1;
+    return String(currentEvent.contractCounter).padStart(3,'0');
+  }
+  contractCounter++;
+  localStorage.setItem('rbl_contract_nr', contractCounter);
+  return String(contractCounter).padStart(3,'0');
+}
+
+// ════════════════════════════════════════════════════════════════
+//  GENERATE
+// ════════════════════════════════════════════════════════════════
 async function generateDocs() {
-  const scriptUrl = localStorage.getItem('rbl_script_url') || '';
-  const data = {
-    nume:g('f-nume'), prenume:g('f-prenume'), dob:g('f-dob'), cnp:g('f-cnp'),
-    ciSerie:g('f-ci-serie'), ciNr:g('f-ci-nr'), judet:g('f-judet'), oras:g('f-oras'),
-    strada:g('f-strada'), nr:g('f-nr'), tel:g('f-tel'), email:g('f-email'),
-    pNume:g('f-p-nume'), pCNP:g('f-p-cnp'), pDom:g('f-p-dom'),
-    pTel:g('f-p-tel'), pEmail:g('f-p-email'),
-  };
-  const minor = isMinor(data.dob);
+  const minor = isMinor(g('f-dob'));
   const nr = nextContractNr();
-  const nf = data.nume.toLowerCase().replace(/\s+/g,'_');
+  const nf = g('f-nume').toLowerCase().replace(/\s+/g,'_');
   const sigData = document.getElementById('sig-canvas').toDataURL('image/png');
   const sigParinteData = minor ? document.getElementById('sig-parinte-canvas').toDataURL('image/png') : '';
 
-  // Daca nu avem URL de script, genereaza PDF local (fallback)
-  if (!scriptUrl) {
-    const dl = document.getElementById('download-links');
-    dl.innerHTML = '<p style="color:var(--red);font-size:13px;text-align:center;padding:10px">⚠️ URL Google Apps Script negăsit în Admin. Documentele se generează local (fără salvare în Drive/Sheets).</p>';
-    const addBtn=(icon,label,sub,def,fn)=>{
-      const b=document.createElement('button'); b.className='dl-btn';
-      b.innerHTML=`<span class="dl-icon">${icon}</span><div><div class="dl-name">${label}</div><div class="dl-sub">${sub}</div></div>`;
-      b.onclick=()=>pdfMake.createPdf(def).download(fn);
-      dl.appendChild(b);
-    };
-    if(minor){
-      addBtn('📄','Contract de voluntariat (minor)',`Nr. ${nr} — ${today()}`,docContractMinor(data,nr),`contract_minor_${nf}_${nr}.pdf`);
-      addBtn('📄','Fișa voluntarului (minor)',`${data.prenume} ${data.nume}`,docFisaMinor(data,nr),`fisa_minor_${nf}_${nr}.pdf`);
-      addBtn('📄','Formular consimțământ GDPR — voluntar',`Semnat de ${data.prenume} ${data.nume}`,docGdprMinorVoluntar(data),`gdpr_voluntar_minor_${nf}.pdf`);
-      addBtn('📋','Formular consimțământ GDPR — părinte',`Semnat de ${data.pNume}`,docGdprParinte(data),`gdpr_parinte_${nf}.pdf`);
-      addBtn('📋','Acord parental',`Părinte: ${data.pNume}`,docAcordParental(data),`acord_parental_${nf}.pdf`);
-    } else {
-      addBtn('📄','Contract de voluntariat',`Nr. ${nr} — ${today()}`,docContractMajor(data,nr),`contract_${nf}_${nr}.pdf`);
-      addBtn('📄','Fișa voluntarului',`${data.prenume} ${data.nume}`,docFisaMajor(data,nr),`fisa_${nf}_${nr}.pdf`);
-      addBtn('📄','Formular consimțământ GDPR',`${data.prenume} ${data.nume}`,docGdprMajor(data),`gdpr_${nf}.pdf`);
-    }
-    goToPage('success');
+  const formData = {
+    nume: g('f-nume'), prenume: g('f-prenume'), dob: g('f-dob'), cnp: g('f-cnp'),
+    ciSerie: g('f-ci-serie'), ciNr: g('f-ci-nr'), judet: g('f-judet'), oras: g('f-oras'),
+    strada: g('f-strada'), nr: g('f-nr'), tel: g('f-tel'), email: g('f-email'),
+    pNume: g('f-p-nume'), pCNP: g('f-p-cnp'), pDom: g('f-p-dom'),
+    pTel: g('f-p-tel'), pEmail: g('f-p-email'),
+    isMinor: minor, sigData, sigParinteData,
+  };
+
+  if (!SCRIPT_URL) {
+    // Fallback: descarca local cu pdfmake (vechea generare)
+    fallbackGenerate(formData, nr, nf, minor);
     return;
   }
 
-  // Cu script URL: trimite la Google Apps Script
   goToPage('processing');
-  const steps = document.getElementById('processing-steps');
-  const addStep = (id, text) => {
-    const d = document.createElement('div');
-    d.className='processing-step active'; d.id='step-'+id;
-    d.innerHTML=`<div class="step-dot active" id="dot-${id}">…</div><span>${text}</span>`;
-    steps.appendChild(d);
-  };
-  const doneStep = (id) => {
-    const d = document.getElementById('step-'+id);
-    const dot = document.getElementById('dot-'+id);
-    if(d){ d.className='processing-step done'; }
-    if(dot){ dot.className='step-dot done'; dot.textContent='✓'; }
-  };
-  const errStep = (id, msg) => {
-    const d = document.getElementById('step-'+id);
-    const dot = document.getElementById('dot-'+id);
-    if(d){ d.className='processing-step error'; d.querySelector('span').textContent=msg; }
-    if(dot){ dot.className='step-dot error'; dot.textContent='✕'; }
-  };
-
+  const steps = document.getElementById('proc-steps');
   steps.innerHTML = '';
-  addStep('send', 'Se trimit datele...');
-  addStep('docs', 'Se completează documentele în Drive...');
-  addStep('sheets', 'Se salvează în Google Sheets...');
-  addStep('done', 'Finalizare...');
+  const addStep = (id,txt) => { steps.innerHTML += `<div class="proc-step active" id="ps-${id}"><div class="step-dot active" id="pd-${id}">…</div><span>${txt}</span></div>`; };
+  const doneStep = id => { const el=document.getElementById('ps-'+id); const dot=document.getElementById('pd-'+id); if(el)el.className='proc-step done'; if(dot){dot.className='step-dot done';dot.textContent='✓';} };
+  const errStep = (id,msg) => { const el=document.getElementById('ps-'+id); const dot=document.getElementById('pd-'+id); if(el){el.className='proc-step err';el.querySelector('span').textContent=msg;} if(dot){dot.className='step-dot err';dot.textContent='✕';} };
+
+  addStep('send','Se trimit datele...');
+  addStep('docs','Se completează documentele în Drive...');
+  addStep('sheets','Se salvează în Google Sheets...');
+  addStep('done','Finalizare...');
 
   try {
-    const payload = {
-      action: 'register',
-      eventId: 'rbl-voluntariat',
-      formData: { ...data, isMinor: minor, sigData, sigParinteData },
-    };
-
     doneStep('send');
-
-    const resp = await fetch(scriptUrl, {
+    const resp = await fetch(SCRIPT_URL, {
       method: 'POST',
-      body: JSON.stringify(payload),
+      body: JSON.stringify({ action:'register', eventId: currentEvent.id, formData }),
     });
     const result = await resp.json();
-
     if (!result.ok) throw new Error(result.error || 'Eroare necunoscută');
 
-    doneStep('docs');
-    doneStep('sheets');
-    doneStep('done');
+    doneStep('docs'); doneStep('sheets'); doneStep('done');
 
-    // Afiseaza linkurile de descarcare
     const dl = document.getElementById('download-links');
     dl.innerHTML = '';
     (result.data.links || []).forEach(link => {
-      const b = document.createElement('a');
-      b.className = 'dl-btn';
-      b.href = link.url || '#';
-      b.target = '_blank';
-      b.style.textDecoration = 'none';
-      if(link.error) {
-        b.innerHTML=`<span class="dl-icon">⚠️</span><div><div class="dl-name">${link.name}</div><div class="dl-sub" style="color:var(--red)">${link.error}</div></div>`;
-      } else {
-        b.innerHTML=`<span class="dl-icon">📄</span><div><div class="dl-name">${link.name}</div><div class="dl-sub">Click pentru descărcare .docx din Google Drive</div></div>`;
-      }
-      dl.appendChild(b);
+      const a = document.createElement('a');
+      a.className = 'dl-btn';
+      a.href = link.url || '#';
+      a.target = '_blank';
+      a.style.textDecoration = 'none';
+      a.innerHTML = link.error
+        ? `<span class="dl-icon">⚠️</span><div><div class="dl-name">${link.name}</div><div class="dl-sub" style="color:#ff9e8e">${link.error}</div></div>`
+        : `<span class="dl-icon">📄</span><div><div class="dl-name">${link.name}</div><div class="dl-sub">Click pentru descărcare .docx din Google Drive</div></div>`;
+      dl.appendChild(a);
     });
+    const note = document.createElement('p');
+    note.style.cssText = 'font-size:12px;color:var(--gray);text-align:center;margin-top:10px';
+    note.textContent = 'Deschide documentul în Word / Google Docs și salvează-l ca PDF înainte de tipărire.';
+    dl.appendChild(note);
 
     goToPage('success');
 
   } catch(ex) {
-    errStep('docs', 'Eroare: ' + ex.message);
-    const dl = document.getElementById('download-links');
-    dl.innerHTML = `<p style="color:var(--red);font-size:13px;padding:10px;text-align:center">❌ ${ex.message}<br><br>Verifică URL-ul Apps Script în Admin sau conexiunea la internet.</p>`;
+    errStep('docs', 'Eroare: '+ex.message);
+    document.getElementById('download-links').innerHTML =
+      `<p style="color:var(--red);font-size:13px;padding:10px;text-align:center">❌ ${ex.message}<br><br>Verifică URL-ul Apps Script în Admin.</p>`;
     goToPage('success');
   }
 }
- 
-// ── RESET ────────────────────────────────────────────────────────────────
+
+function fallbackGenerate(formData, nr, nf, minor) {
+  // Generare locala PDF cu pdfmake (fara Drive/Sheets)
+  const dl = document.getElementById('download-links');
+  dl.innerHTML = '<p style="background:#fff8e6;border:1px solid #f0c060;border-radius:8px;padding:12px;font-size:13px;color:#7a5c10;margin-bottom:14px">⚠️ URL Apps Script neconfigurat — documentele sunt generate local și nu se salvează în Drive/Sheets.</p>';
+  // Refoloseste functiile existente de generare pdfmake din codul original
+  const data = formData;
+  const addBtn = (icon,label,sub,def,fn) => {
+    const b = document.createElement('button'); b.className='dl-btn';
+    b.innerHTML=`<span class="dl-icon">${icon}</span><div><div class="dl-name">${label}</div><div class="dl-sub">${sub}</div></div>`;
+    b.onclick = () => pdfMake.createPdf(def).download(fn);
+    dl.appendChild(b);
+  };
+  if (minor) {
+    addBtn('📄','Contract voluntariat (minor)',`Nr. ${nr} — ${today()}`,docContractMinor(data,nr),`contract_minor_${nf}_${nr}.pdf`);
+    addBtn('📄','Fișa voluntarului (minor)',`${data.prenume} ${data.nume}`,docFisaMinor(data,nr),`fisa_minor_${nf}_${nr}.pdf`);
+    addBtn('📄','GDPR voluntar',`${data.prenume} ${data.nume}`,docGdprMinorVoluntar(data),`gdpr_voluntar_${nf}.pdf`);
+    addBtn('📋','GDPR părinte',`${data.pNume}`,docGdprParinte(data),`gdpr_parinte_${nf}.pdf`);
+    addBtn('📋','Acord parental',`${data.pNume}`,docAcordParental(data),`acord_parental_${nf}.pdf`);
+  } else {
+    addBtn('📄','Contract voluntariat',`Nr. ${nr} — ${today()}`,docContractMajor(data,nr),`contract_${nf}_${nr}.pdf`);
+    addBtn('📄','Fișa voluntarului',`${data.prenume} ${data.nume}`,docFisaMajor(data,nr),`fisa_${nf}_${nr}.pdf`);
+    addBtn('📄','GDPR',`${data.prenume} ${data.nume}`,docGdprMajor(data),`gdpr_${nf}.pdf`);
+  }
+  goToPage('success');
+}
+
+// ════════════════════════════════════════════════════════════════
+//  RESET + INIT
+// ════════════════════════════════════════════════════════════════
 function resetForm() {
   document.querySelectorAll('input[type=text],input[type=date],input[type=email],input[type=tel]').forEach(i=>i.value='');
   clearSig('sig-canvas'); clearSig('sig-parinte-canvas');
   document.getElementById('minor-banner').style.display='none';
   document.getElementById('parinte-section').style.display='none';
   document.getElementById('sig-parinte-block').style.display='none';
-  ['sig-canvas','sig-parinte-canvas'].forEach(id=>{const c=document.getElementById(id);if(c)c.width=0;});
-  goToPage(1);
 }
- 
-// ── INIT ─────────────────────────────────────────────────────────────────
-window.addEventListener('load',()=>{
-  setupCanvas('sig-canvas'); setupCanvas('sig-parinte-canvas');
-  document.getElementById('f-dob').max=new Date().toISOString().split('T')[0];
-  document.getElementById('admin-current-nr').textContent=contractCounter+1;
-  // Incarca URL script salvat
-  const savedUrl = localStorage.getItem('rbl_script_url') || '';
-  const urlInput = document.getElementById('admin-script-url');
-  if(urlInput && savedUrl) {
-    urlInput.value = savedUrl;
-    document.getElementById('admin-url-status').textContent = '✅ configurat';
-  }
+
+window.addEventListener('load', () => {
+  document.getElementById('f-dob').max = new Date().toISOString().split('T')[0];
+  loadEvents();
+  setupCanvas('sig-canvas');
+  setupCanvas('sig-parinte-canvas');
 });
 </script>
-</body>
-</html>
