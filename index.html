@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Înregistrare Voluntar</title>
+<title>Înregistrare Voluntar — Fun4ever.ro</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.min.js"></script>
@@ -20,7 +20,7 @@
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Inter', sans-serif; background: var(--light); color: var(--navy); min-height: 100vh; }
-
+ 
   /* HEADER */
   header {
     background: var(--navy); color: white;
@@ -38,176 +38,45 @@
     font-size: 12px; font-family: 'Inter', sans-serif; cursor: pointer; transition: all .2s;
   }
   .admin-toggle-btn:hover { background: rgba(255,255,255,0.15); color: white; }
-
+ 
   /* ADMIN PANEL */
   #admin-panel {
-    display: none; background: #1a1f38;
+    display: none; background: #222844;
     border-top: 1px solid rgba(255,255,255,0.06);
     border-bottom: 3px solid var(--red);
-    padding: 0;
+    padding: 18px 40px;
   }
   #admin-panel.open { display: block; }
-
-  .admin-tabs { display: flex; border-bottom: 1px solid rgba(255,255,255,0.08); padding: 0 40px; }
-  .admin-tab {
-    padding: 14px 20px; font-size: 12px; font-weight: 600; letter-spacing: 0.5px;
-    color: rgba(255,255,255,0.4); cursor: pointer; border-bottom: 2px solid transparent;
-    transition: all .2s; text-transform: uppercase;
-  }
-  .admin-tab.active { color: white; border-bottom-color: var(--red); }
-  .admin-tab:hover { color: rgba(255,255,255,0.7); }
-
-  .admin-tab-content { display: none; padding: 22px 40px; }
-  .admin-tab-content.active { display: block; }
-
-  /* Admin tab 1: numerotare */
-  .admin-inner { display: flex; align-items: flex-end; gap: 18px; flex-wrap: wrap; }
+  .admin-inner { max-width: 780px; margin: 0 auto; display: flex; align-items: flex-end; gap: 18px; flex-wrap: wrap; }
   .admin-field { display: flex; flex-direction: column; gap: 5px; }
   .admin-field label { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.45); }
-  .admin-field input, .admin-field textarea, .admin-field select {
+  .admin-field input {
     background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2);
-    color: white; border-radius: 6px; padding: 8px 13px; font-size: 13px;
-    font-family: 'Inter', sans-serif; outline: none; transition: border-color .2s;
+    color: white; border-radius: 6px; padding: 8px 13px; font-size: 14px;
+    font-family: 'Inter', sans-serif; width: 160px; outline: none; transition: border-color .2s;
   }
-  .admin-field input:focus, .admin-field textarea:focus { border-color: var(--red); }
-  .admin-field textarea { resize: vertical; min-height: 70px; }
-  .admin-field select option { background: #2b3252; color: white; }
+  .admin-field input:focus { border-color: var(--red); }
   .admin-save-btn {
     background: var(--red); color: white; border: none; border-radius: 6px;
     padding: 9px 20px; font-size: 13px; font-weight: 600; font-family: 'Inter', sans-serif;
-    cursor: pointer; transition: all .2s; white-space: nowrap;
+    cursor: pointer; transition: all .2s;
   }
   .admin-save-btn:hover { background: #c4432d; }
-  .admin-save-btn.secondary {
-    background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8);
-    border: 1px solid rgba(255,255,255,0.2);
-  }
-  .admin-save-btn.secondary:hover { background: rgba(255,255,255,0.18); }
-  .admin-save-btn.danger { background: #7a1f1f; }
-  .admin-save-btn.danger:hover { background: #9e2929; }
   .admin-info { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 6px; width: 100%; }
-
-  /* Event list in admin */
-  .event-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-  .event-item {
-    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 8px; padding: 14px 18px; display: flex; align-items: center;
-    justify-content: space-between; gap: 12px;
-  }
-  .event-item-left { flex: 1; min-width: 0; }
-  .event-item-name { font-size: 14px; font-weight: 600; color: white; }
-  .event-item-org { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 2px; }
-  .event-item-actions { display: flex; gap: 8px; flex-shrink: 0; }
-  .event-item-actions button {
-    padding: 5px 12px; border-radius: 5px; font-size: 11px; font-weight: 600;
-    cursor: pointer; border: none; font-family: 'Inter', sans-serif; transition: all .2s;
-  }
-  .btn-edit-ev { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7); }
-  .btn-edit-ev:hover { background: rgba(255,255,255,0.18); color: white; }
-  .btn-del-ev { background: rgba(192,0,0,0.25); color: #ff8080; }
-  .btn-del-ev:hover { background: rgba(192,0,0,0.4); }
-
-  .add-event-form {
-    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 10px; padding: 20px; margin-top: 8px;
-  }
-  .add-event-form h4 { color: rgba(255,255,255,0.7); font-size: 12px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px; }
-  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
-  .form-grid .full { grid-column: 1 / -1; }
-  .add-event-form .admin-field input,
-  .add-event-form .admin-field textarea { width: 100%; }
-  .add-event-form .admin-field label { margin-bottom: 4px; display: block; }
-  .form-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 6px; }
-
-  /* MODALS */
-  #admin-overlay, #event-modal-overlay {
-    display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,0.6); z-index: 999;
-    align-items: center; justify-content: center;
-  }
-  #admin-overlay.open, #event-modal-overlay.open { display: flex; }
-  .admin-modal {
-    background: #222844; border-radius: 12px;
-    padding: 32px; width: 340px;
-    border-top: 3px solid var(--red);
-  }
-  .event-modal {
-    background: #1e2340; border-radius: 14px;
-    padding: 30px; width: 620px; max-width: 95vw; max-height: 90vh; overflow-y: auto;
-    border-top: 3px solid var(--red);
-  }
-  .admin-modal h3, .event-modal h3 { color: white; font-size: 16px; margin-bottom: 6px; }
-  .admin-modal p { color: rgba(255,255,255,0.45); font-size: 12px; margin-bottom: 18px; }
-  .admin-modal input {
-    width: 100%; padding: 10px 13px;
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 7px; color: white;
-    font-family: 'Inter', sans-serif; font-size: 14px;
-    outline: none; margin-bottom: 12px;
-  }
-  .admin-modal input:focus { border-color: var(--red); }
-  .admin-modal-btns { display: flex; gap: 10px; }
-  .admin-modal-btns button { flex: 1; padding: 10px; border-radius: 7px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; border: none; }
-  .btn-confirm { background: var(--red); color: white; }
-  .btn-confirm:hover { background: #c4432d; }
-  .btn-cancel-modal { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.6); }
-  .admin-modal .error-msg { color: #ff6b6b; font-size: 12px; margin-bottom: 8px; display: none; }
-
-  /* EVENT MODAL fields */
-  .ev-modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
-  .ev-modal-grid .full { grid-column: 1 / -1; }
-  .ev-modal-grid label { display: block; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.45); margin-bottom: 4px; }
-  .ev-modal-grid input, .ev-modal-grid textarea {
-    width: 100%; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2);
-    color: white; border-radius: 6px; padding: 8px 12px; font-size: 13px;
-    font-family: 'Inter', sans-serif; outline: none; transition: border-color .2s;
-  }
-  .ev-modal-grid textarea { resize: vertical; min-height: 65px; }
-  .ev-modal-grid input:focus, .ev-modal-grid textarea:focus { border-color: var(--red); }
-  .ev-section-label {
-    font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
-    color: var(--red); margin: 18px 0 10px; padding-bottom: 6px;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-  }
-  .ev-modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px; }
-  .ev-modal-actions button { padding: 9px 22px; border-radius: 7px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; border: none; }
-
+ 
   /* PROGRESS */
   .progress-bar { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 40px; display: flex; }
   .step-tab { padding: 13px 22px; font-size: 13px; font-weight: 500; color: var(--gray); border-bottom: 3px solid transparent; cursor: default; transition: all .2s; white-space: nowrap; }
   .step-tab.active { color: var(--navy); border-bottom-color: var(--red); font-weight: 600; }
   .step-tab.done { color: var(--red); }
-
+ 
   /* MAIN */
   main { max-width: 780px; margin: 0 auto; padding: 40px 24px 80px; }
   .form-page { display: none; }
   .form-page.active { display: block; }
   .section-title { font-size: 26px; font-weight: 700; margin-bottom: 5px; }
   .section-subtitle { color: var(--gray); font-size: 14px; margin-bottom: 30px; }
-
-  /* EVENT SELECTOR */
-  #page-events { display: none; }
-  #page-events.active { display: block; }
-  .event-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 18px; margin-top: 10px; }
-  .event-card {
-    background: var(--white); border: 2px solid var(--border); border-radius: 14px;
-    padding: 28px 22px; cursor: pointer; transition: all .22s; text-align: center;
-  }
-  .event-card:hover { border-color: var(--red); transform: translateY(-3px); box-shadow: 0 8px 28px rgba(217,79,56,0.15); }
-  .event-card-icon { font-size: 40px; margin-bottom: 14px; }
-  .event-card-name { font-size: 16px; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
-  .event-card-org { font-size: 12px; color: var(--gray); line-height: 1.4; }
-  .no-events-msg { color: var(--gray); font-size: 14px; padding: 30px; text-align: center; background: var(--white); border-radius: 12px; border: 1px solid var(--border); }
-
-  /* current event badge */
-  #current-event-badge {
-    display: none; background: rgba(217,79,56,0.12); border: 1px solid rgba(217,79,56,0.3);
-    border-radius: 20px; padding: 4px 14px; font-size: 12px; color: var(--red);
-    font-weight: 600; cursor: pointer; margin-left: 12px; transition: all .2s;
-  }
-  #current-event-badge:hover { background: rgba(217,79,56,0.2); }
-
+ 
   /* FIELD GROUPS */
   .field-group { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 24px 28px; margin-bottom: 18px; box-shadow: var(--shadow); }
   .field-group-title { font-size: 10px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; color: var(--red); margin-bottom: 16px; }
@@ -222,16 +91,17 @@
   }
   input:focus { border-color: var(--red); box-shadow: 0 0 0 3px rgba(217,79,56,0.12); }
   input.error { border-color: var(--red); background: #fff5f4; }
-
+ 
+  /* MINOR BANNER */
   #minor-banner { display: none; background: #fff8e6; border: 1.5px solid #f0c060; border-radius: 10px; padding: 14px 18px; font-size: 13px; color: #7a5c10; margin-bottom: 18px; line-height: 1.5; }
-
+ 
   /* SIGNATURE */
   .sig-container { position: relative; background: var(--light); border: 1.5px solid var(--border); border-radius: 8px; overflow: hidden; }
   .sig-container canvas { display: block; cursor: crosshair; touch-action: none; }
   .sig-label { position: absolute; bottom: 10px; left: 14px; font-size: 11px; color: var(--border); pointer-events: none; font-style: italic; }
   .sig-clear { position: absolute; top: 8px; right: 10px; background: none; border: 1px solid var(--border); border-radius: 5px; padding: 3px 9px; font-size: 11px; color: var(--gray); cursor: pointer; font-family: 'Inter', sans-serif; transition: all .2s; }
   .sig-clear:hover { border-color: var(--red); color: var(--red); }
-
+ 
   /* BUTTONS */
   .btn-row { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; }
   .btn { padding: 12px 28px; border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: all .2s; }
@@ -241,7 +111,7 @@
   .btn-primary:hover { background: #374070; transform: translateY(-1px); }
   .btn-red { background: var(--red); color: white; font-size: 15px; padding: 13px 36px; }
   .btn-red:hover { background: #c4432d; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(217,79,56,0.30); }
-
+ 
   /* REVIEW */
   .review-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .review-item .rl { color: var(--gray); font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
@@ -251,7 +121,7 @@
   .doc-icon { width: 32px; height: 32px; background: var(--cream); border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
   .doc-name { font-weight: 500; font-size: 13px; }
   .doc-sub { font-size: 11px; color: var(--gray); margin-top: 1px; }
-
+ 
   /* SUCCESS */
   #page-success { text-align: center; padding: 40px 0; }
   .success-icon { width: 76px; height: 76px; background: #e8f5e9; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; margin: 0 auto 22px; }
@@ -263,24 +133,77 @@
   .dl-btn .dl-sub { font-size: 11px; opacity: 0.55; margin-top: 2px; }
   .required::after { content: ' *'; color: var(--red); }
 
+  #admin-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5); z-index: 999;
+  align-items: center; justify-content: center;
+}
+#admin-overlay.open { display: flex; }
+.admin-modal {
+  background: #222844; border-radius: 12px;
+  padding: 32px; width: 320px;
+  border-top: 3px solid var(--red);
+}
+.admin-modal h3 { color: white; font-size: 16px; margin-bottom: 6px; }
+.admin-modal p { color: rgba(255,255,255,0.45); font-size: 12px; margin-bottom: 18px; }
+.admin-modal input {
+  width: 100%; padding: 10px 13px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 7px; color: white;
+  font-family: 'Inter', sans-serif; font-size: 14px;
+  outline: none; margin-bottom: 12px;
+}
+.admin-modal input:focus { border-color: var(--red); }
+.admin-modal-btns { display: flex; gap: 10px; }
+.admin-modal-btns button { flex: 1; padding: 10px; border-radius: 7px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; border: none; }
+.btn-confirm { background: var(--red); color: white; }
+.btn-confirm:hover { background: #c4432d; }
+.btn-cancel-modal { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.6); }
+.admin-modal .error-msg { color: #ff6b6b; font-size: 12px; margin-bottom: 8px; display: none; }
+  
+  .sig-tab-btn {
+    padding: 7px 16px; border-radius: 6px; font-family: 'Inter', sans-serif;
+    font-size: 12px; font-weight: 600; cursor: pointer; border: 1.5px solid var(--border);
+    background: var(--white); color: var(--gray); transition: all .2s;
+  }
+  .sig-tab-btn.active { background: var(--navy); color: white; border-color: var(--navy); }
+  .sig-upload-box {
+    border: 2px dashed var(--border); border-radius: 8px; padding: 30px 20px;
+    text-align: center; cursor: pointer; transition: all .2s; background: var(--light);
+    font-size: 13px; color: var(--gray); min-height: 140px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .sig-upload-box:hover { border-color: var(--red); color: var(--navy); }
+  .sig-upload-box img { max-height: 100px; max-width: 100%; border-radius: 4px; }
+  .processing-step {
+    display: flex; align-items: center; gap: 10px; padding: 8px 0;
+    font-size: 13px; color: var(--gray);
+  }
+  .processing-step.done { color: #2d6a4f; }
+  .processing-step.active { color: var(--navy); font-weight: 600; }
+  .processing-step.error { color: var(--red); }
+  .step-dot { width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; }
+  .step-dot.pending { background: var(--border); }
+  .step-dot.active { background: var(--navy); color: white; animation: pulse 1s infinite; }
+  .step-dot.done { background: #2d6a4f; color: white; }
+  .step-dot.error { background: var(--red); color: white; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+
   @media (max-width: 600px) {
-    header { padding: 0 16px; } #admin-panel .admin-tab-content { padding: 18px 16px; }
+    header { padding: 0 16px; } #admin-panel { padding: 16px; }
     main { padding: 24px 14px 60px; }
     .row.cols-2 { grid-template-columns: 1fr; }
     .field-group { padding: 18px; }
     .review-grid { grid-template-columns: 1fr; }
     .progress-bar { padding: 0 8px; overflow-x: auto; }
-    .admin-tabs { padding: 0 16px; }
-    .ev-modal-grid { grid-template-columns: 1fr; }
-    .form-grid { grid-template-columns: 1fr; }
-    .event-modal { padding: 20px; }
   }
 </style>
 </head>
 <body>
-
-<!-- PASSWORD OVERLAY -->
-<div id="admin-overlay">
+ 
+<header>
+  <div id="admin-overlay">
   <div class="admin-modal">
     <h3>⚙ Panou Admin</h3>
     <p>Introdu parola pentru a accesa setările.</p>
@@ -292,113 +215,6 @@
     </div>
   </div>
 </div>
-
-<!-- EVENT EDIT MODAL -->
-<div id="event-modal-overlay">
-  <div class="event-modal">
-    <h3 id="ev-modal-title">Eveniment nou</h3>
-    <input type="hidden" id="ev-editing-id">
-
-    <div class="ev-section-label">Informații eveniment</div>
-    <div class="ev-modal-grid">
-      <div class="full">
-        <label>Numele evenimentului / butonului *</label>
-        <input type="text" id="ev-name" placeholder="ex: RBL Voluntariat 2026">
-      </div>
-      <div>
-        <label>Emoji / Iconiță</label>
-        <input type="text" id="ev-icon" placeholder="ex: 🚴 sau 🤝" maxlength="4">
-      </div>
-      <div>
-        <label>Număr start contracte</label>
-        <input type="number" id="ev-start-nr" placeholder="ex: 1" min="1">
-      </div>
-    </div>
-
-    <div class="ev-section-label">Organizație</div>
-    <div class="ev-modal-grid">
-      <div class="full">
-        <label>Numele organizației *</label>
-        <input type="text" id="ev-org-name" placeholder="ex: Fundația Romanian Business Leaders">
-      </div>
-      <div>
-        <label>CIF / CUI</label>
-        <input type="text" id="ev-org-cif" placeholder="ex: RO 29004248">
-      </div>
-      <div>
-        <label>IBAN</label>
-        <input type="text" id="ev-org-iban" placeholder="ex: RO82BTRL...">
-      </div>
-      <div class="full">
-        <label>Sediu social complet</label>
-        <input type="text" id="ev-org-sediu" placeholder="ex: Calea Dorobanți nr 42, etaj 3, Sector 1, București">
-      </div>
-      <div>
-        <label>Telefon org.</label>
-        <input type="text" id="ev-org-tel" placeholder="021/794.14.98">
-      </div>
-      <div>
-        <label>Email org.</label>
-        <input type="text" id="ev-org-email" placeholder="contact@rbls.ro">
-      </div>
-      <div>
-        <label>Email GDPR</label>
-        <input type="text" id="ev-org-gdpr-email" placeholder="dataprotection@rbls.ro">
-      </div>
-      <div>
-        <label>Link politică GDPR</label>
-        <input type="text" id="ev-org-gdpr-link" placeholder="https://rbls.ro/politica...">
-      </div>
-    </div>
-
-    <div class="ev-section-label">Reprezentanți</div>
-    <div class="ev-modal-grid">
-      <div>
-        <label>Nume Director General *</label>
-        <input type="text" id="ev-director" placeholder="ex: Alexandru Dincovici">
-      </div>
-      <div>
-        <label>Titlu Director</label>
-        <input type="text" id="ev-director-titlu" placeholder="ex: Director General">
-      </div>
-      <div>
-        <label>Nume Coordonator Voluntari</label>
-        <input type="text" id="ev-coord" placeholder="ex: Teodora Gaftoi">
-      </div>
-      <div>
-        <label>Email Coordonator</label>
-        <input type="text" id="ev-coord-email" placeholder="teodora.gaftoi@rbls.ro">
-      </div>
-      <div>
-        <label>Telefon Coordonator</label>
-        <input type="text" id="ev-coord-tel" placeholder="0739 637 426">
-      </div>
-      <div>
-        <label>Președinte (pentru GDPR)</label>
-        <input type="text" id="ev-presedinte" placeholder="ex: Sergiu Neguț">
-      </div>
-    </div>
-
-    <div class="ev-section-label">Responsabilități voluntar (câte una pe linie)</div>
-    <div class="ev-modal-grid">
-      <div class="full">
-        <label>Major</label>
-        <textarea id="ev-resp-major" placeholder="coordonare acces participanți eveniment RBL&#10;ajutor amenajare și distribuire materiale tipărite&#10;suport în amenajare spațiu desfășurare eveniment&#10;suport în coordonare logistică organizare eveniment"></textarea>
-      </div>
-      <div class="full">
-        <label>Minor</label>
-        <textarea id="ev-resp-minor" placeholder="sprijinirea organizării și desfășurării evenimentelor&#10;suport administrativ și logistic&#10;implicare în activități de comunicare"></textarea>
-      </div>
-    </div>
-
-    <div class="ev-modal-actions">
-      <button class="btn-cancel-modal" style="background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.6);border-radius:7px;" onclick="closeEventModal()">Anulează</button>
-      <button class="btn-confirm" onclick="saveEvent()">Salvează evenimentul</button>
-    </div>
-  </div>
-</div>
-
-<header>
   <div class="header-left">
     <svg class="logo-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
       <rect x="12" y="12" width="36" height="36" rx="8" fill="#d94f38"/>
@@ -413,59 +229,41 @@
     </svg>
     <div class="header-titles">
       <h1>Fun4ever.ro</h1>
-      <p id="header-subtitle">Formular de înregistrare voluntar</p>
+      <p>Formular de înregistrare voluntar</p>
     </div>
-    <span id="current-event-badge" onclick="backToEvents()">← Schimbă evenimentul</span>
   </div>
   <button class="admin-toggle-btn" onclick="toggleAdmin()">⚙ Admin</button>
 </header>
-
+ 
 <div id="admin-panel">
-  <div class="admin-tabs">
-    <div class="admin-tab active" onclick="switchAdminTab(0)">Numerotare contracte</div>
-    <div class="admin-tab" onclick="switchAdminTab(1)">Evenimente / Organizații</div>
-  </div>
-
-  <!-- TAB 1: numerotare -->
-  <div class="admin-tab-content active" id="admin-tab-0">
-    <div class="admin-inner">
-      <div class="admin-field">
-        <label>Număr start contracte (evenimentul curent)</label>
-        <input type="number" id="admin-start-nr" min="1" placeholder="ex: 42" style="width:160px">
-      </div>
-      <button class="admin-save-btn" onclick="saveAdminSettings()">Salvează</button>
-      <div class="admin-info" id="admin-info">Setează numărul de la care să înceapă numerotarea. Următor: <b id="admin-current-nr">—</b></div>
+  <div class="admin-inner">
+    <div class="admin-field">
+      <label>Număr start contracte</label>
+      <input type="number" id="admin-start-nr" min="1" placeholder="ex: 42" style="width:140px;">
     </div>
-  </div>
-
-  <!-- TAB 2: events -->
-  <div class="admin-tab-content" id="admin-tab-1">
-    <div class="event-list" id="admin-event-list"></div>
-    <button class="admin-save-btn" onclick="openNewEventModal()" style="margin-top:4px">+ Adaugă eveniment / organizație</button>
+    <div class="admin-field" style="flex:1;min-width:260px;">
+      <label>URL Google Apps Script</label>
+      <input type="text" id="admin-script-url" placeholder="https://script.google.com/macros/s/.../exec" style="width:100%;">
+    </div>
+    <button class="admin-save-btn" onclick="saveAdminSettings()">Salvează</button>
+    <div class="admin-info" style="width:100%;">Următor contract: <b id="admin-current-nr">—</b> &nbsp;·&nbsp; URL script: <b id="admin-url-status">negăsit</b></div>
   </div>
 </div>
-
-<div class="progress-bar" id="progress-bar" style="display:none">
+ 
+<div class="progress-bar">
   <div class="step-tab active" id="tab-1">1. Date personale</div>
   <div class="step-tab" id="tab-2">2. Semnătură</div>
   <div class="step-tab" id="tab-3">3. Confirmare</div>
 </div>
-
+ 
 <main>
-
-<!-- PAGE EVENTS -->
-<div id="page-events" class="active">
-  <div class="section-title">Selectează evenimentul</div>
-  <div class="section-subtitle">Alege evenimentul pentru care dorești să te înregistrezi ca voluntar.</div>
-  <div class="event-cards" id="event-cards-container"></div>
-</div>
-
+ 
 <!-- PAGE 1 -->
-<div class="form-page" id="page-1">
+<div class="form-page active" id="page-1">
   <div class="section-title">Date personale</div>
   <div class="section-subtitle">Completează cu atenție. Datele vor fi introduse automat în contract.</div>
   <div id="minor-banner">⚠️ <b>Voluntar minor</b> — Pe baza datei de naștere, ești minor. Se vor genera documente speciale pentru minori. Completează și datele unui părinte/tutore.</div>
-
+ 
   <div class="field-group">
     <div class="field-group-title">Identitate</div>
     <div class="row cols-2">
@@ -481,7 +279,7 @@
       <div><label class="required">Număr CI</label><input type="text" id="f-ci-nr" placeholder="ex: 123456" maxlength="6"></div>
     </div>
   </div>
-
+ 
   <div class="field-group">
     <div class="field-group-title">Domiciliu</div>
     <div class="row cols-2">
@@ -493,7 +291,7 @@
       <div><label class="required">Număr</label><input type="text" id="f-nr" placeholder="ex: 12"></div>
     </div>
   </div>
-
+ 
   <div class="field-group">
     <div class="field-group-title">Contact</div>
     <div class="row cols-2">
@@ -501,7 +299,7 @@
       <div><label class="required">Email</label><input type="email" id="f-email" placeholder="ex: maria@email.com"></div>
     </div>
   </div>
-
+ 
   <div class="field-group" id="parinte-section" style="display:none;">
     <div class="field-group-title">📋 Date părinte / tutore legal</div>
     <div class="row cols-2">
@@ -516,29 +314,53 @@
       <div><label class="required">Email părinte</label><input type="email" id="f-p-email" placeholder="ex: parinte@email.com"></div>
     </div>
   </div>
-
+ 
   <div class="btn-row"><span></span><button class="btn btn-primary" onclick="goToPage2()">Continuă →</button></div>
 </div>
-
+ 
 <!-- PAGE 2 -->
 <div class="form-page" id="page-2">
   <div class="section-title">Semnătură</div>
   <div class="section-subtitle">Semnează în câmpul de mai jos folosind mouse-ul sau degetul.</div>
   <div class="field-group">
     <div class="field-group-title">Semnătură voluntar</div>
-    <div class="sig-container" style="height:180px;">
-      <canvas id="sig-canvas" height="178" style="width:100%;"></canvas>
-      <div class="sig-label">Semnează aici</div>
-      <button class="sig-clear" onclick="clearSig('sig-canvas')">Șterge</button>
+    <div style="display:flex;gap:8px;margin-bottom:10px;">
+      <button class="sig-tab-btn active" id="sig-tab-draw" onclick="switchSigTab('draw','sig')">✏ Desenează</button>
+      <button class="sig-tab-btn" id="sig-tab-upload" onclick="switchSigTab('upload','sig')">↑ Încarcă imagine</button>
+    </div>
+    <div id="sig-draw-area">
+      <div class="sig-container" style="height:180px;">
+        <canvas id="sig-canvas" height="178" style="width:100%;"></canvas>
+        <div class="sig-label">Semnează aici</div>
+        <button class="sig-clear" onclick="clearSig('sig-canvas')">Șterge</button>
+      </div>
+    </div>
+    <div id="sig-upload-area" style="display:none;">
+      <div class="sig-upload-box" onclick="document.getElementById('sig-file-input').click()">
+        <div id="sig-upload-preview">📎 Click pentru a încărca imaginea semnăturii (PNG, JPG)</div>
+        <input type="file" id="sig-file-input" accept="image/*" style="display:none" onchange="handleSigUpload(this,'sig-canvas','sig-upload-preview')">
+      </div>
     </div>
   </div>
   <div class="field-group" id="sig-parinte-block" style="display:none;">
     <div class="field-group-title">Semnătură părinte / tutore</div>
     <p style="font-size:13px;color:var(--gray);margin-bottom:14px;">Necesară pentru voluntarii minori.</p>
-    <div class="sig-container" style="height:180px;">
-      <canvas id="sig-parinte-canvas" height="178" style="width:100%;"></canvas>
-      <div class="sig-label">Semnează aici</div>
-      <button class="sig-clear" onclick="clearSig('sig-parinte-canvas')">Șterge</button>
+    <div style="display:flex;gap:8px;margin-bottom:10px;">
+      <button class="sig-tab-btn active" id="sigp-tab-draw" onclick="switchSigTab('draw','sigp')">✏ Desenează</button>
+      <button class="sig-tab-btn" id="sigp-tab-upload" onclick="switchSigTab('upload','sigp')">↑ Încarcă imagine</button>
+    </div>
+    <div id="sigp-draw-area">
+      <div class="sig-container" style="height:180px;">
+        <canvas id="sig-parinte-canvas" height="178" style="width:100%;"></canvas>
+        <div class="sig-label">Semnează aici</div>
+        <button class="sig-clear" onclick="clearSig('sig-parinte-canvas')">Șterge</button>
+      </div>
+    </div>
+    <div id="sigp-upload-area" style="display:none;">
+      <div class="sig-upload-box" onclick="document.getElementById('sigp-file-input').click()">
+        <div id="sigp-upload-preview">📎 Click pentru a încărca imaginea semnăturii (PNG, JPG)</div>
+        <input type="file" id="sigp-file-input" accept="image/*" style="display:none" onchange="handleSigUpload(this,'sig-parinte-canvas','sigp-upload-preview')">
+      </div>
     </div>
   </div>
   <div class="btn-row">
@@ -546,7 +368,7 @@
     <button class="btn btn-primary" onclick="goToPage3()">Continuă →</button>
   </div>
 </div>
-
+ 
 <!-- PAGE 3 -->
 <div class="form-page" id="page-3">
   <div class="section-title">Confirmare și generare documente</div>
@@ -561,104 +383,39 @@
   </div>
   <div class="btn-row">
     <button class="btn btn-secondary" onclick="goToPage(2)">← Înapoi</button>
-    <button class="btn btn-red" onclick="generateDocs()">⬇ Generează documente PDF</button>
+    <button class="btn btn-red" id="btn-generate" onclick="generateDocs()">⬇ Generează și salvează documente</button>
+  </div>
+</div>
+ 
+<!-- PROCESSING -->
+<div class="form-page" id="page-processing">
+  <div style="text-align:center;padding:60px 20px;">
+    <div style="font-size:48px;margin-bottom:20px;">⏳</div>
+    <div class="section-title" style="text-align:center;">Se procesează documentele...</div>
+    <p style="color:var(--gray);margin-top:10px;font-size:14px;">Documentele sunt completate și salvate în Drive. Te rugăm să aștepți.</p>
+    <div id="processing-steps" style="margin-top:24px;text-align:left;max-width:340px;margin-left:auto;margin-right:auto;"></div>
   </div>
 </div>
 
 <!-- SUCCESS -->
 <div class="form-page" id="page-success">
   <div class="success-icon">✅</div>
-  <div class="section-title" style="text-align:center;">Documente generate!</div>
-  <p style="color:var(--gray);text-align:center;margin-top:8px;">Descarcă fiecare document separat, tipărește-le și semnează-le.</p>
+  <div class="section-title" style="text-align:center;">Documente salvate!</div>
+  <p style="color:var(--gray);text-align:center;margin-top:8px;">Documentele au fost salvate în Google Drive și înregistrate în Google Sheets. Descarcă-le mai jos.</p>
   <div class="download-links" id="download-links"></div>
-  <button class="btn btn-secondary" onclick="resetForm()" style="display:block;margin:0 auto;">← Înregistrare nouă</button>
+  <div id="sheets-link-box" style="display:none;margin:16px 0;text-align:center;">
+    <a id="sheets-link" href="#" target="_blank" style="font-size:13px;color:var(--navy);text-decoration:underline;">📊 Vezi toate înregistrările în Google Sheets</a>
+  </div>
+  <button class="btn btn-secondary" onclick="resetForm()" style="display:block;margin:16px auto 0;">← Înregistrare nouă</button>
 </div>
-
+ 
 </main>
-
+ 
 <script>
-// ════════════════════════════════════════════════════════════════
-// EVENT SYSTEM
-// ════════════════════════════════════════════════════════════════
-
-const DEFAULT_EVENTS = [
-  {
-    id: 'rbl-voluntariat',
-    name: 'RBL Voluntariat',
-    icon: '🤝',
-    org: {
-      name: 'Fundația Romanian Business Leaders',
-      cif: 'RO 29004248',
-      iban: 'RO82BTRL04801205902473XX',
-      sediu: 'București, Calea Dorobanți, nr 42, etaj 3, ap 5, Sector 1 (adresa socială: comuna Mogosoaia, Jud. Ilfov, Str. I.C.Bratianu, nr. 145)',
-      hj: 'HJ nr. 40PJ/20.07.2011 emisa de Judecatoria Buftea',
-      tel: '021/794.14.98',
-      email: 'contact@rbls.ro',
-      gdprEmail: 'dataprotection@rbls.ro',
-      gdprLink: 'https://www.rbls.ro/politica-de-confidentialitate/',
-    },
-    director: { nume: 'Alexandru Dincovici', titlu: 'Director General' },
-    presedinte: 'Sergiu Neguț',
-    coord: { nume: 'Teodora Gaftoi', email: 'teodora.gaftoi@rbls.ro', tel: '0739 637 426' },
-    resp: {
-      major: ['coordonare acces participanți eveniment RBL','ajutor amenajare și distribuire materiale tipărite în timpul evenimentului RBL','suport în amenajare spațiu desfășurare eveniment RBL','suport în coordonare logistică organizare eveniment RBL'],
-      minor: ['sprijinirea organizării și desfășurării evenimentelor RBL (logistică, acces participanți, suport în teren etc.)','suport administrativ și logistic pentru departamentul de evenimente','implicare în activități de comunicare, promovare și distribuire materiale informative','activități de documentare, redactare și arhivare materiale','contribuții la dezvoltarea comunității de voluntari RBL'],
-    },
-    contractCounter: 0,
-  },
-  {
-    id: 'parada-biciclisti',
-    name: 'Parada Micilor Bicicliști',
-    icon: '🚴',
-    org: {
-      name: 'Fundația Romanian Business Leaders',
-      cif: 'RO 29004248',
-      iban: 'RO82BTRL04801205902473XX',
-      sediu: 'București, Calea Dorobanți, nr 42, etaj 3, ap 5, Sector 1 (adresa socială: comuna Mogosoaia, Jud. Ilfov, Str. I.C.Bratianu, nr. 145)',
-      hj: 'HJ nr. 40PJ/20.07.2011 emisa de Judecatoria Buftea',
-      tel: '021/794.14.98',
-      email: 'contact@rbls.ro',
-      gdprEmail: 'dataprotection@rbls.ro',
-      gdprLink: 'https://www.rbls.ro/politica-de-confidentialitate/',
-    },
-    director: { nume: 'Alexandru Dincovici', titlu: 'Director General' },
-    presedinte: 'Sergiu Neguț',
-    coord: { nume: 'Teodora Gaftoi', email: 'teodora.gaftoi@rbls.ro', tel: '0739 637 426' },
-    resp: {
-      major: ['coordonare acces participanți parada bicicliștilor','ajutor amenajare traseu și distribuire materiale','suport siguranță și ghidare participanți','suport logistică organizare eveniment'],
-      minor: ['sprijinirea organizării evenimentului (logistică, acces participanți)','suport în coordonarea traseului','distribuire materiale și comunicare cu participanții'],
-    },
-    contractCounter: 0,
-  }
-];
-
-let events = [];
-let currentEvent = null;
-
-function loadEvents() {
-  const saved = localStorage.getItem('vol_events');
-  if (saved) {
-    try { events = JSON.parse(saved); } catch(e) { events = [...DEFAULT_EVENTS]; }
-  } else {
-    events = [...DEFAULT_EVENTS];
-    saveEvents();
-  }
-}
-
-function saveEvents() {
-  localStorage.setItem('vol_events', JSON.stringify(events));
-}
-
-function getEventById(id) {
-  return events.find(e => e.id === id);
-}
-
-// ── CONFIG accessor (used by PDF builders) ──────────────────────
-function C() { return currentEvent; }
-
-// ════════════════════════════════════════════════════════════════
-// ADMIN
-// ════════════════════════════════════════════════════════════════
+// ── STATE ──────────────────────────────────────────────────────────────────
+let contractCounter = parseInt(localStorage.getItem('rbl_contract_nr') || '0');
+ 
+// ── ADMIN ─────────────────────────────────────────────────────────────────
 function toggleAdmin() {
   if (document.getElementById('admin-panel').classList.contains('open')) {
     document.getElementById('admin-panel').classList.remove('open');
@@ -673,214 +430,29 @@ function checkAdminPassword() {
   const val = document.getElementById('admin-password-input').value;
   if (val === 'Fun4ever!') {
     document.getElementById('admin-overlay').classList.remove('open');
-    document.getElementById('admin-panel').classList.add('open');
-    const nr = currentEvent ? currentEvent.contractCounter + 1 : '—';
-    document.getElementById('admin-start-nr').value = nr;
-    document.getElementById('admin-current-nr').textContent = nr;
-    renderAdminEventList();
+    const panel = document.getElementById('admin-panel');
+    panel.classList.add('open');
+    document.getElementById('admin-start-nr').value = contractCounter + 1;
+    document.getElementById('admin-current-nr').textContent = contractCounter + 1;
   } else {
     document.getElementById('admin-pass-error').style.display = 'block';
     document.getElementById('admin-password-input').value = '';
     document.getElementById('admin-password-input').focus();
   }
 }
-function closeAdminOverlay() { document.getElementById('admin-overlay').classList.remove('open'); }
-
-function switchAdminTab(idx) {
-  document.querySelectorAll('.admin-tab').forEach((t,i) => t.classList.toggle('active', i===idx));
-  document.querySelectorAll('.admin-tab-content').forEach((t,i) => t.classList.toggle('active', i===idx));
-  if (idx === 1) renderAdminEventList();
+function closeAdminOverlay() {
+  document.getElementById('admin-overlay').classList.remove('open');
 }
-
 function saveAdminSettings() {
-  if (!currentEvent) { alert('Selectează mai întâi un eveniment.'); return; }
   const val = parseInt(document.getElementById('admin-start-nr').value);
-  if (isNaN(val) || val < 1) { alert('Introduceți un număr valid.'); return; }
-  currentEvent.contractCounter = val - 1;
-  saveEvents();
+  if (isNaN(val) || val < 1) { alert('Introduceți un număr valid (minim 1).'); return; }
+  contractCounter = val - 1;
+  localStorage.setItem('rbl_contract_nr', contractCounter);
   document.getElementById('admin-current-nr').textContent = val;
   document.getElementById('admin-info').innerHTML = `✅ Salvat! Următorul contract va fi nr. <b>${val}</b>. Următor: <b id="admin-current-nr">${val}</b>`;
 }
-
-function renderAdminEventList() {
-  const list = document.getElementById('admin-event-list');
-  if (!events.length) { list.innerHTML = '<div style="color:rgba(255,255,255,0.4);font-size:13px;">Niciun eveniment adăugat încă.</div>'; return; }
-  list.innerHTML = events.map(ev => `
-    <div class="event-item">
-      <div class="event-item-left">
-        <div class="event-item-name">${ev.icon || '📄'} ${ev.name}</div>
-        <div class="event-item-org">${ev.org.name} · Contracte: ${ev.contractCounter}</div>
-      </div>
-      <div class="event-item-actions">
-        <button class="btn-edit-ev" onclick="openEditEventModal('${ev.id}')">✏ Editează</button>
-        <button class="btn-del-ev" onclick="deleteEvent('${ev.id}')">✕ Șterge</button>
-      </div>
-    </div>
-  `).join('');
-}
-
-// ════════════════════════════════════════════════════════════════
-// EVENT MODAL
-// ════════════════════════════════════════════════════════════════
-function openNewEventModal() {
-  document.getElementById('ev-modal-title').textContent = 'Eveniment nou';
-  document.getElementById('ev-editing-id').value = '';
-  clearEventModal();
-  document.getElementById('event-modal-overlay').classList.add('open');
-}
-
-function openEditEventModal(id) {
-  const ev = getEventById(id);
-  if (!ev) return;
-  document.getElementById('ev-modal-title').textContent = 'Editează eveniment';
-  document.getElementById('ev-editing-id').value = id;
-  document.getElementById('ev-name').value = ev.name || '';
-  document.getElementById('ev-icon').value = ev.icon || '';
-  document.getElementById('ev-start-nr').value = ev.contractCounter + 1;
-  document.getElementById('ev-org-name').value = ev.org.name || '';
-  document.getElementById('ev-org-cif').value = ev.org.cif || '';
-  document.getElementById('ev-org-iban').value = ev.org.iban || '';
-  document.getElementById('ev-org-sediu').value = ev.org.sediu || '';
-  document.getElementById('ev-org-tel').value = ev.org.tel || '';
-  document.getElementById('ev-org-email').value = ev.org.email || '';
-  document.getElementById('ev-org-gdpr-email').value = ev.org.gdprEmail || '';
-  document.getElementById('ev-org-gdpr-link').value = ev.org.gdprLink || '';
-  document.getElementById('ev-director').value = ev.director.nume || '';
-  document.getElementById('ev-director-titlu').value = ev.director.titlu || '';
-  document.getElementById('ev-coord').value = ev.coord.nume || '';
-  document.getElementById('ev-coord-email').value = ev.coord.email || '';
-  document.getElementById('ev-coord-tel').value = ev.coord.tel || '';
-  document.getElementById('ev-presedinte').value = ev.presedinte || '';
-  document.getElementById('ev-resp-major').value = (ev.resp.major || []).join('\n');
-  document.getElementById('ev-resp-minor').value = (ev.resp.minor || []).join('\n');
-  document.getElementById('event-modal-overlay').classList.add('open');
-}
-
-function clearEventModal() {
-  ['ev-name','ev-icon','ev-org-name','ev-org-cif','ev-org-iban','ev-org-sediu','ev-org-tel','ev-org-email','ev-org-gdpr-email','ev-org-gdpr-link','ev-director','ev-director-titlu','ev-coord','ev-coord-email','ev-coord-tel','ev-presedinte','ev-resp-major','ev-resp-minor'].forEach(id => { document.getElementById(id).value = ''; });
-  document.getElementById('ev-start-nr').value = 1;
-}
-
-function closeEventModal() { document.getElementById('event-modal-overlay').classList.remove('open'); }
-
-function saveEvent() {
-  const name = document.getElementById('ev-name').value.trim();
-  const orgName = document.getElementById('ev-org-name').value.trim();
-  const director = document.getElementById('ev-director').value.trim();
-  if (!name || !orgName || !director) { alert('Completează cel puțin: Nume eveniment, Organizație și Director.'); return; }
-
-  const startNr = parseInt(document.getElementById('ev-start-nr').value) || 1;
-  const respMajorRaw = document.getElementById('ev-resp-major').value;
-  const respMinorRaw = document.getElementById('ev-resp-minor').value;
-
-  const ev = {
-    id: document.getElementById('ev-editing-id').value || ('ev_' + Date.now()),
-    name,
-    icon: document.getElementById('ev-icon').value.trim() || '📄',
-    org: {
-      name: orgName,
-      cif: document.getElementById('ev-org-cif').value.trim(),
-      iban: document.getElementById('ev-org-iban').value.trim(),
-      sediu: document.getElementById('ev-org-sediu').value.trim(),
-      hj: '',
-      tel: document.getElementById('ev-org-tel').value.trim(),
-      email: document.getElementById('ev-org-email').value.trim(),
-      gdprEmail: document.getElementById('ev-org-gdpr-email').value.trim(),
-      gdprLink: document.getElementById('ev-org-gdpr-link').value.trim(),
-    },
-    director: {
-      nume: director,
-      titlu: document.getElementById('ev-director-titlu').value.trim() || 'Director General',
-    },
-    presedinte: document.getElementById('ev-presedinte').value.trim() || director,
-    coord: {
-      nume: document.getElementById('ev-coord').value.trim(),
-      email: document.getElementById('ev-coord-email').value.trim(),
-      tel: document.getElementById('ev-coord-tel').value.trim(),
-    },
-    resp: {
-      major: respMajorRaw.split('\n').map(s=>s.trim()).filter(Boolean),
-      minor: respMinorRaw.split('\n').map(s=>s.trim()).filter(Boolean),
-    },
-    contractCounter: startNr - 1,
-  };
-
-  const editId = document.getElementById('ev-editing-id').value;
-  if (editId) {
-    const idx = events.findIndex(e => e.id === editId);
-    if (idx >= 0) { ev.contractCounter = events[idx].contractCounter; events[idx] = ev; }
-  } else {
-    events.push(ev);
-  }
-  saveEvents();
-  closeEventModal();
-  renderAdminEventList();
-  renderEventCards();
-}
-
-function deleteEvent(id) {
-  if (!confirm('Sigur ștergi acest eveniment? Contractele generate nu sunt afectate.')) return;
-  events = events.filter(e => e.id !== id);
-  saveEvents();
-  renderAdminEventList();
-  renderEventCards();
-}
-
-// ════════════════════════════════════════════════════════════════
-// EVENT SELECTOR SCREEN
-// ════════════════════════════════════════════════════════════════
-function renderEventCards() {
-  const container = document.getElementById('event-cards-container');
-  if (!events.length) {
-    container.innerHTML = '<div class="no-events-msg">Niciun eveniment configurat. Accesează panoul Admin pentru a adăuga.</div>';
-    return;
-  }
-  container.innerHTML = events.map(ev => `
-    <div class="event-card" onclick="selectEvent('${ev.id}')">
-      <div class="event-card-icon">${ev.icon || '📄'}</div>
-      <div class="event-card-name">${ev.name}</div>
-      <div class="event-card-org">${ev.org.name}</div>
-    </div>
-  `).join('');
-}
-
-function selectEvent(id) {
-  currentEvent = getEventById(id);
-  if (!currentEvent) return;
-  document.getElementById('header-subtitle').textContent = currentEvent.name;
-  document.getElementById('current-event-badge').style.display = 'inline-block';
-  document.getElementById('page-events').classList.remove('active');
-  document.getElementById('progress-bar').style.display = 'flex';
-  document.getElementById('page-1').classList.add('active');
-  ['tab-1','tab-2','tab-3'].forEach(t => { const el=document.getElementById(t); if(el){el.classList.remove('active','done');} });
-  document.getElementById('tab-1').classList.add('active');
-  window.scrollTo(0,0);
-}
-
-function backToEvents() {
-  if (!confirm('Mergi înapoi la selecția evenimentului? Datele completate se vor pierde.')) return;
-  resetForm();
-  currentEvent = null;
-  document.getElementById('header-subtitle').textContent = 'Formular de înregistrare voluntar';
-  document.getElementById('current-event-badge').style.display = 'none';
-  document.getElementById('progress-bar').style.display = 'none';
-  document.querySelectorAll('.form-page').forEach(p => p.classList.remove('active'));
-  document.getElementById('page-events').classList.add('active');
-  window.scrollTo(0,0);
-}
-
-// ════════════════════════════════════════════════════════════════
-// CONTRACT COUNTER (per event)
-// ════════════════════════════════════════════════════════════════
-function nextContractNr() {
-  currentEvent.contractCounter++;
-  saveEvents();
-  return String(currentEvent.contractCounter).padStart(3,'0');
-}
-
-// ════════════════════════════════════════════════════════════════
-// CANVAS / SIGNATURE
-// ════════════════════════════════════════════════════════════════
+ 
+// ── CANVAS ────────────────────────────────────────────────────────────────
 function resizeCanvas(id) {
   const c = document.getElementById(id); if (!c) return;
   const tmp = c.toDataURL();
@@ -903,10 +475,8 @@ function setupCanvas(id) {
 function clearSig(id) { const c=document.getElementById(id); c.getContext('2d').clearRect(0,0,c.width,c.height); }
 function isSigEmpty(id) { const c=document.getElementById(id); return !c.getContext('2d').getImageData(0,0,c.width,c.height).data.some(v=>v!==0); }
 function getSig(id) { return document.getElementById(id).toDataURL('image/png'); }
-
-// ════════════════════════════════════════════════════════════════
-// MINOR / VALIDATION / NAVIGATION
-// ════════════════════════════════════════════════════════════════
+ 
+// ── MINOR ────────────────────────────────────────────────────────────────
 function isMinor(dob) {
   if (!dob) return false;
   const b=new Date(dob), n=new Date(); let age=n.getFullYear()-b.getFullYear();
@@ -919,7 +489,8 @@ document.getElementById('f-dob').addEventListener('change', function() {
   document.getElementById('parinte-section').style.display = minor?'block':'none';
   document.getElementById('sig-parinte-block').style.display = minor?'block':'none';
 });
-
+ 
+// ── VALIDATION ───────────────────────────────────────────────────────────
 function v(id) { const el=document.getElementById(id), val=el.value.trim(); el.classList.toggle('error',!val); return !!val; }
 function goToPage2() {
   const f=['f-nume','f-prenume','f-dob','f-cnp','f-ci-serie','f-ci-nr','f-judet','f-oras','f-strada','f-nr','f-tel','f-email'];
@@ -935,11 +506,14 @@ function goToPage3() {
   if(minor&&isSigEmpty('sig-parinte-canvas')){alert('Te rugăm să adaugi și semnătura părintelui/tutorelui.');return;}
   buildReview(); goToPage(3);
 }
+ 
+// ── NAVIGATION ───────────────────────────────────────────────────────────
 function goToPage(n) {
   document.querySelectorAll('.form-page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.step-tab').forEach(t=>t.classList.remove('active','done'));
-  if(n==='success') {
-    document.getElementById('page-success').classList.add('active');
+  if(n==='success' || n==='processing') {
+    const pageId = n==='success' ? 'page-success' : 'page-processing';
+    document.getElementById(pageId).classList.add('active');
     ['tab-1','tab-2','tab-3'].forEach(t=>document.getElementById(t).classList.add('done'));
   } else {
     document.getElementById('page-'+n).classList.add('active');
@@ -948,21 +522,14 @@ function goToPage(n) {
   }
   window.scrollTo(0,0);
 }
-
-// ════════════════════════════════════════════════════════════════
-// HELPERS
-// ════════════════════════════════════════════════════════════════
+ 
+// ── HELPERS ──────────────────────────────────────────────────────────────
 function g(id){return document.getElementById(id).value.trim();}
-function today(){const d=new Date();
-  const zi=d.getDay();
-  if(zi===6) d.setDate(d.getDate()+2);
-  if(zi===0) d.setDate(d.getDate()+1);
-  return `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.${d.getFullYear()}`;}
+function today(){const d=new Date();return `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.${d.getFullYear()}`;}
 function todayYear(){return new Date().getFullYear();}
-
-// ════════════════════════════════════════════════════════════════
-// REVIEW
-// ════════════════════════════════════════════════════════════════
+function nextContractNr(){contractCounter++;localStorage.setItem('rbl_contract_nr',contractCounter);return String(contractCounter).padStart(3,'0');}
+ 
+// ── REVIEW ───────────────────────────────────────────────────────────────
 function buildReview() {
   const minor=isMinor(g('f-dob'));
   const items=[['Nume complet',g('f-prenume')+' '+g('f-nume')],['Data nașterii',g('f-dob')],['CNP',g('f-cnp')],['CI',g('f-ci-serie').toUpperCase()+' '+g('f-ci-nr')],['Domiciliu',g('f-oras')+', '+g('f-judet')],['Email',g('f-email')]];
@@ -972,8 +539,7 @@ function buildReview() {
     :[['📄','Contract de voluntariat','cu toate articolele complete'],['📄','Fișa voluntarului','completată automat'],['📄','Formular consimțământ GDPR','completat și semnat']];
   document.getElementById('doc-list').innerHTML=docs.map(([icon,name,sub])=>`<div class="doc-item"><div class="doc-icon">${icon}</div><div><div class="doc-name">${name}</div><div class="doc-sub">${sub}</div></div></div>`).join('');
 }
-
-
+ 
 // ── PDF STYLES ───────────────────────────────────────────────────────────
 const S={title:{fontSize:13,bold:true,alignment:'center',margin:[0,0,0,4]},subtitle:{fontSize:11,alignment:'center',margin:[0,0,0,4]},nr:{fontSize:10,alignment:'center',margin:[0,0,0,14]},sectionTitle:{fontSize:10,bold:true,margin:[0,8,0,3]},body:{fontSize:10,margin:[0,0,0,5]}};
 const DEF={font:'Roboto',fontSize:10};
@@ -993,7 +559,7 @@ function docContractMajor(data,nr) {
   if (zi === 0) d.setDate(d.getDate() + 1); // duminica -> luni
   return `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.${d.getFullYear()}`;
 },
-    {text:['Între ',{text:'FUNDAȚIA ROMANIAN BUSINESS LEADERS, ',bold:true},'persoana juridică non-profit cu sediul în București, Calea Dorobanți, nr 42, etaj 3, ap 5, Sector 1, Bucuresti (adresa socială: comuna Mogosoaia, Jud. Ilfov, Str. I.C.Bratianu, nr. 145) înființată prin HJ nr. 40PJ/20.07.2011 emisa de Judecatoria Buftea, telefon ${data.ev.org.tel}, CIF RO 29004248, IBAN (RON) RO82BTRL04801205902473XX deschis la Banca Transilvania, Sucursala Chibrit, reprezentanta în mod legal de Alexandru Dincovici în calitate de Director General, numită în continuare ',{text:'Organizația gazdă',bold:true}],style:'body'},
+    {text:['Între ',{text:'FUNDAȚIA ROMANIAN BUSINESS LEADERS, ',bold:true},'persoana juridică non-profit cu sediul în București, Calea Dorobanți, nr 42, etaj 3, ap 5, Sector 1, Bucuresti (adresa socială: comuna Mogosoaia, Jud. Ilfov, Str. I.C.Bratianu, nr. 145) înființată prin HJ nr. 40PJ/20.07.2011 emisa de Judecatoria Buftea, telefon 021/794.14.98, CIF RO 29004248, IBAN (RON) RO82BTRL04801205902473XX deschis la Banca Transilvania, Sucursala Chibrit, reprezentanta în mod legal de Alexandru Dincovici în calitate de Director General, numită în continuare ',{text:'Organizația gazdă',bold:true}],style:'body'},
     {text:'și',style:'body'},
     {text:[{text:full,bold:true},`, domiciliat în ${data.oras}, Str. ${data.strada} nr. ${data.nr}, Jud. ${data.judet}, identificat cu CI seria `,{text:data.ciSerie.toUpperCase(),bold:true},' nr. ',{text:data.ciNr,bold:true},', CNP ',{text:data.cnp,bold:true},', numită în continuare ',{text:'Voluntar',bold:true},','],style:'body'},
     {text:'s-a convenit încheierea prezentului contract în baza Legii nr. 78/2014 privind reglementarea activității de voluntariat din România.',style:'body',margin:[0,0,0,10]},
@@ -1024,7 +590,7 @@ function docContractMajor(data,nr) {
     {text:'8.2 Răspunderea pentru neexecutarea sau executarea necorespunzătoare a contractului de voluntariat este supusă prevederilor Legii nr. 287/2009 privind Codul civil, republicată, cu modificările ulterioare.',style:'body'},
     {text:`Încheiat astăzi, ${today()}, în două exemplare, câte unul pentru fiecare parte, și intră în vigoare la data semnării de către ambele părți.`,style:'body',margin:[0,8,0,20]},
     {columns:[
-      {width:'50%',stack:[{text:'Organizația Gazdă',bold:true,fontSize:10},{text:`${data.ev.org.name}`,fontSize:10},{text:data.ev.director.nume,fontSize:10},{text:data.ev.director.titlu,fontSize:10}]},
+      {width:'50%',stack:[{text:'Organizația Gazdă',bold:true,fontSize:10},{text:'Fundația Romanian Business Leaders',fontSize:10},{text:'Alexandru Dincovici',fontSize:10},{text:'Director General',fontSize:10}]},
       {width:'50%',stack:[{text:'Nume și semnătură voluntar',bold:true,fontSize:10},{text:full,fontSize:10},{image:sigV,width:120,height:40,margin:[0,6,0,0]}]},
     ]},
   ]};
@@ -1042,16 +608,16 @@ function docFisaMajor(data,nr) {
     {text:[{text:'Denumirea postului: ',bold:true},'voluntar'],style:'body'},
     {text:[{text:'Nume voluntar: ',bold:true},full],style:'body'},
     {text:'RELAȚII IERARHICE:',style:'sectionTitle'},
-    {text:''+`este subordonat: ${data.ev.director.titlu} al ${data.ev.org.name} – ${data.ev.director.nume} și coordonatorului de voluntari – ${data.ev.coord.nume}.`+'',style:'body'},
+    {text:'este subordonat: Directorul general al Fundației Romanian Business Leaders – Alexandru Dincovici și coordonatorului de voluntari – Teodora Gaftoi.',style:'body'},
     {text:'RELAȚII FUNCȚIONALE:',style:'sectionTitle'},
     {text:'Lucrează în strânsă legătură cu echipa executivă a RBL.',style:'body'},
     {text:'PROGRAM DE LUCRU:',style:'sectionTitle'},
     {text:'Voluntarul își desfășoară activitatea pe parcursul anului calendaristic, conform unui program flexibil, stabilit de comun acord cu coordonatorul de voluntari, în funcție de nevoile proiectelor și disponibilitatea voluntarului.',style:'body'},
     {text:'RESPONSABILITĂȚI:',style:'sectionTitle'},
-    {ul:data.ev.resp.major,style:'body',margin:[10,0,0,16]},
+    {ul:['coordonare acces participanți eveniment RBL','ajutor amenajare și distribuire materiale tipărite în timpul evenimentului RBL','suport în amenajare spațiu desfășurare eveniment RBL','suport în coordonare logistică organizare eveniment RBL'],style:'body',margin:[10,0,0,16]},
     {text:`Data: ${today()}`,style:'body',margin:[0,8,0,16]},
     {columns:[
-      {width:'50%',stack:[{text:'Semnătura Director General',bold:true,fontSize:10},{text:`${data.ev.org.name}`,fontSize:10},{text:data.ev.director.nume,fontSize:10}]},
+      {width:'50%',stack:[{text:'Semnătura Director General',bold:true,fontSize:10},{text:'Fundația Romanian Business Leaders',fontSize:10},{text:'Alexandru Dincovici',fontSize:10}]},
       {width:'50%',stack:[{text:'Semnătura voluntar',bold:true,fontSize:10},{text:full,fontSize:10},{image:sigV,width:120,height:40,margin:[0,6,0,0]}]},
     ]},
   ]};
@@ -1070,11 +636,11 @@ function docGdprMajor(data) {
     {text:[{text:'Telefon: ',bold:true},data.tel],style:'body'},
     {text:[{text:'E-mail: ',bold:true},data.email],style:'body'},
     {text:'FORMULAR PRELUARE CONSIMȚĂMÂNT',style:'sectionTitle'},
-    {text:['Cu ocazia completării formularului de înscriere în cadrul ',{text:'ROMANIAN BUSINESS LEADERS',bold:true},' („',{text:'RBL',bold:true},'"), declar ca sunt de acord ca ',{text:'RBL',bold:true},', cu sediul în Comuna Mogoșoaia, Str. I.C. Brătianu, nr. 145, jud. Ilfov și cu adresa de corespondență în București, Calea Dorobanți, nr. 42, et. 3, cam. 5, Sector 1, România, email ${data.ev.org.email}, telefon ${data.ev.org.tel}, reprezentată legal prin ',{text:data.ev.presedinte,bold:true},', să fie autorizată să prelucreze datele mele cu caracter personal comunicate către aceasta, precum si datele colectate în cadrul relațiilor cu RBL în vederea promovării activității, proiectelor și evenimentelor RBL, ale sponsorilor, partenerilor și ale membrilor fundației (scop de marketing). În scopul aici menționat, sunt de acord și cu înregistrarea evenimentelor online realizate de RBL și distribuirea materialelor înregistrate.'],style:'body'},
+    {text:['Cu ocazia completării formularului de înscriere în cadrul ',{text:'ROMANIAN BUSINESS LEADERS',bold:true},' („',{text:'RBL',bold:true},'"), declar ca sunt de acord ca ',{text:'RBL',bold:true},', cu sediul în Comuna Mogoșoaia, Str. I.C. Brătianu, nr. 145, jud. Ilfov și cu adresa de corespondență în București, Calea Dorobanți, nr. 42, et. 3, cam. 5, Sector 1, România, email contact@rbls.ro, telefon 021 794 14 98, reprezentată legal prin președinte ',{text:'Sergiu Neguț',bold:true},', să fie autorizată să prelucreze datele mele cu caracter personal comunicate către aceasta, precum si datele colectate în cadrul relațiilor cu RBL în vederea promovării activității, proiectelor și evenimentelor RBL, ale sponsorilor, partenerilor și ale membrilor fundației (scop de marketing). În scopul aici menționat, sunt de acord și cu înregistrarea evenimentelor online realizate de RBL și distribuirea materialelor înregistrate.'],style:'body'},
     {text:'Îmi ofer consimțământul în mod liber, dorind să ofer sprijinul meu în eforturile de promovare care fac posibilă aducerea evenimentelor de afaceri si a proiectelor susținute de RBL în atenția publicului, înțelegând că nu există nicio consecință negativă pentru mine în cazul în care nu îmi acord consimțământul.',style:'body'},
     {text:'Sunt de acord cu prelucrarea datelor mele prin aplicații de tip email, cloud, calendar, conferințe video etc oferite de companii situate sau controlate din afara Spațiului Economic European (SEE), cum ar fi Google, Microsoft și Facebook, înțelegând că nivelul de protecție a datelor personale prevăzut de legislația aplicabilă acestora poate fi mai redus decât cel din SEE, permițând autorităților locale accesarea lor, în paralel cu lipsa unor mecanisme de contestare eficiente.',style:'body'},
-    {text:'Declar ca am citit Informarea privind prelucrarea datelor cu caracter personal (${data.ev.org.gdprLink}), informare al cărui conținut l-am înțeles în integralitate,',style:'body'},
-    {text:'Am luat cunoștință și am fost informat/ă asupra faptului că în conformitate cu dispozițiile Regulamentului (UE) 2016/679 al Parlamentului European și al Consiliului din 27 aprilie 2016, privind protecția persoanelor fizice în ceea ce privește prelucrarea datelor cu caracter personal am, în condițiile legale aplicabile, dreptul de acces, rectificare, ștergere, restrictionare, portabilitate, opoziție, de a face o plângere la autoritatea de supraveghere, precum și dreptul de a-mi retrage consimțământul în orice moment printr-un simplu e-mail la adresa ${data.ev.org.gdprEmail}. Retragerea consimțământului nu afectează legalitatea prelucrării efectuate pe baza consimțământului înainte de retragerea acestuia.',italics:true,fontSize:9,margin:[0,0,0,10]},
+    {text:'Declar ca am citit Informarea privind prelucrarea datelor cu caracter personal (https://www.rbls.ro/politica-de-confidentialitate/), informare al cărui conținut l-am înțeles în integralitate,',style:'body'},
+    {text:'Am luat cunoștință și am fost informat/ă asupra faptului că în conformitate cu dispozițiile Regulamentului (UE) 2016/679 al Parlamentului European și al Consiliului din 27 aprilie 2016, privind protecția persoanelor fizice în ceea ce privește prelucrarea datelor cu caracter personal am, în condițiile legale aplicabile, dreptul de acces, rectificare, ștergere, restrictionare, portabilitate, opoziție, de a face o plângere la autoritatea de supraveghere, precum și dreptul de a-mi retrage consimțământul în orice moment printr-un simplu e-mail la adresa dataprotection@rbls.ro. Retragerea consimțământului nu afectează legalitatea prelucrării efectuate pe baza consimțământului înainte de retragerea acestuia.',italics:true,fontSize:9,margin:[0,0,0,10]},
     {text:[{text:'Confirm că am citit și am înțeles conținutul prezentului document "FORMULAR DE CONSIMTAMANT"',bold:true}],style:'body',margin:[0,0,0,18]},
     {columns:[
       {width:'40%',stack:[{text:'Data',bold:true,fontSize:10},{text:today(),fontSize:10}]},
@@ -1092,7 +658,7 @@ function docContractMinor(data,nr) {
     {text:'CONTRACT DE VOLUNTARIAT',style:'title'},
     {text:'pentru voluntari minori',style:'subtitle'},
     {text:`Nr. ${nr} din data de ${today()}`,style:'nr'},
-    {text:['Între ',{text:`${data.ev.org.name}, `,bold:true},'cu sediul în Mogosoaia, str. I.C.Bratianu nr.145, jud. Ilfov, identificată cu CUI RO 29004248, reprezentată de Alexandru Dincovici în calitate de director general, numită în continuare ',{text:'Organizația gazdă',bold:true}],style:'body'},
+    {text:['Între ',{text:'Fundația Romanian Business Leaders, ',bold:true},'cu sediul în Mogosoaia, str. I.C.Bratianu nr.145, jud. Ilfov, identificată cu CUI RO 29004248, reprezentată de Alexandru Dincovici în calitate de director general, numită în continuare ',{text:'Organizația gazdă',bold:true}],style:'body'},
     {text:'și',style:'body'},
     {text:[{text:full,bold:true},`, domiciliat în ${data.oras}, Jud. ${data.judet}, numit în continuare `,{text:'Voluntar',bold:true},','],style:'body'},
     {text:'s-a convenit încheierea prezentului contract în baza Legii nr. 78/2014 privind reglementarea activității de voluntariat din România.',style:'body',margin:[0,0,0,10]},
@@ -1120,7 +686,7 @@ function docContractMinor(data,nr) {
     {ul:['Prezentul contract este însoțit de anexe (fișa de voluntariat și fișa de protecție), care fac parte integrantă a acestui contract.','Prezentul contract se va încheia cu acordul părinților sau al reprezentanților legali, conform legislației în vigoare.','Răspunderea pentru neexecutarea sau executarea necorespunzătoare a contractului de voluntariat este supusă prevederilor Legii nr. 287/2009 privind Codul civil, republicată, cu modificările ulterioare.','Toate prevederile prezentului Contract sunt rezultatul negocierii dintre Organizația-gazdă și Voluntar și reprezintă acordul total al părților cu privire la toate aspectele prezentului Contract.','Prezentului Contract îi sunt aplicabile dispozițiile legii române.'],style:'body',margin:[10,0,0,8]},
     {text:`Încheiat astăzi, ${today()}, în două exemplare, câte unul pentru fiecare parte.`,style:'body',margin:[0,0,0,20]},
     {columns:[
-      {width:'50%',stack:[{text:'Organizația Gazdă',bold:true,fontSize:10},{text:`${data.ev.org.name}`,fontSize:10},{text:data.ev.director.nume,fontSize:10}]},
+      {width:'50%',stack:[{text:'Organizația Gazdă',bold:true,fontSize:10},{text:'Fundatia Romanian Business Leaders',fontSize:10},{text:'Alexandru Dincovici',fontSize:10}]},
       {width:'50%',stack:[{text:'Voluntar',bold:true,fontSize:10},{text:full,fontSize:10},{image:sigV,width:120,height:40,margin:[0,6,0,0]}]},
     ]},
   ]};
@@ -1138,16 +704,16 @@ function docFisaMinor(data,nr) {
     {text:[{text:'Denumirea postului: ',bold:true},'Voluntar'],style:'body'},
     {text:[{text:'Nume voluntar: ',bold:true},full],style:'body'},
     {text:'RELAȚII IERARHICE:',style:'sectionTitle'},
-    {text:''+`este subordonat: ${data.ev.director.titlu} al ${data.ev.org.name} – ${data.ev.director.nume} și Coordonatorului de voluntari – ${data.ev.coord.nume}.`+'',style:'body'},
+    {text:'este subordonat: Directorul General al Fundației Romanian Business Leaders – Alexandru Dincovici și Coordonatorului de voluntari – Teodora Gaftoi.',style:'body'},
     {text:'RELAȚII FUNCȚIONALE:',style:'sectionTitle'},
     {text:'Lucrează în stransa legatura cu echipa proiectului și echipa executivă.',style:'body'},
     {text:'PROGRAM DE LUCRU:',style:'sectionTitle'},
     {text:'Voluntarul își desfășoară activitatea pe parcursul anului calendaristic, conform unui program flexibil, stabilit de comun acord cu coordonatorul de voluntari, în funcție de nevoile proiectelor și disponibilitatea voluntarului.',style:'body'},
     {text:'Activitati:',style:'sectionTitle'},
-    {ul:data.ev.resp.minor,style:'body',margin:[10,0,0,16]},
+    {ul:['sprijinirea organizării și desfășurării evenimentelor RBL (logistică, acces participanți, suport în teren etc.)','suport administrativ și logistic pentru departamentul de evenimente','implicare în activități de comunicare, promovare și distribuire materiale informative','activități de documentare, redactare și arhivare materiale','contribuții la dezvoltarea comunității de voluntari RBL'],style:'body',margin:[10,0,0,16]},
     {text:`Data: ${today()}`,style:'body',margin:[0,8,0,16]},
     {columns:[
-      {width:'55%',stack:[{text:'Semnătura',bold:true,fontSize:10},{text:data.ev.director.titlu,bold:true,fontSize:10},{text:`${data.ev.org.name}`,fontSize:10},{text:data.ev.director.nume,fontSize:10}]},
+      {width:'55%',stack:[{text:'Semnătura',bold:true,fontSize:10},{text:'Director General',bold:true,fontSize:10},{text:'Fundația Romanian Business Leaders',fontSize:10},{text:'Alexandru Dincovici',fontSize:10}]},
       {width:'45%',stack:[{text:'Semnătura voluntar',bold:true,fontSize:10},{text:full,fontSize:10},{image:sigV,width:110,height:36,margin:[0,6,0,0]}]},
     ]},
   ]};
@@ -1166,11 +732,11 @@ function docGdprMinorVoluntar(data) {
     {text:[{text:'Telefon: ',bold:true},data.tel],style:'body'},
     {text:[{text:'E-mail: ',bold:true},data.email],style:'body'},
     {text:'FORMULAR PRELUARE CONSIMTAMANT',style:'sectionTitle'},
-    {text:['Cu ocazia completarii formularului de înscriere in cadrul ',{text:'ROMANIAN BUSINESS LEADER',bold:true},' („',{text:'RBL',bold:true},'"), declar ca sunt de acord ca ',{text:'RBL',bold:true},', cu sediul în Comuna Mogoșoaia, Str. I.C. Brătianu, nr. 145, jud. Ilfov și cu adresa de corespondență în București, Calea Dorobanți, nr. 42, et. 3, cam. 5, Sector 1, România, email ${data.ev.org.email}, telefon ${data.ev.org.tel}, reprezentată legal prin ',{text:data.ev.presedinte,bold:true},', să fie autorizata sa prelucreze datele mele cu caracter personal comunicate catre aceasta, precum si datele colectate în cadrul relatiilor cu RBL în vederea promovării activității, proiectelor și evenimentelor RBL, ale sponsorilor, partenerilor și ale membrilor fundației (scop de marketing). În scopul aici menționat, sunt de acord și cu înregistrarea evenimentelor online realizate de RBL și distribuirea materialelor înregistrate.'],style:'body'},
+    {text:['Cu ocazia completarii formularului de înscriere in cadrul ',{text:'ROMANIAN BUSINESS LEADER',bold:true},' („',{text:'RBL',bold:true},'"), declar ca sunt de acord ca ',{text:'RBL',bold:true},', cu sediul în Comuna Mogoșoaia, Str. I.C. Brătianu, nr. 145, jud. Ilfov și cu adresa de corespondență în București, Calea Dorobanți, nr. 42, et. 3, cam. 5, Sector 1, România, email contact@rbls.ro, telefon 021 794 14 98, reprezentată legal prin președinte ',{text:'Sergiu Neguț',bold:true},', să fie autorizata sa prelucreze datele mele cu caracter personal comunicate catre aceasta, precum si datele colectate în cadrul relatiilor cu RBL în vederea promovării activității, proiectelor și evenimentelor RBL, ale sponsorilor, partenerilor și ale membrilor fundației (scop de marketing). În scopul aici menționat, sunt de acord și cu înregistrarea evenimentelor online realizate de RBL și distribuirea materialelor înregistrate.'],style:'body'},
     {text:'Îmi ofer consimțământul în mod liber, dorind să ofer sprijinul meu în eforturile de promovare care fac posibilă aducerea evenimentelor de afaceri si a proiectelor susținute de RBL în atenția publicului, înțelegând că nu există nicio consecință negativă pentru mine în cazul în care nu îmi acord consimțământul.',style:'body'},
     {text:'Sunt de acord cu prelucrarea datelor mele prin aplicații de tip email, cloud, calendar, conferințe video etc oferite de companii situate sau controlate din afara Spațiului Economic European (SEE), cum ar fi Google, Microsoft și Facebook, înțelegând că nivelul de protecție a datelor personale prevăzut de legislația aplicabilă acestora poate fi mai redus decât cel din SEE, permițând autorităților locale accesarea lor, în paralel cu lipsa unor mecanisme de contestare eficiente.',style:'body'},
-    {text:'Declar ca am citit Informarea privind prelucrarea datelor cu caracter personal (${data.ev.org.gdprLink}), informare al carui continut l-am inteles in integralitate,',style:'body'},
-    {text:'Am luat cunoștință și am fost informat/ă asupra faptului că în conformitate cu dispozițiile Regulamentului (UE) 2016/679 al Parlamentului European și al Consiliului din 27 aprilie 2016, privind protecția persoanelor fizice în ceea ce privește prelucrarea datelor cu caracter personal am, în condițiile legale aplicabile, dreptul de acces, rectificare, ștergere, restricționare, portabilitate, opoziție, de a face o plângere la autoritatea de supraveghere, precum și dreptul de a-mi retrage consimțământul în orice moment printr-un simplu e-mail la adresa ${data.ev.org.gdprEmail}. Retragerea consimțământului nu afectează legalitatea prelucrării efectuate pe baza consimțământului înainte de retragerea acestuia.',italics:true,fontSize:9,margin:[0,0,0,10]},
+    {text:'Declar ca am citit Informarea privind prelucrarea datelor cu caracter personal (https://www.rbls.ro/politica-de-confidentialitate/), informare al carui continut l-am inteles in integralitate,',style:'body'},
+    {text:'Am luat cunoștință și am fost informat/ă asupra faptului că în conformitate cu dispozițiile Regulamentului (UE) 2016/679 al Parlamentului European și al Consiliului din 27 aprilie 2016, privind protecția persoanelor fizice în ceea ce privește prelucrarea datelor cu caracter personal am, în condițiile legale aplicabile, dreptul de acces, rectificare, ștergere, restricționare, portabilitate, opoziție, de a face o plângere la autoritatea de supraveghere, precum și dreptul de a-mi retrage consimțământul în orice moment printr-un simplu e-mail la adresa dataprotection@rbls.ro. Retragerea consimțământului nu afectează legalitatea prelucrării efectuate pe baza consimțământului înainte de retragerea acestuia.',italics:true,fontSize:9,margin:[0,0,0,10]},
     {text:[{text:'Confirm că am citit și am înțeles conținutul prezentului document "FORMULAR DE CONSIMTAMANT"',bold:true}],style:'body',margin:[0,0,0,18]},
     {columns:[
       {width:'40%',stack:[{text:'Data',bold:true,fontSize:10},{text:today(),fontSize:10}]},
@@ -1198,7 +764,7 @@ function docGdprParinte(data) {
       {width:'40%',stack:[{text:'DATA,',bold:true,fontSize:10},{text:today(),fontSize:10}]},
       {width:'60%',stack:[{text:'NUME, SEMNĂTURA PĂRINTE/TUTORE',bold:true,fontSize:10},{text:data.pNume,fontSize:10},{image:sigP,width:120,height:40,margin:[0,6,0,0]}]},
     ],margin:[0,0,0,20]},
-    {text:'1 Consimtamantul in ceea ce priveste prelucrarea datelor cu caracter personal, precum si furnizarea datelor mentionate mai jos sunt voluntare. Acest consimtamant poate fi revocat in orice moment, cu efect ulterior printr-o simpla notificare catre RBL la adresa ${data.ev.org.gdprEmail}.',fontSize:8,italics:true},
+    {text:'1 Consimtamantul in ceea ce priveste prelucrarea datelor cu caracter personal, precum si furnizarea datelor mentionate mai jos sunt voluntare. Acest consimtamant poate fi revocat in orice moment, cu efect ulterior printr-o simpla notificare catre RBL la adresa dataprotection@rbls.ro.',fontSize:8,italics:true},
   ]};
 }
  
@@ -1214,7 +780,7 @@ function docAcordParental(data) {
     {text:['Subsemnatul ',{text:data.pNume,bold:true},', cetățean român, domiciliat în ',{text:data.pDom,bold:true},', identificat prin CNP ',{text:data.pCNP,bold:true},', în calitate de părinte al copilului ',{text:full,bold:true},`, declar pe propria răspundere, că sunt de acord cu participarea acestuia la evenimentele organizate de Fundația Romanian Business Leaders, în perioada aprilie ${an1} - aprilie ${an2}.`],style:'body'},
     {text:'Am luat la cunoștință și sunt de acord ca acesta să participe din interes la proiect și că participarea la activități se face pe răspunderea personală a părinților dacă acesta nu a împlinit 18 ani la data derulării evenimentului.',style:'body'},
     {text:'Fundația își rezervă dreptul de a utiliza datele personale ale participanților doar cu scopul îndeplinirii formalităților organizatorice și dreptul de a contacta telefonic unul dintre părinți dacă situația impune acest lucru.',style:'body'},
-    {text:''+`Date contact organizatori: ${data.ev.coord.nume} – ${data.ev.coord.email} / ${data.ev.coord.tel}`+'',style:'body',margin:[0,0,0,14]},
+    {text:'Date contact organizatori: Gaftoi Teodora, Events Assistant – teodora.gaftoi@rbls.ro / 0739 637 426',style:'body',margin:[0,0,0,14]},
     {text:'Am luat la cunoștință,',style:'body',margin:[0,0,0,20]},
     {columns:[
       {width:'50%',stack:[{text:'Parinte',bold:true,fontSize:10},{text:[{text:'Nume si prenume: '},data.pNume],fontSize:10},{text:[{text:'Telefon: '},data.pTel],fontSize:10},{text:'Semnatura:',fontSize:10,margin:[0,8,0,2]},{image:sigP,width:110,height:36,margin:[0,2,0,0]}]},
@@ -1222,49 +788,167 @@ function docAcordParental(data) {
     ]},
   ]};
 }
+ 
 
-// ════════════════════════════════════════════════════════════════
-// GENERATE
-// ════════════════════════════════════════════════════════════════
-function generateDocs() {
-  if (!currentEvent) { alert('Selectează mai întâi un eveniment.'); return; }
-  const data={
-    nume:g('f-nume'),prenume:g('f-prenume'),dob:g('f-dob'),cnp:g('f-cnp'),
-    ciSerie:g('f-ci-serie'),ciNr:g('f-ci-nr'),judet:g('f-judet'),oras:g('f-oras'),
-    strada:g('f-strada'),nr:g('f-nr'),tel:g('f-tel'),email:g('f-email'),
-    pNume:g('f-p-nume'),pCNP:g('f-p-cnp'),pDom:g('f-p-dom'),pTel:g('f-p-tel'),pEmail:g('f-p-email'),
-    ev: currentEvent,
-  };
-  const minor=isMinor(data.dob);
-  const nr=nextContractNr();
-  const nf=data.nume.toLowerCase().replace(/\s+/g,'_');
-  const dl=document.getElementById('download-links');
-  dl.innerHTML='';
-
-  const addBtn=(icon,label,sub,def,fn)=>{
-    const b=document.createElement('button'); b.className='dl-btn';
-    b.innerHTML=`<span class="dl-icon">${icon}</span><div><div class="dl-name">${label}</div><div class="dl-sub">${sub}</div></div>`;
-    b.onclick=()=>pdfMake.createPdf(def).download(fn);
-    dl.appendChild(b);
-  };
-
-  if(minor){
-    addBtn('📄','Contract de voluntariat (minor)',`Nr. ${nr} — ${today()}`,docContractMinor(data,nr),`contract_minor_${nf}_${nr}.pdf`);
-    addBtn('📄','Fișa voluntarului (minor)',`${data.prenume} ${data.nume}`,docFisaMinor(data,nr),`fisa_minor_${nf}_${nr}.pdf`);
-    addBtn('📄','Formular consimțământ GDPR — voluntar',`Semnat de ${data.prenume} ${data.nume}`,docGdprMinorVoluntar(data),`gdpr_voluntar_minor_${nf}.pdf`);
-    addBtn('📋','Formular consimțământ GDPR — părinte',`Semnat de ${data.pNume}`,docGdprParinte(data),`gdpr_parinte_${nf}.pdf`);
-    addBtn('📋','Acord parental',`Părinte: ${data.pNume}`,docAcordParental(data),`acord_parental_${nf}.pdf`);
+// ── SEMNATURA UPLOAD ──────────────────────────────────────────────────────
+function switchSigTab(mode, prefix) {
+  const isVoluntar = prefix === 'sig';
+  const drawArea  = document.getElementById(prefix + '-draw-area');
+  const uploadArea= document.getElementById(prefix + '-upload-area');
+  const tabDraw   = document.getElementById(prefix + '-tab-draw');
+  const tabUpload = document.getElementById(prefix + '-tab-upload');
+  if(mode === 'draw'){
+    drawArea.style.display='block'; uploadArea.style.display='none';
+    tabDraw.classList.add('active'); tabUpload.classList.remove('active');
   } else {
-    addBtn('📄','Contract de voluntariat',`Nr. ${nr} — ${today()}`,docContractMajor(data,nr),`contract_${nf}_${nr}.pdf`);
-    addBtn('📄','Fișa voluntarului',`${data.prenume} ${data.nume}`,docFisaMajor(data,nr),`fisa_${nf}_${nr}.pdf`);
-    addBtn('📄','Formular consimțământ GDPR',`${data.prenume} ${data.nume}`,docGdprMajor(data),`gdpr_${nf}.pdf`);
+    drawArea.style.display='none'; uploadArea.style.display='block';
+    tabDraw.classList.remove('active'); tabUpload.classList.add('active');
   }
-  goToPage('success');
 }
 
-// ════════════════════════════════════════════════════════════════
-// RESET
-// ════════════════════════════════════════════════════════════════
+function handleSigUpload(input, canvasId, previewId) {
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const img = new Image();
+    img.onload = function() {
+      const canvas = document.getElementById(canvasId);
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      // Draw white background then image scaled to fit
+      const scale = Math.min(canvas.width/img.width, canvas.height/img.height, 1);
+      const w = img.width*scale, h = img.height*scale;
+      const x = (canvas.width-w)/2, y = (canvas.height-h)/2;
+      ctx.fillStyle='white'; ctx.fillRect(0,0,canvas.width,canvas.height);
+      ctx.drawImage(img,x,y,w,h);
+    };
+    img.src = e.target.result;
+    // Show preview
+    const preview = document.getElementById(previewId);
+    preview.innerHTML = `<img src="${e.target.result}" alt="Semnătură încărcată">`;
+  };
+  reader.readAsDataURL(file);
+}
+
+// ── GENERATE ─────────────────────────────────────────────────────────────
+async function generateDocs() {
+  const scriptUrl = localStorage.getItem('rbl_script_url') || '';
+  const data = {
+    nume:g('f-nume'), prenume:g('f-prenume'), dob:g('f-dob'), cnp:g('f-cnp'),
+    ciSerie:g('f-ci-serie'), ciNr:g('f-ci-nr'), judet:g('f-judet'), oras:g('f-oras'),
+    strada:g('f-strada'), nr:g('f-nr'), tel:g('f-tel'), email:g('f-email'),
+    pNume:g('f-p-nume'), pCNP:g('f-p-cnp'), pDom:g('f-p-dom'),
+    pTel:g('f-p-tel'), pEmail:g('f-p-email'),
+  };
+  const minor = isMinor(data.dob);
+  const nr = nextContractNr();
+  const nf = data.nume.toLowerCase().replace(/\s+/g,'_');
+  const sigData = document.getElementById('sig-canvas').toDataURL('image/png');
+  const sigParinteData = minor ? document.getElementById('sig-parinte-canvas').toDataURL('image/png') : '';
+
+  // Daca nu avem URL de script, genereaza PDF local (fallback)
+  if (!scriptUrl) {
+    const dl = document.getElementById('download-links');
+    dl.innerHTML = '<p style="color:var(--red);font-size:13px;text-align:center;padding:10px">⚠️ URL Google Apps Script negăsit în Admin. Documentele se generează local (fără salvare în Drive/Sheets).</p>';
+    const addBtn=(icon,label,sub,def,fn)=>{
+      const b=document.createElement('button'); b.className='dl-btn';
+      b.innerHTML=`<span class="dl-icon">${icon}</span><div><div class="dl-name">${label}</div><div class="dl-sub">${sub}</div></div>`;
+      b.onclick=()=>pdfMake.createPdf(def).download(fn);
+      dl.appendChild(b);
+    };
+    if(minor){
+      addBtn('📄','Contract de voluntariat (minor)',`Nr. ${nr} — ${today()}`,docContractMinor(data,nr),`contract_minor_${nf}_${nr}.pdf`);
+      addBtn('📄','Fișa voluntarului (minor)',`${data.prenume} ${data.nume}`,docFisaMinor(data,nr),`fisa_minor_${nf}_${nr}.pdf`);
+      addBtn('📄','Formular consimțământ GDPR — voluntar',`Semnat de ${data.prenume} ${data.nume}`,docGdprMinorVoluntar(data),`gdpr_voluntar_minor_${nf}.pdf`);
+      addBtn('📋','Formular consimțământ GDPR — părinte',`Semnat de ${data.pNume}`,docGdprParinte(data),`gdpr_parinte_${nf}.pdf`);
+      addBtn('📋','Acord parental',`Părinte: ${data.pNume}`,docAcordParental(data),`acord_parental_${nf}.pdf`);
+    } else {
+      addBtn('📄','Contract de voluntariat',`Nr. ${nr} — ${today()}`,docContractMajor(data,nr),`contract_${nf}_${nr}.pdf`);
+      addBtn('📄','Fișa voluntarului',`${data.prenume} ${data.nume}`,docFisaMajor(data,nr),`fisa_${nf}_${nr}.pdf`);
+      addBtn('📄','Formular consimțământ GDPR',`${data.prenume} ${data.nume}`,docGdprMajor(data),`gdpr_${nf}.pdf`);
+    }
+    goToPage('success');
+    return;
+  }
+
+  // Cu script URL: trimite la Google Apps Script
+  goToPage('processing');
+  const steps = document.getElementById('processing-steps');
+  const addStep = (id, text) => {
+    const d = document.createElement('div');
+    d.className='processing-step active'; d.id='step-'+id;
+    d.innerHTML=`<div class="step-dot active" id="dot-${id}">…</div><span>${text}</span>`;
+    steps.appendChild(d);
+  };
+  const doneStep = (id) => {
+    const d = document.getElementById('step-'+id);
+    const dot = document.getElementById('dot-'+id);
+    if(d){ d.className='processing-step done'; }
+    if(dot){ dot.className='step-dot done'; dot.textContent='✓'; }
+  };
+  const errStep = (id, msg) => {
+    const d = document.getElementById('step-'+id);
+    const dot = document.getElementById('dot-'+id);
+    if(d){ d.className='processing-step error'; d.querySelector('span').textContent=msg; }
+    if(dot){ dot.className='step-dot error'; dot.textContent='✕'; }
+  };
+
+  steps.innerHTML = '';
+  addStep('send', 'Se trimit datele...');
+  addStep('docs', 'Se completează documentele în Drive...');
+  addStep('sheets', 'Se salvează în Google Sheets...');
+  addStep('done', 'Finalizare...');
+
+  try {
+    const payload = {
+      action: 'register',
+      eventId: 'rbl-voluntariat',
+      formData: { ...data, isMinor: minor, sigData, sigParinteData },
+    };
+
+    doneStep('send');
+
+    const resp = await fetch(scriptUrl, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+    const result = await resp.json();
+
+    if (!result.ok) throw new Error(result.error || 'Eroare necunoscută');
+
+    doneStep('docs');
+    doneStep('sheets');
+    doneStep('done');
+
+    // Afiseaza linkurile de descarcare
+    const dl = document.getElementById('download-links');
+    dl.innerHTML = '';
+    (result.data.links || []).forEach(link => {
+      const b = document.createElement('a');
+      b.className = 'dl-btn';
+      b.href = link.url || '#';
+      b.target = '_blank';
+      b.style.textDecoration = 'none';
+      if(link.error) {
+        b.innerHTML=`<span class="dl-icon">⚠️</span><div><div class="dl-name">${link.name}</div><div class="dl-sub" style="color:var(--red)">${link.error}</div></div>`;
+      } else {
+        b.innerHTML=`<span class="dl-icon">📄</span><div><div class="dl-name">${link.name}</div><div class="dl-sub">Click pentru descărcare .docx din Google Drive</div></div>`;
+      }
+      dl.appendChild(b);
+    });
+
+    goToPage('success');
+
+  } catch(ex) {
+    errStep('docs', 'Eroare: ' + ex.message);
+    const dl = document.getElementById('download-links');
+    dl.innerHTML = `<p style="color:var(--red);font-size:13px;padding:10px;text-align:center">❌ ${ex.message}<br><br>Verifică URL-ul Apps Script în Admin sau conexiunea la internet.</p>`;
+    goToPage('success');
+  }
+}
+ 
+// ── RESET ────────────────────────────────────────────────────────────────
 function resetForm() {
   document.querySelectorAll('input[type=text],input[type=date],input[type=email],input[type=tel]').forEach(i=>i.value='');
   clearSig('sig-canvas'); clearSig('sig-parinte-canvas');
@@ -1274,15 +958,19 @@ function resetForm() {
   ['sig-canvas','sig-parinte-canvas'].forEach(id=>{const c=document.getElementById(id);if(c)c.width=0;});
   goToPage(1);
 }
-
-// ════════════════════════════════════════════════════════════════
-// INIT
-// ════════════════════════════════════════════════════════════════
+ 
+// ── INIT ─────────────────────────────────────────────────────────────────
 window.addEventListener('load',()=>{
-  loadEvents();
-  renderEventCards();
   setupCanvas('sig-canvas'); setupCanvas('sig-parinte-canvas');
   document.getElementById('f-dob').max=new Date().toISOString().split('T')[0];
+  document.getElementById('admin-current-nr').textContent=contractCounter+1;
+  // Incarca URL script salvat
+  const savedUrl = localStorage.getItem('rbl_script_url') || '';
+  const urlInput = document.getElementById('admin-script-url');
+  if(urlInput && savedUrl) {
+    urlInput.value = savedUrl;
+    document.getElementById('admin-url-status').textContent = '✅ configurat';
+  }
 });
 </script>
 </body>
