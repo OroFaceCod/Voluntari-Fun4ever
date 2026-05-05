@@ -132,7 +132,36 @@
   .dl-btn .dl-name { font-weight: 600; font-size: 13px; }
   .dl-btn .dl-sub { font-size: 11px; opacity: 0.55; margin-top: 2px; }
   .required::after { content: ' *'; color: var(--red); }
- 
+
+  #admin-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5); z-index: 999;
+  align-items: center; justify-content: center;
+}
+#admin-overlay.open { display: flex; }
+.admin-modal {
+  background: #222844; border-radius: 12px;
+  padding: 32px; width: 320px;
+  border-top: 3px solid var(--red);
+}
+.admin-modal h3 { color: white; font-size: 16px; margin-bottom: 6px; }
+.admin-modal p { color: rgba(255,255,255,0.45); font-size: 12px; margin-bottom: 18px; }
+.admin-modal input {
+  width: 100%; padding: 10px 13px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 7px; color: white;
+  font-family: 'Inter', sans-serif; font-size: 14px;
+  outline: none; margin-bottom: 12px;
+}
+.admin-modal input:focus { border-color: var(--red); }
+.admin-modal-btns { display: flex; gap: 10px; }
+.admin-modal-btns button { flex: 1; padding: 10px; border-radius: 7px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; border: none; }
+.btn-confirm { background: var(--red); color: white; }
+.btn-confirm:hover { background: #c4432d; }
+.btn-cancel-modal { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.6); }
+.admin-modal .error-msg { color: #ff6b6b; font-size: 12px; margin-bottom: 8px; display: none; }
+  
   @media (max-width: 600px) {
     header { padding: 0 16px; } #admin-panel { padding: 16px; }
     main { padding: 24px 14px 60px; }
@@ -146,6 +175,18 @@
 <body>
  
 <header>
+  <div id="admin-overlay">
+  <div class="admin-modal">
+    <h3>⚙ Panou Admin</h3>
+    <p>Introdu parola pentru a accesa setările.</p>
+    <input type="password" id="admin-password-input" placeholder="Parolă" onkeydown="if(event.key==='Enter') checkAdminPassword()">
+    <div class="error-msg" id="admin-pass-error">Parolă incorectă. Încearcă din nou.</div>
+    <div class="admin-modal-btns">
+      <button class="btn-cancel-modal" onclick="closeAdminOverlay()">Anulează</button>
+      <button class="btn-confirm" onclick="checkAdminPassword()">Intră</button>
+    </div>
+  </div>
+</div>
   <div class="header-left">
     <svg class="logo-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
       <rect x="12" y="12" width="36" height="36" rx="8" fill="#d94f38"/>
@@ -307,12 +348,31 @@ let contractCounter = parseInt(localStorage.getItem('rbl_contract_nr') || '0');
  
 // ── ADMIN ─────────────────────────────────────────────────────────────────
 function toggleAdmin() {
-  const p = document.getElementById('admin-panel');
-  p.classList.toggle('open');
-  if (p.classList.contains('open')) {
+  if (document.getElementById('admin-panel').classList.contains('open')) {
+    document.getElementById('admin-panel').classList.remove('open');
+  } else {
+    document.getElementById('admin-overlay').classList.add('open');
+    document.getElementById('admin-password-input').value = '';
+    document.getElementById('admin-pass-error').style.display = 'none';
+    setTimeout(() => document.getElementById('admin-password-input').focus(), 100);
+  }
+}
+function checkAdminPassword() {
+  const val = document.getElementById('admin-password-input').value;
+  if (val === 'Fun4ever!') {
+    document.getElementById('admin-overlay').classList.remove('open');
+    const panel = document.getElementById('admin-panel');
+    panel.classList.add('open');
     document.getElementById('admin-start-nr').value = contractCounter + 1;
     document.getElementById('admin-current-nr').textContent = contractCounter + 1;
+  } else {
+    document.getElementById('admin-pass-error').style.display = 'block';
+    document.getElementById('admin-password-input').value = '';
+    document.getElementById('admin-password-input').focus();
   }
+}
+function closeAdminOverlay() {
+  document.getElementById('admin-overlay').classList.remove('open');
 }
 function saveAdminSettings() {
   const val = parseInt(document.getElementById('admin-start-nr').value);
