@@ -476,39 +476,12 @@ input.error{border-color:var(--red);background:#fff5f4}
     <input type="hidden" id="ev-edit-id">
 
     <div class="a-section-lbl">Informații eveniment</div>
-    <div class="a-row c2">
-      <div class="af a-full"><label>Numele evenimentului *</label><input type="text" id="ev-name" placeholder="ex: RBL Voluntariat 2026"></div>
+    <div class="a-row">
+      <div class="af"><label>Numele evenimentului *</label><input type="text" id="ev-name" placeholder="ex: RBL Voluntariat 2026"></div>
     </div>
     <div class="a-row c2">
       <div class="af"><label>Emoji / Iconiță</label><input type="text" id="ev-icon" placeholder="ex: 🤝" maxlength="4"></div>
       <div class="af"><label>Nr. start contracte</label><input type="number" id="ev-start-nr" placeholder="ex: 1" min="1"></div>
-    </div>
-
-    <div class="a-section-lbl">Organizație</div>
-    <div class="a-row">
-      <div class="af"><label>Numele organizației *</label><input type="text" id="ev-org-name" placeholder="ex: Fundația Romanian Business Leaders"></div>
-    </div>
-    <div class="a-row c3">
-      <div class="af"><label>CIF</label><input type="text" id="ev-org-cif" placeholder="RO 29004248"></div>
-      <div class="af"><label>Telefon</label><input type="text" id="ev-org-tel" placeholder="021 794 14 98"></div>
-      <div class="af"><label>Email</label><input type="text" id="ev-org-email" placeholder="contact@rbls.ro"></div>
-    </div>
-    <div class="a-row">
-      <div class="af"><label>Sediu social</label><input type="text" id="ev-org-sediu" placeholder="ex: București, Calea Dorobanți nr. 42, Sector 1"></div>
-    </div>
-
-    <div class="a-section-lbl">Reprezentanți</div>
-    <div class="a-row c2">
-      <div class="af"><label>Nume Director *</label><input type="text" id="ev-director" placeholder="ex: Alexandru Dincovici"></div>
-      <div class="af"><label>Titlu Director</label><input type="text" id="ev-director-titlu" placeholder="ex: Director General"></div>
-    </div>
-    <div class="a-row c2">
-      <div class="af"><label>Coordonator Voluntari</label><input type="text" id="ev-coord" placeholder="ex: Teodora Gaftoi"></div>
-      <div class="af"><label>Email Coordonator</label><input type="text" id="ev-coord-email" placeholder="teodora.gaftoi@rbls.ro"></div>
-    </div>
-    <div class="a-row c2">
-      <div class="af"><label>Telefon Coordonator</label><input type="text" id="ev-coord-tel" placeholder="0739 637 426"></div>
-      <div class="af"><label>Președinte (GDPR)</label><input type="text" id="ev-presedinte" placeholder="ex: Sergiu Neguț"></div>
     </div>
 
     <div class="a-section-lbl">
@@ -837,7 +810,7 @@ function renderEventCards() {
       <div class="event-card" onclick="selectEvent('${ev.id}')">
         <div class="event-card-icon">${ev.icon || '📄'}</div>
         <div class="event-card-name">${ev.name}</div>
-        <div class="event-card-org">${ev.org ? ev.org.name : ''}</div>
+        <div class="event-card-org">Click pentru înregistrare</div>
       </div>
     `).join('') + '</div>';
 }
@@ -879,7 +852,7 @@ function renderAdminEvList() {
     <div class="ev-item">
       <div class="ev-item-info">
         <div class="ev-item-name">${ev.icon || '📄'} ${ev.name}</div>
-        <div class="ev-item-sub">${ev.org ? ev.org.name : ''} · ${(ev.docs||[]).length} documente · ${ev.contractCounter || 0} contracte generate</div>
+        <div class="ev-item-sub">${(ev.docs||[]).length} documente configurate · ${ev.contractCounter || 0} contracte generate</div>
       </div>
       <div class="ev-item-actions">
         <button class="btn-edit-ev" onclick="openEditEvModal('${ev.id}')">✏ Editează</button>
@@ -905,17 +878,6 @@ function openEditEvModal(id) {
   document.getElementById('ev-name').value = ev.name || '';
   document.getElementById('ev-icon').value = ev.icon || '';
   document.getElementById('ev-start-nr').value = (ev.contractCounter || 0) + 1;
-  document.getElementById('ev-org-name').value = ev.org ? ev.org.name : '';
-  document.getElementById('ev-org-cif').value = ev.org ? ev.org.cif : '';
-  document.getElementById('ev-org-tel').value = ev.org ? ev.org.tel : '';
-  document.getElementById('ev-org-email').value = ev.org ? ev.org.email : '';
-  document.getElementById('ev-org-sediu').value = ev.org ? ev.org.sediu : '';
-  document.getElementById('ev-director').value = ev.director ? ev.director.nume : '';
-  document.getElementById('ev-director-titlu').value = ev.director ? ev.director.titlu : '';
-  document.getElementById('ev-coord').value = ev.coord ? ev.coord.nume : '';
-  document.getElementById('ev-coord-email').value = ev.coord ? ev.coord.email : '';
-  document.getElementById('ev-coord-tel').value = ev.coord ? ev.coord.tel : '';
-  document.getElementById('ev-presedinte').value = ev.presedinte || '';
   // Populeaza doc slots
   document.getElementById('ev-doc-slots').innerHTML = '';
   (ev.docs || []).forEach(doc => addDocSlot(doc));
@@ -923,9 +885,7 @@ function openEditEvModal(id) {
 }
 
 function clearEvModalFields() {
-  ['ev-name','ev-icon','ev-org-name','ev-org-cif','ev-org-tel','ev-org-email',
-   'ev-org-sediu','ev-director','ev-director-titlu','ev-coord','ev-coord-email',
-   'ev-coord-tel','ev-presedinte'].forEach(id => {
+  ['ev-name','ev-icon'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
@@ -985,36 +945,13 @@ function getDocSlots() {
 
 async function saveEvent() {
   const name = document.getElementById('ev-name').value.trim();
-  const orgName = document.getElementById('ev-org-name').value.trim();
-  const director = document.getElementById('ev-director').value.trim();
-  if (!name || !orgName || !director) {
-    alert('Completează cel puțin: Nume eveniment, Organizație și Director.');
-    return;
-  }
+  if (!name) { alert('Completează numele evenimentului.'); return; }
   const editId = document.getElementById('ev-edit-id').value;
   const startNr = parseInt(document.getElementById('ev-start-nr').value) || 1;
   const ev = {
     id: editId || ('ev_' + Date.now()),
     name,
     icon: document.getElementById('ev-icon').value.trim() || '📄',
-    org: {
-      name: orgName,
-      cif: document.getElementById('ev-org-cif').value.trim(),
-      tel: document.getElementById('ev-org-tel').value.trim(),
-      email: document.getElementById('ev-org-email').value.trim(),
-      sediu: document.getElementById('ev-org-sediu').value.trim(),
-      gdprEmail: document.getElementById('ev-org-email').value.trim(),
-    },
-    director: {
-      nume: director,
-      titlu: document.getElementById('ev-director-titlu').value.trim() || 'Director General',
-    },
-    presedinte: document.getElementById('ev-presedinte').value.trim() || director,
-    coord: {
-      nume: document.getElementById('ev-coord').value.trim(),
-      email: document.getElementById('ev-coord-email').value.trim(),
-      tel: document.getElementById('ev-coord-tel').value.trim(),
-    },
     docs: getDocSlots(),
     contractCounter: editId ? (events.find(e=>e.id===editId)||{}).contractCounter || startNr-1 : startNr-1,
   };
@@ -1023,7 +960,8 @@ async function saveEvent() {
     try {
       const resp = await fetch(SCRIPT_URL, {
         method: 'POST',
-        body: JSON.stringify({ action: 'saveEvent', password: 'Fun4ever!', event: ev }),
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: 'data=' + encodeURIComponent(JSON.stringify({ action: 'saveEvent', password: 'Fun4ever!', event: ev })),
       });
       const result = await resp.json();
       if (!result.ok) throw new Error(result.error);
@@ -1050,7 +988,8 @@ async function deleteEvent(id) {
     try {
       await fetch(SCRIPT_URL, {
         method: 'POST',
-        body: JSON.stringify({ action: 'deleteEvent', password: 'Fun4ever!', eventId: id }),
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: 'data=' + encodeURIComponent(JSON.stringify({ action: 'deleteEvent', password: 'Fun4ever!', eventId: id })),
       });
     } catch(e) {}
   }
@@ -1253,7 +1192,8 @@ async function generateDocs() {
     doneStep('send');
     const resp = await fetch(SCRIPT_URL, {
       method: 'POST',
-      body: JSON.stringify({ action:'register', eventId: currentEvent.id, formData }),
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      body: 'data=' + encodeURIComponent(JSON.stringify({ action:'register', eventId: currentEvent.id, formData })),
     });
     const result = await resp.json();
     if (!result.ok) throw new Error(result.error || 'Eroare necunoscută');
