@@ -482,7 +482,13 @@ function docContractMajor(data,nr) {
   const full=`${data.prenume} ${data.nume}`, sigV=getSig('sig-canvas');
   return {pageMargins:PM,defaultStyle:DEF,styles:S,content:[
     {text:'CONTRACT DE VOLUNTARIAT',style:'title'},
-    {text:`Nr. ${nr}/........`,style:'nr'},
+   function today() {
+  const d = new Date();
+  const zi = d.getDay();
+  if (zi === 6) d.setDate(d.getDate() + 2); // sambata -> luni
+  if (zi === 0) d.setDate(d.getDate() + 1); // duminica -> luni
+  return `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.${d.getFullYear()}`;
+},
     {text:['Între ',{text:'FUNDAȚIA ROMANIAN BUSINESS LEADERS, ',bold:true},'persoana juridică non-profit cu sediul în București, Calea Dorobanți, nr 42, etaj 3, ap 5, Sector 1, Bucuresti (adresa socială: comuna Mogosoaia, Jud. Ilfov, Str. I.C.Bratianu, nr. 145) înființată prin HJ nr. 40PJ/20.07.2011 emisa de Judecatoria Buftea, telefon 021/794.14.98, CIF RO 29004248, IBAN (RON) RO82BTRL04801205902473XX deschis la Banca Transilvania, Sucursala Chibrit, reprezentanta în mod legal de Alexandru Dincovici în calitate de Director General, numită în continuare ',{text:'Organizația gazdă',bold:true}],style:'body'},
     {text:'și',style:'body'},
     {text:[{text:full,bold:true},`, domiciliat în ${data.oras}, Str. ${data.strada} nr. ${data.nr}, Jud. ${data.judet}, identificat cu CI seria `,{text:data.ciSerie.toUpperCase(),bold:true},' nr. ',{text:data.ciNr,bold:true},', CNP ',{text:data.cnp,bold:true},', numită în continuare ',{text:'Voluntar',bold:true},','],style:'body'},
