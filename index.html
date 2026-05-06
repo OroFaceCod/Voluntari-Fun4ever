@@ -558,6 +558,7 @@ input.error{border-color:var(--red);background:#fff5f4}
 <div class="form-page active" id="page-events">
   <div class="section-title">Selectează evenimentul</div>
   <div class="section-subtitle">Alege evenimentul pentru care dorești să te înregistrezi ca voluntar.</div>
+  <div id="debug-url" style="font-size:10px;color:#ccc;margin-top:4px"></div>
   <div id="event-cards-wrap">
     <div class="loading-events">⏳ Se încarcă evenimentele...</div>
   </div>
@@ -844,6 +845,9 @@ async function loadEvents() {
     }
   }
 
+  // Debug: arata URL-ul activ
+  const dbg = document.getElementById('debug-url');
+  if (dbg) dbg.textContent = 'Script: ' + (SCRIPT_URL ? SCRIPT_URL.slice(0,60)+'...' : 'NEGASIT');
   renderEventCards();
 }
 
