@@ -720,12 +720,9 @@ input.error{border-color:var(--red);background:#fff5f4}
 // ════════════════════════════════════════════════════════════════
 //  CONFIG & STATE
 // ════════════════════════════════════════════════════════════════
-// URL-ul Apps Script e hardcodat aici — acelasi pentru toti utilizatorii pe orice browser
-// Admin poate suprascrie din panoul de setari daca e nevoie
+// URL-ul Apps Script — hardcodat, acelasi pentru toti utilizatorii pe orice browser
 const SCRIPT_URL_HARDCODED = 'https://script.google.com/macros/s/AKfycby7ePwiXGc_SnZdwJojA10o7eNuDECXlTvZh5iCL1iHoJfH0VcPwz0DGunWlToQ6q5j/exec';
-let SCRIPT_URL = (SCRIPT_URL_HARDCODED && SCRIPT_URL_HARDCODED !== 'https://script.google.com/macros/s/AKfycby7ePwiXGc_SnZdwJojA10o7eNuDECXlTvZh5iCL1iHoJfH0VcPwz0DGunWlToQ6q5j/exec')
-  ? SCRIPT_URL_HARDCODED
-  : (localStorage.getItem('fun4ever_script_url') || '');
+let SCRIPT_URL = SCRIPT_URL_HARDCODED;
 let events = [];
 let currentEvent = null;
 let contractCounter = parseInt(localStorage.getItem('rbl_contract_nr') || '0');
