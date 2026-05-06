@@ -777,10 +777,51 @@ function saveGeneralSettings() {
 //  EVENTS — încărcare din Apps Script sau local
 // ════════════════════════════════════════════════════════════════
 async function loadEvents() {
-  // Evenimentele sunt stocate local — nu depind de Apps Script
+  // 1. Porneste cu evenimentele DEFAULT hardcodate (vizibile pe orice browser)
+  const defaultEvents = getDefaultEvents();
+
+  // 2. Merge cu evenimentele custom salvate local
   const local = localStorage.getItem('fun4ever_events_local');
-  events = local ? JSON.parse(local) : [];
+  const localEvents = local ? JSON.parse(local) : [];
+
+  // 3. Combina: default + custom (fara duplicate)
+  const defaultIds = defaultEvents.map(e => e.id);
+  const customOnly = localEvents.filter(e => !defaultIds.includes(e.id));
+  events = [...defaultEvents, ...customOnly];
+
+  // 4. Daca avem Apps Script, incarca si evenimentele custom de acolo
+  if (SCRIPT_URL) {
+    try {
+      const resp = await fetch(SCRIPT_URL + '?action=getEvents', { method: 'GET' });
+      const result = await resp.json();
+      if (result.ok && Array.isArray(result.data) && result.data.length > 0) {
+        // Pastreaza default-urile + adauga custom-urile din script
+        const scriptCustom = result.data.filter(e => !defaultIds.includes(e.id));
+        events = [...defaultEvents, ...scriptCustom];
+        localStorage.setItem('fun4ever_events_local', JSON.stringify(events));
+      }
+    } catch(e) {
+      // Merge cu ce avem local
+    }
+  }
+
   renderEventCards();
+}
+
+function getDefaultEvents() {
+  // Acestea sunt mereu vizibile pe orice browser, hardcodate in HTML
+  return [
+    {
+      id: 'rbl-voluntariat',
+      name: 'RBL Voluntariat',
+      icon: '🤝',
+      docs: [
+        { name: 'Documente Majori', driveFileId: '1lsuzhV_DZnTdkEaF508VXz14Whr0GtE', forMinor: 'major' },
+        { name: 'Documente Minori', driveFileId: '1gJU7rut1kbfHjHKwaBGxTLtq-iDOEck_', forMinor: 'minor' },
+      ],
+      contractCounter: 0,
+    },
+  ];
 }
 
 function renderEventCards() {
@@ -940,15 +981,30 @@ async function saveEvent() {
     contractCounter: editId ? (events.find(e=>e.id===editId)||{}).contractCounter || startNr-1 : startNr-1,
   };
 
-  // Salveaza local (evenimentele nu au nevoie de Apps Script)
+  // Salveaza local
   const idx = events.findIndex(e => e.id === ev.id);
   if (idx >= 0) events[idx] = ev;
   else events.push(ev);
   localStorage.setItem('fun4ever_events_local', JSON.stringify(events));
 
+  // Salveaza in Apps Script via no-cors (merge intotdeauna, nu citim raspunsul)
+  if (SCRIPT_URL) {
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: JSON.stringify({ action: 'saveEvent', password: 'Fun4ever!', event: ev }),
+    }).catch(e => console.warn('Apps Script save:', e));
+    // Dupa 2 secunde reincarcam din Apps Script ca sa confirmam salvarea
+    setTimeout(() => loadEvents(), 2000);
+  }
+
   closeEvModal();
   renderAdminEvList();
   renderEventCards();
+  // Arata un toast de confirmare
+  showToast(SCRIPT_URL
+    ? '✅ Eveniment salvat! Se sincronizează...'
+    : '✅ Eveniment salvat local!');
 }
 
 async function deleteEvent(id) {
@@ -956,6 +1012,17 @@ async function deleteEvent(id) {
 
   events = events.filter(e => e.id !== id);
   localStorage.setItem('fun4ever_events_local', JSON.stringify(events));
+
+  // Sterge si din Apps Script
+  if (SCRIPT_URL) {
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: JSON.stringify({ action: 'deleteEvent', password: 'Fun4ever!', eventId: id }),
+    }).catch(e => console.warn('Apps Script delete:', e));
+    setTimeout(() => loadEvents(), 2000);
+  }
+
   renderAdminEvList();
   renderEventCards();
 }
@@ -1230,11 +1297,46 @@ function fallbackGenerate(formData, nr, nf, minor) {
 //  RESET + INIT
 // ════════════════════════════════════════════════════════════════
 function resetForm() {
-  document.querySelectorAll('input[type=text],input[type=date],input[type=email],input[type=tel]').forEach(i=>i.value='');
-  clearSig('sig-canvas'); clearSig('sig-parinte-canvas');
-  document.getElementById('minor-banner').style.display='none';
-  document.getElementById('parinte-section').style.display='none';
-  document.getElementById('sig-parinte-block').style.display='none';
+  // Reseteaza toate campurile
+  document.querySelectorAll('input[type=text],input[type=date],input[type=email],input[type=tel]').forEach(i => i.value = '');
+  // Reseteaza semnaturile
+  clearSig('sig-canvas');
+  clearSig('sig-parinte-canvas');
+  // Reseteaza tab-urile semnaturi
+  switchSigTab('draw', 'sig');
+  switchSigTab('draw', 'sigp');
+  // Reseteaza bannerele si sectiunile de minor
+  document.getElementById('minor-banner').style.display = 'none';
+  document.getElementById('parinte-section').style.display = 'none';
+  document.getElementById('sig-parinte-block').style.display = 'none';
+  // Reseteaza erorile de validare
+  document.querySelectorAll('input.error').forEach(i => i.classList.remove('error'));
+  // Daca avem un eveniment selectat, ramanem pe el si mergem la pagina 1
+  // Daca nu, mergem la selectia de eveniment
+  if (currentEvent) {
+    goToPage(1);
+    setTimeout(() => { setupCanvas('sig-canvas'); setupCanvas('sig-parinte-canvas'); }, 100);
+  } else {
+    document.querySelectorAll('.form-page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-events').classList.add('active');
+    document.getElementById('progress-bar').classList.remove('show');
+    document.querySelectorAll('.step-tab').forEach(t => t.classList.remove('active','done'));
+  }
+  window.scrollTo(0, 0);
+}
+
+function showToast(msg) {
+  let toast = document.getElementById('toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'toast';
+    toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#2b3252;color:white;padding:12px 24px;border-radius:8px;font-size:13px;font-weight:500;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.3);transition:opacity .3s';
+    document.body.appendChild(toast);
+  }
+  toast.textContent = msg;
+  toast.style.opacity = '1';
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => { toast.style.opacity = '0'; }, 3000);
 }
 
 window.addEventListener('load', () => {
