@@ -767,9 +767,23 @@ function saveGeneralSettings() {
   SCRIPT_URL = url;
   localStorage.setItem('fun4ever_script_url', url);
   document.getElementById('admin-general-info').textContent = url
-    ? '✅ URL salvat! Evenimentele se vor încărca din Apps Script.'
-    : 'URL șters — se folosesc evenimentele locale.';
-  // Reîncarcă evenimentele cu noul URL
+    ? '✅ URL salvat! Se testează conexiunea...'
+    : 'URL șters.';
+  if (url) {
+    // Test imediat conexiunea
+    fetch(url + '?action=getEvents')
+      .then(r => r.json())
+      .then(result => {
+        document.getElementById('admin-general-info').textContent =
+          result.ok
+            ? '✅ Conexiune OK! Apps Script răspunde corect.'
+            : '❌ Apps Script a răspuns cu eroare: ' + result.error;
+      })
+      .catch(ex => {
+        document.getElementById('admin-general-info').textContent =
+          '❌ Nu se poate conecta la Apps Script: ' + ex.message;
+      });
+  }
   loadEvents();
 }
 
@@ -1013,14 +1027,17 @@ async function saveEvent() {
     try {
       const result = await scriptFetch({ action: 'saveEvent', password: 'Fun4ever!', event: ev });
       if (result.ok) {
-        showToast('✅ Eveniment salvat și sincronizat!');
-        await loadEvents(); // reincarca din Apps Script
+        showToast('✅ Eveniment salvat în Apps Script — vizibil pe toate dispozitivele!');
+        await loadEvents();
         return;
+      } else {
+        showToast('❌ Eroare Apps Script: ' + (result.error || 'necunoscută'));
       }
     } catch(ex) {
-      console.warn('Apps Script save error:', ex.message);
+      showToast('❌ Eroare conexiune: ' + ex.message);
+      console.error('scriptFetch error:', ex);
     }
-    showToast('⚠️ Salvat local. Verifică conexiunea la Apps Script.');
+    showToast('⚠️ Salvat doar local (Apps Script indisponibil).');
   }
 
   closeEvModal();
