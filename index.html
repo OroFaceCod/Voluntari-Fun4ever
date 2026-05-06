@@ -720,7 +720,12 @@ input.error{border-color:var(--red);background:#fff5f4}
 // ════════════════════════════════════════════════════════════════
 //  CONFIG & STATE
 // ════════════════════════════════════════════════════════════════
-let SCRIPT_URL = localStorage.getItem('fun4ever_script_url') || '';
+// URL-ul Apps Script e hardcodat aici — acelasi pentru toti utilizatorii pe orice browser
+// Admin poate suprascrie din panoul de setari daca e nevoie
+const SCRIPT_URL_HARDCODED = 'https://script.google.com/macros/s/AKfycby7ePwiXGc_SnZdwJojA10o7eNuDECXlTvZh5iCL1iHoJfH0VcPwz0DGunWlToQ6q5j/exec';
+let SCRIPT_URL = (SCRIPT_URL_HARDCODED && SCRIPT_URL_HARDCODED !== 'https://script.google.com/macros/s/AKfycby7ePwiXGc_SnZdwJojA10o7eNuDECXlTvZh5iCL1iHoJfH0VcPwz0DGunWlToQ6q5j/exec')
+  ? SCRIPT_URL_HARDCODED
+  : (localStorage.getItem('fun4ever_script_url') || '');
 let events = [];
 let currentEvent = null;
 let contractCounter = parseInt(localStorage.getItem('rbl_contract_nr') || '0');
@@ -766,6 +771,8 @@ function saveGeneralSettings() {
   const url = document.getElementById('admin-script-url').value.trim();
   SCRIPT_URL = url;
   localStorage.setItem('fun4ever_script_url', url);
+  // Avertizare: URL-ul salvat local nu se aplica pe alte browsere
+  // Pentru a il face permanent, pune-l in SCRIPT_URL_HARDCODED din cod
   document.getElementById('admin-general-info').textContent = url
     ? '✅ URL salvat! Se testează conexiunea...'
     : 'URL șters.';
