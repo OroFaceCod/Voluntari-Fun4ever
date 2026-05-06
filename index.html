@@ -776,6 +776,17 @@ function saveGeneralSettings() {
 // ════════════════════════════════════════════════════════════════
 //  EVENTS — încărcare din Apps Script sau local
 // ════════════════════════════════════════════════════════════════
+// Fetch helper: trimite JSON ca text/plain (simple request, fara preflight CORS)
+// Astfel putem citi si raspunsul, nu doar fire-and-forget
+async function scriptFetch(payload) {
+  const resp = await fetch(SCRIPT_URL, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+    // NB: fara Content-Type header => text/plain implicit => simple request => fara CORS preflight
+  });
+  return await resp.json();
+}
+
 async function loadEvents() {
   // 1. Porneste cu evenimentele DEFAULT hardcodate (vizibile pe orice browser)
   const defaultEvents = getDefaultEvents();
@@ -987,15 +998,19 @@ async function saveEvent() {
   else events.push(ev);
   localStorage.setItem('fun4ever_events_local', JSON.stringify(events));
 
-  // Salveaza in Apps Script via no-cors (merge intotdeauna, nu citim raspunsul)
+  // Salveaza in Apps Script (cu citire raspuns, fara CORS)
   if (SCRIPT_URL) {
-    fetch(SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      body: JSON.stringify({ action: 'saveEvent', password: 'Fun4ever!', event: ev }),
-    }).catch(e => console.warn('Apps Script save:', e));
-    // Dupa 2 secunde reincarcam din Apps Script ca sa confirmam salvarea
-    setTimeout(() => loadEvents(), 2000);
+    try {
+      const result = await scriptFetch({ action: 'saveEvent', password: 'Fun4ever!', event: ev });
+      if (result.ok) {
+        showToast('✅ Eveniment salvat și sincronizat!');
+        await loadEvents(); // reincarca din Apps Script
+        return;
+      }
+    } catch(ex) {
+      console.warn('Apps Script save error:', ex.message);
+    }
+    showToast('⚠️ Salvat local. Verifică conexiunea la Apps Script.');
   }
 
   closeEvModal();
@@ -1015,12 +1030,12 @@ async function deleteEvent(id) {
 
   // Sterge si din Apps Script
   if (SCRIPT_URL) {
-    fetch(SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      body: JSON.stringify({ action: 'deleteEvent', password: 'Fun4ever!', eventId: id }),
-    }).catch(e => console.warn('Apps Script delete:', e));
-    setTimeout(() => loadEvents(), 2000);
+    try {
+      await scriptFetch({ action: 'deleteEvent', password: 'Fun4ever!', eventId: id });
+      await loadEvents();
+    } catch(ex) {
+      console.warn('Apps Script delete error:', ex.message);
+    }
   }
 
   renderAdminEvList();
@@ -1214,52 +1229,47 @@ async function generateDocs() {
   `;
 
   try {
-    // no-cors: trimitem datele fara sa citim raspunsul
-    // Apps Script proceseaza si trimite email cu linkurile
-    fetch(SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      body: JSON.stringify({
-        action: 'register',
-        eventName: currentEvent.name,
-        eventDocs: (currentEvent.docs || []).filter(d => {
-          if (d.forMinor === 'major' && minor) return false;
-          if (d.forMinor === 'minor' && !minor) return false;
-          return !!d.driveFileId;
-        }),
-        formData,
+    // Trimite datele la Apps Script si citeste raspunsul (fara CORS cu text/plain)
+    const result = await scriptFetch({
+      action: 'register',
+      eventName: currentEvent.name,
+      eventDocs: (currentEvent.docs || []).filter(d => {
+        if (d.forMinor === 'major' && minor) return false;
+        if (d.forMinor === 'minor' && !minor) return false;
+        return !!d.driveFileId;
       }),
+      formData,
     });
 
-    // Animam pasii
-    await new Promise(r => setTimeout(r, 800));
-    steps.querySelectorAll('.proc-step').forEach((s,i) => {
-      setTimeout(() => {
-        s.className = 'proc-step done';
-        const dot = s.querySelector('.step-dot');
-        dot.className = 'step-dot done'; dot.textContent = '✓';
-        if (i > 0) { const prev = steps.querySelectorAll('.proc-step')[i]; }
-      }, i * 600);
-    });
+    // Animam pasii pe rand
+    const allSteps = steps.querySelectorAll('.proc-step');
+    for (let i = 0; i < allSteps.length; i++) {
+      await new Promise(r => setTimeout(r, 500));
+      allSteps[i].className = 'proc-step done';
+      const dot = allSteps[i].querySelector('.step-dot');
+      dot.className = 'step-dot done'; dot.textContent = '✓';
+    }
 
-    await new Promise(r => setTimeout(r, 3000));
+    if (!result.ok) throw new Error(result.error || 'Eroare de la server');
 
-    // Pagina de succes cu mesaj email
+    // Pagina de succes cu linkuri reale de descarcare
     const dl = document.getElementById('download-links');
-    dl.innerHTML = `
-      <div style="background:#e8f5e9;border:1px solid #b8dfc5;border-radius:10px;padding:18px 20px;text-align:center">
-        <div style="font-size:28px;margin-bottom:8px">📧</div>
-        <div style="font-weight:700;font-size:15px;color:#2d6a4f;margin-bottom:6px">Documentele se procesează!</div>
-        <div style="font-size:13px;color:#3a7a5a;line-height:1.6">
-          Documentele completate cu datele tale sunt generate în Google Drive<br>
-          și vei primi linkurile de descărcare pe adresa:<br>
-          <b>${formData.email}</b>
-        </div>
-      </div>
-      <div style="background:#f0f4ff;border:1px solid #c5d0f0;border-radius:10px;padding:14px 18px;margin-top:10px;font-size:12px;color:#3a5bc7;line-height:1.6">
-        📋 Datele tale au fost salvate și în Google Sheets. Dacă nu primești emailul în 5 minute, verifică folderul Spam.
-      </div>
-    `;
+    dl.innerHTML = '';
+    (result.data.links || []).forEach(link => {
+      const a = document.createElement('a');
+      a.className = 'dl-btn';
+      a.href = link.url || '#';
+      a.target = '_blank';
+      a.style.textDecoration = 'none';
+      a.innerHTML = link.error
+        ? `<span class="dl-icon">⚠️</span><div><div class="dl-name">${link.name}</div><div class="dl-sub" style="color:#ff9e8e">${link.error}</div></div>`
+        : `<span class="dl-icon">📄</span><div><div class="dl-name">${link.name}</div><div class="dl-sub">Click pentru descărcare · deschide în Word/Google Docs</div></div>`;
+      dl.appendChild(a);
+    });
+    const note = document.createElement('p');
+    note.style.cssText = 'font-size:12px;color:var(--gray);text-align:center;margin-top:12px;line-height:1.5';
+    note.textContent = 'Un email cu linkurile a fost trimis și la ' + formData.email;
+    dl.appendChild(note);
     goToPage('success');
 
   } catch(ex) {
