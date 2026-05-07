@@ -1221,14 +1221,18 @@ function nextContractNr() {
 // ════════════════════════════════════════════════════════════════
 //  GENERATE
 // ════════════════════════════════════════════════════════════════
+function canvasToPng(canvasId) {
+  return document.getElementById(canvasId).toDataURL('image/png');
+}
+
 async function generateDocs() {
   try {
   const minor = isMinor(g('f-dob'));
   const nr = nextContractNr();
   const nf = g('f-nume').toLowerCase().replace(/\s+/g,'_');
-  // Comprima semnatura ca JPEG 60% - mult mai mica decat PNG
-  const sigData = document.getElementById('sig-canvas').toDataURL('image/jpeg', 0.6);
-  const sigParinteData = minor ? document.getElementById('sig-parinte-canvas').toDataURL('image/jpeg', 0.6) : '';
+  // Converteste canvas la JPEG cu fundal ALB (JPEG nu suporta transparenta)
+  const sigData = canvasToPng('sig-canvas');
+  const sigParinteData = minor ? canvasToPng('sig-parinte-canvas') : '';
 
   const formData = {
     nume: g('f-nume'), prenume: g('f-prenume'), dob: g('f-dob'), cnp: g('f-cnp'),
