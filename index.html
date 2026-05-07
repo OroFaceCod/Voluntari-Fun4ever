@@ -721,9 +721,7 @@ input.error{border-color:var(--red);background:#fff5f4}
 // ════════════════════════════════════════════════════════════════
 //  CONFIG & STATE
 // ════════════════════════════════════════════════════════════════
-// URL-ul Apps Script — hardcodat, acelasi pentru toti utilizatorii pe orice browser
-const SCRIPT_URL_HARDCODED = 'https://script.google.com/macros/s/AKfycby7ePwiXGc_SnZdwJojA10o7eNuDECXlTvZh5iCL1iHoJfH0VcPwz0DGunWlToQ6q5j/exec';
-let SCRIPT_URL = SCRIPT_URL_HARDCODED;
+let SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby7ePwiXGc_SnZdwJojA10o7eNuDECXlTvZh5iCL1iHoJfH0VcPwz0DGunWlToQ6q5j/exec';
 let events = [];
 let currentEvent = null;
 let contractCounter = parseInt(localStorage.getItem('rbl_contract_nr') || '0');
@@ -817,37 +815,29 @@ async function scriptFetch(payload) {
 }
 
 async function loadEvents() {
-  // 1. Porneste cu evenimentele DEFAULT hardcodate (vizibile pe orice browser)
-  const defaultEvents = getDefaultEvents();
+  const dbg = document.getElementById('debug-url');
 
-  // 2. Merge cu evenimentele custom salvate local
-  const local = localStorage.getItem('fun4ever_events_local');
-  const localEvents = local ? JSON.parse(local) : [];
-
-  // 3. Combina: default + custom (fara duplicate)
-  const defaultIds = defaultEvents.map(e => e.id);
-  const customOnly = localEvents.filter(e => !defaultIds.includes(e.id));
-  events = [...defaultEvents, ...customOnly];
-
-  // 4. Daca avem Apps Script, incarca si evenimentele custom de acolo
+  // Incarca TOATE evenimentele din Apps Script
   if (SCRIPT_URL) {
     try {
-      const resp = await fetch(SCRIPT_URL + '?action=getEvents', { method: 'GET' });
+      const resp = await fetch(SCRIPT_URL + '?action=getEvents');
       const result = await resp.json();
-      if (result.ok && Array.isArray(result.data) && result.data.length > 0) {
-        // Pastreaza default-urile + adauga custom-urile din script
-        const scriptCustom = result.data.filter(e => !defaultIds.includes(e.id));
-        events = [...defaultEvents, ...scriptCustom];
+      if (result.ok && Array.isArray(result.data)) {
+        events = result.data;
         localStorage.setItem('fun4ever_events_local', JSON.stringify(events));
+        if (dbg) dbg.textContent = 'Script OK · ' + events.length + ' evenimente';
+        renderEventCards();
+        return;
       }
     } catch(e) {
-      // Merge cu ce avem local
+      if (dbg) dbg.textContent = 'Eroare script: ' + e.message;
     }
   }
 
-  // Debug: arata URL-ul activ
-  const dbg = document.getElementById('debug-url');
-  if (dbg) dbg.textContent = 'Script: ' + (SCRIPT_URL ? SCRIPT_URL.slice(0,60)+'...' : 'NEGASIT');
+  // Fallback: localStorage
+  const local = localStorage.getItem('fun4ever_events_local');
+  events = local ? JSON.parse(local) : getDefaultEvents();
+  if (dbg) dbg.textContent = 'Local: ' + events.length + ' evenimente';
   renderEventCards();
 }
 
